@@ -79,7 +79,28 @@ vendor/bin/pest
 > Pozn. pro Windows: používejte `vendor\bin\pest` přímo — `php artisan test`
 > na cestě s diakritikou selhává (známý problém předávání argumentů PHPUnit).
 
-## Nasazení (produkce)
+## Nasazení na Laravel Cloud (auto-deploy z GitHubu)
+
+Repo je připravené (trust proxies, health endpoint `/up`, idempotentní seed).
+Jednorázové nastavení na [cloud.laravel.com](https://cloud.laravel.com):
+
+1. **Sign in with GitHub** a povol přístup k repu `Josef-Drdlicek/textilnamiru-app`.
+2. **New application** → vyber repo, větev `main`, region EU (Frankfurt).
+3. V nastavení aplikace:
+   - **Build commands:** výchozí composer install + přidej `npm ci && npm run build`
+   - **Deploy commands:** `php artisan migrate --force --seed`
+     (seed jen doplní ceník — je idempotentní, existující data nemění)
+   - **Environment:** `APP_LOCALE=cs`, `APP_FAKER_LOCALE=cs_CZ`
+4. **Database** → vytvoř databázi a připoj ji k aplikaci (DB_* proměnné se
+   doplní samy; migrace jsou přenositelné, funguje Postgres i MySQL).
+5. **Deploy.** Od té chvíle každý `git push` do `main` spustí build a nasazení.
+6. První účet dílny: v Cloud UI → **Commands** →
+   `php artisan app:create-admin dilna --name="Šicí dílna" --password=…`
+
+Session i cache jdou do databáze (výchozí Laravel 13 konfigurace), takže
+aplikace nefunguje jen na jedné instanci a nepotřebuje lokální disk.
+
+## Nasazení (klasický hosting)
 
 1. PHP 8.3+ s rozšířeními `pdo_mysql`, `mbstring`; `gd` netřeba (nákresy jsou SVG).
 2. `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `DB_CONNECTION=mysql` + přístupy, `APP_URL`.

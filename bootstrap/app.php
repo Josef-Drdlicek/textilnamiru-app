@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Aplikace běží za load balancerem (Laravel Cloud) — bez důvěry
+        // proxy hlavičkám by generované URL a detekce HTTPS nefungovaly.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'active' => EnsureUserIsActive::class,
             'admin' => EnsureUserIsAdmin::class,
