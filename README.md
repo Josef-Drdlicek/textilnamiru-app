@@ -8,6 +8,8 @@ přijímá, posouvá stavovým workflow, spravuje ceník a uživatele.
 Rebuild původní aplikace `zakazka.textilnamiru.cz` podle reverzně-inženýrského
 zadání `../ZADANI-textilnamiru.md`.
 
+📖 **Návod pro uživatele (dílna + designéři):** [docs/uzivatelska-prirucka.md](docs/uzivatelska-prirucka.md)
+
 ## Stack
 
 - PHP 8.3, Laravel 13, Livewire 4 (živý přepočet cen), Tailwind CSS 4 + Vite
