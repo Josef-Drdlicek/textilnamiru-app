@@ -13,6 +13,18 @@ it('lists users with their order counts', function () {
         ->assertSee('Lucie Návrhářka');
 });
 
+it('renders the create form with submittable field names', function () {
+    // Regrese: x-form.input dříve nevykresloval atribut name → prohlížeč
+    // pole neodeslal a validace hlásila „povinné" i u vyplněného formuláře.
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('admin.users.create'))
+        ->assertOk()
+        ->assertSee('name="name"', escape: false)
+        ->assertSee('name="username"', escape: false)
+        ->assertSee('name="password"', escape: false)
+        ->assertSee('name="phone"', escape: false);
+});
+
 it('creates a user account', function () {
     $admin = User::factory()->admin()->create();
 
