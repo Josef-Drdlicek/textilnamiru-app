@@ -18,6 +18,17 @@ it('shows catalog prices from the live price list', function () {
         ->assertSee('Na poptávku');
 });
 
+it('renders the homepage even when the price list is empty', function () {
+    \DB::table('pricing_variables')->delete();
+    \DB::table('ribbons')->delete();
+    \DB::table('blind_price_bands')->delete();
+    \Cache::flush();
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('Na poptávku');
+});
+
 it('renders the homepage for authenticated users without redirecting', function () {
     $this->actingAs(User::factory()->create())
         ->get('/')

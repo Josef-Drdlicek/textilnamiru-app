@@ -33,13 +33,26 @@ class PageController extends Controller
     {
         return Cache::remember('web.prices-from', now()->addHour(), function (): array {
             $pricer = app(ItemPricer::class);
-            $vatRate = $pricer->vatRate();
+
+            try {
+                $vatRate = $pricer->vatRate();
+            } catch (\DomainException $e) {
+                report($e);
+
+                return [];
+            }
 
             $prices = [];
 
             foreach (ItemType::cases() as $type) {
-                $price = $pricer->price($type, PublicPresets::referenceParameters($type));
-                $prices[$type->value] = (int) (ceil($price->unitPriceWithVat($vatRate) / 10) * 10);
+                // Díra v ceníku nesmí shodit celý web — dlaždice bez ceny
+                // spadne na chip „Na poptávku".
+                try {
+                    $price = $pricer->price($type, PublicPresets::referenceParameters($type));
+                    $prices[$type->value] = (int) (ceil($price->unitPriceWithVat($vatRate) / 10) * 10);
+                } catch (\DomainException $e) {
+                    report($e);
+                }
             }
 
             return $prices;

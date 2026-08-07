@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Web;
 
-use App\Domain\Pricing\Exceptions\NoBlindPriceBand;
 use App\Domain\Pricing\ItemPricer;
 use App\Domain\Pricing\PublicPresets;
 use App\Enums\ItemType;
@@ -89,8 +88,8 @@ class PriceEstimator extends Component
 
         try {
             $result = $pricer->price($type, $parameters);
-        } catch (NoBlindPriceBand) {
-            $this->addError('width', 'Tento rozměr neumíme nacenit online — poptejte nás prosím napřímo.');
+        } catch (\DomainException) {
+            $this->addError('width', 'Tuto konfiguraci neumíme nacenit online — poptejte nás prosím napřímo.');
 
             return null;
         }
@@ -219,13 +218,12 @@ class PriceEstimator extends Component
                 $this->itemType(),
                 PublicPresets::estimatorParameters($this->itemType(), $this->estimatorInput()),
             );
-        } catch (NoBlindPriceBand) {
+            $vatRate = $pricer->vatRate();
+        } catch (\DomainException) {
             $this->clearPrice();
 
             return;
         }
-
-        $vatRate = $pricer->vatRate();
 
         $this->unitPriceVat = $result->unitPriceWithVat($vatRate);
         $this->totalPrice = $result->totalPrice((int) $this->count);
