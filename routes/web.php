@@ -21,6 +21,8 @@ Route::post('/poptavka', [Web\InquiryController::class, 'store'])
     ->name('web.inquiry.store');
 Route::get('/poptavka/dekujeme', [Web\InquiryController::class, 'thanks'])->name('web.inquiry.thanks');
 Route::get('/sitemap.xml', Web\SitemapController::class)->name('web.sitemap');
+// DOČASNÉ — diagnostika 500 na homepage, po vyřešení smazat
+Route::get('/interni-diagnostika-7d4e93c', Web\DiagnosticsController::class)->name('web.diagnostics');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
