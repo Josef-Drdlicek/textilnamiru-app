@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /prehled
+Disallow: /orders
+Disallow: /admin
+Disallow: /login
+Disallow: /profile
+Disallow: /items
+Disallow: /poptavka/dekujeme
+
+Sitemap: https://textilnamiru-app-production-ivgo5z.laravel.cloud/sitemap.xml

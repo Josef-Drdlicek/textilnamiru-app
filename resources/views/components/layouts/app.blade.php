@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ isset($title) ? $title.' – '.config('app.name') : config('app.name') }}</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=raleway:400,500,600,700&display=swap" rel="stylesheet">
+    @fonts
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -21,6 +20,12 @@
 
                     <nav class="flex items-center gap-4 text-sm">
                         @if (auth()->user()->isAdmin())
+                            <a href="{{ route('admin.inquiries.index') }}" class="inline-flex items-center gap-1.5 font-medium text-stone-600 hover:text-teal-800 {{ request()->routeIs('admin.inquiries.*') ? 'text-teal-800' : '' }}">
+                                Poptávky
+                                @if (($newInquiriesCount ?? 0) > 0)
+                                    <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{{ $newInquiriesCount }}</span>
+                                @endif
+                            </a>
                             <a href="{{ route('admin.orders.index') }}" class="font-medium text-stone-600 hover:text-teal-800 {{ request()->routeIs('admin.orders.*') ? 'text-teal-800' : '' }}">
                                 Zakázky
                             </a>

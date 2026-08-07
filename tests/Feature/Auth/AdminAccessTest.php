@@ -19,5 +19,5 @@ it('allows admins into admin routes', function () {
 });
 
 it('redirects guests to login', function () {
-    $this->get('/')->assertRedirect('/login');
+    $this->get('/prehled')->assertRedirect('/login');
 });

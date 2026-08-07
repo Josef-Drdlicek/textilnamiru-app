@@ -44,7 +44,7 @@ it('logs out a user whose account was deactivated mid-session', function () {
 
     $user->update(['is_active' => false]);
 
-    $this->get('/')->assertRedirect('/login');
+    $this->get('/prehled')->assertRedirect('/login');
     $this->assertGuest();
 });
 
@@ -62,7 +62,7 @@ it('redirects admins to the admin dashboard after login', function () {
     $admin = User::factory()->admin()->create();
 
     $this->actingAs($admin)
-        ->get('/')
+        ->get('/prehled')
         ->assertRedirect(route('admin.orders.index'));
 });
 
@@ -70,7 +70,7 @@ it('redirects designers to the order welcome page after login', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->get('/')
+        ->get('/prehled')
         ->assertRedirect(route('orders.welcome'));
 });
 

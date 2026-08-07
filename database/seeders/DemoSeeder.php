@@ -93,5 +93,19 @@ class DemoSeeder extends Seeder
 
         // Rozpracovaný draft
         Order::create(['user_id' => $lucie->id, 'name' => 'Penzion U Lípy – pokoje', 'status' => OrderStatus::Draft]);
+
+        // Ukázkové poptávky z webu
+        if (! \App\Models\Inquiry::query()->exists()) {
+            \App\Models\Inquiry::factory()->withConfiguration()->create([
+                'name' => 'Jana Veselá',
+                'email' => 'jana.vesela@example.com',
+                'city' => 'Blansko',
+            ]);
+            \App\Models\Inquiry::factory()->contacted()->create([
+                'name' => 'Hotel Panorama',
+                'email' => 'recepce@example.com',
+                'city' => 'Brno',
+            ]);
+        }
     }
 }

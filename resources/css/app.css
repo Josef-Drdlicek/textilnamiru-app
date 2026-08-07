@@ -4,6 +4,81 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Brand — terracotta odvozená z historického plakátu Františka Mlatečky.
+       500 má na bílé kontrast jen 4,3:1 — používat pouze na velký/tučný text
+       a grafiku; pro běžný text a tlačítka s bílým textem slouží 600+. */
+    --color-brand-50: #fbf3ee;
+    --color-brand-100: #f6e3d7;
+    --color-brand-300: #e0a17c;
+    --color-brand-400: #d97a4a;
+    --color-brand-500: #c45c26;
+    --color-brand-600: #a84b1f;
+    --color-brand-700: #8a3d1a;
+    --color-brand-900: #4a2110;
+
+    /* Ink — uhlová; primární CTA a text (IKEA logika: primární akce tmavá,
+       terracotta je vzácný akcent). */
+    --color-ink: #141b1e;
+    --color-ink-800: #2a3439;
+
+    /* Teplé neutrály veřejného webu */
+    --color-paper: #faf9f7;
+    --color-surface-alt: #f2efe9;
+    --color-line: #e7e2da;
+    --color-muted: #5f5b55;
+}
+
+@layer components {
+    .eyebrow {
+        @apply text-sm font-semibold uppercase tracking-[0.08em] text-brand-600;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink px-7 py-3.5 text-base font-semibold text-white transition hover:bg-ink-800 focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-7 py-3 text-base font-semibold text-ink transition hover:bg-ink hover:text-white focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    .text-display {
+        font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        font-weight: 800;
+    }
+
+    .text-section-title {
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        font-weight: 800;
+    }
+
+    .text-price-xl {
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.1;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/* Jemné odhalení sekcí při scrollu — pouze pro uživatele bez omezení pohybu;
+   bez JS (nebo s reduced-motion) zůstává vše viditelné. */
+@media (prefers-reduced-motion: no-preference) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+            opacity 0.5s ease-out,
+            transform 0.5s ease-out;
+    }
+
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

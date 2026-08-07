@@ -1,0 +1,10 @@
+<x-layouts.web>
+    @include('web.sections._hero')
+    @include('web.sections._usp')
+    @include('web.sections._catalog')
+    @include('web.sections._calculator')
+    @include('web.sections._segments')
+    @include('web.sections._gallery')
+    @include('web.sections._process')
+    @include('web.sections._about')
+</x-layouts.web>

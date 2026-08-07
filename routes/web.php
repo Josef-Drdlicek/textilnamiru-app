@@ -9,7 +9,18 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\OrderItemSchemaController;
 use App\Http\Controllers\OrderSubmissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web;
 use Illuminate\Support\Facades\Route;
+
+// Veřejný web — marketing, kalkulačka a poptávky (bez přihlášení)
+Route::get('/', [Web\PageController::class, 'home'])->name('web.home');
+Route::get('/ochrana-osobnich-udaju', [Web\PageController::class, 'privacy'])->name('web.privacy');
+Route::get('/poptavka', [Web\InquiryController::class, 'create'])->name('web.inquiry.create');
+Route::post('/poptavka', [Web\InquiryController::class, 'store'])
+    ->middleware('throttle:inquiries')
+    ->name('web.inquiry.store');
+Route::get('/poptavka/dekujeme', [Web\InquiryController::class, 'thanks'])->name('web.inquiry.thanks');
+Route::get('/sitemap.xml', Web\SitemapController::class)->name('web.sitemap');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
@@ -19,7 +30,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-    Route::get('/', HomeController::class)->name('home');
+    Route::get('/prehled', HomeController::class)->name('home');
 
     // Zakázky designéra
     Route::get('/orders', [OrderController::class, 'welcome'])->name('orders.welcome');
@@ -43,6 +54,13 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Administrace (dílna)
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        // Poptávky z veřejného webu
+        Route::get('/inquiries', [Admin\InquiryController::class, 'index'])->name('inquiries.index');
+        Route::get('/inquiries/{inquiry}', [Admin\InquiryController::class, 'show'])->name('inquiries.show');
+        Route::post('/inquiries/{inquiry}/status', [Admin\InquiryStatusController::class, 'store'])->name('inquiries.status');
+        Route::post('/inquiries/{inquiry}/convert', [Admin\InquiryConversionController::class, 'store'])->name('inquiries.convert');
+        Route::delete('/inquiries/{inquiry}', [Admin\InquiryController::class, 'destroy'])->name('inquiries.destroy');
+
         Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [Admin\OrderStatusController::class, 'store'])->name('orders.status');
