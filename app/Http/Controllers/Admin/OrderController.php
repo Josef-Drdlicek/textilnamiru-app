@@ -7,13 +7,15 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\OrderFilterRequest;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
     /**
-     * Přehled zakázek ve 4 stavových sekcích s filtrem podle data objednání.
+     * Přehled zakázek ve 4 stavových sekcích s filtrem podle data objednání a zákazníka.
      */
     public function index(OrderFilterRequest $request): View
     {
@@ -24,6 +26,7 @@ class OrderController extends Controller
             ->with('user')
             ->when($filter['submitted_from'] ?? null, fn ($query, $from) => $query->whereDate('submitted_at', '>=', $from))
             ->when($filter['submitted_to'] ?? null, fn ($query, $to) => $query->whereDate('submitted_at', '<=', $to))
+            ->when($filter['user_id'] ?? null, fn ($query, $userId) => $query->where('user_id', $userId))
             ->orderByDesc('submitted_at')
             ->get()
             ->groupBy(fn (Order $order) => $order->status->value);
@@ -32,7 +35,21 @@ class OrderController extends Controller
             'sections' => OrderStatus::adminSections(),
             'orders' => $orders,
             'filter' => $filter,
+            'customers' => $this->customersWithOrders(),
         ]);
+    }
+
+    /**
+     * Uživatelé s aspoň jednou odeslanou zakázkou — nabídka do filtru.
+     *
+     * @return Collection<int, User>
+     */
+    private function customersWithOrders(): Collection
+    {
+        return User::query()
+            ->whereHas('orders', fn ($query) => $query->submitted())
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public function show(Order $order, MaterialConsumptionAggregator $aggregator): View

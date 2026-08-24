@@ -75,7 +75,9 @@ správce.
 
 Stránka **Zakázky** má čtyři sekce podle fáze: *Nové*, *Přijaté*,
 *K fakturaci*, *Hotové*. Rozpracované zakázky designérů vidět nejsou — objeví
-se až po závazném objednání jako *Nové*. Filtrovat lze podle data objednání.
+se až po závazném objednání jako *Nové*. Filtrovat lze podle data objednání
+a podle zákazníka (nabídka obsahuje jen ty, kdo už nějakou zakázku odeslali);
+oba filtry lze kombinovat.
 
 Zakázku posouváte tlačítky **Přijmout → Fakturace → Uzavřít** (v přehledu i
 v detailu). Každý posun se zapisuje do historie — v detailu vidíte kdo a kdy.

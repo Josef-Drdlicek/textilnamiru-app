@@ -14,16 +14,31 @@
                     <input id="submitted_to" name="submitted_to" type="date" value="{{ $filter['submitted_to'] ?? '' }}"
                         class="mt-1 rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500">
                 </div>
+                <div>
+                    <label for="user_id" class="block text-xs font-medium text-stone-500">Zákazník</label>
+                    <select id="user_id" name="user_id"
+                        class="mt-1 rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <option value="">Všichni</option>
+                        @foreach ($customers as $customer)
+                            <option value="{{ $customer->id }}" @selected(($filter['user_id'] ?? null) == $customer->id)>
+                                {{ $customer->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
                 <button type="submit" class="rounded-lg bg-teal-700 px-4 py-2 font-semibold text-white transition hover:bg-teal-800">
                     Filtrovat
                 </button>
-                @if (($filter['submitted_from'] ?? null) || ($filter['submitted_to'] ?? null))
+                @if (($filter['submitted_from'] ?? null) || ($filter['submitted_to'] ?? null) || ($filter['user_id'] ?? null))
                     <a href="{{ route('admin.orders.index') }}" class="py-2 text-stone-500 hover:underline">Zrušit filtr</a>
                 @endif
             </form>
         </div>
 
         @error('submitted_to')
+            <p class="text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('user_id')
             <p class="text-sm text-red-600">{{ $message }}</p>
         @enderror
         @error('status')
