@@ -8,25 +8,39 @@ it('renders the public homepage for guests', function () {
         ->assertSee('Interiérový textil šitý')
         ->assertSee('Náš sortiment')
         ->assertSee('Kolik bude stát ušití?')
-        ->assertSee('Rodinná tradice od roku 1992');
+        ->assertSee('Rodinná tradice od roku 1992')
+        ->assertSee('Vypínaný stropní podhled v interiéru')
+        ->assertSee('Stínící technika v interiéru')
+        ->assertSee('Vypínaný stropní podhled')
+        ->assertSee('Nová technologie stropů')
+        ->assertSee('Stínění pro každou situaci');
 });
 
 it('shows catalog prices from the live price list', function () {
-    $this->get('/')
+    $this->get('/sortiment')
         ->assertOk()
         ->assertSee('za ušití vč. DPH, bez látky')
         ->assertSee('Na poptávku');
 });
 
-it('renders the homepage even when the price list is empty', function () {
+it('renders the catalog even when the price list is empty', function () {
     \DB::table('pricing_variables')->delete();
     \DB::table('ribbons')->delete();
     \DB::table('blind_price_bands')->delete();
     \Cache::flush();
 
-    $this->get('/')
+    $this->get('/sortiment')
         ->assertOk()
         ->assertSee('Na poptávku');
+});
+
+it('does not repeat full catalog, calculator or gallery on the homepage', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('Zobrazit více')
+        ->assertDontSee('Spočítat cenu')
+        ->assertDontSee('Hotová šířka')
+        ->assertDontSee('Hotel Voroněž, Brno');
 });
 
 it('renders the homepage for authenticated users without redirecting', function () {
@@ -34,6 +48,53 @@ it('renders the homepage for authenticated users without redirecting', function 
         ->get('/')
         ->assertOk()
         ->assertSee('Náš sortiment');
+});
+
+it('renders the calculator page', function () {
+    $this->get('/kalkulacka')
+        ->assertOk()
+        ->assertSee('Kolik bude stát ušití?')
+        ->assertSee('Orientační kalkulačka')
+        ->assertSee('Záclona');
+});
+
+it('renders the gallery page', function () {
+    $this->get('/realizace')
+        ->assertOk()
+        ->assertSee('Naše realizace')
+        ->assertSee('Hotel Voroněž, Brno')
+        ->assertSee('Zámek Emy Destinové');
+});
+
+it('renders the stretched-ceiling page', function () {
+    $this->get('/vypinany-podhled')
+        ->assertOk()
+        ->assertSee('Vypínaný podhled')
+        ->assertSee('DOPLNIT OBSAH');
+});
+
+it('renders the shading-technology page', function () {
+    $this->get('/stinici-technika')
+        ->assertOk()
+        ->assertSee('Stínící technika')
+        ->assertSee('DOPLNIT OBSAH');
+});
+
+it('renders the b2b login page with noindex', function () {
+    $this->get('/b2b')
+        ->assertOk()
+        ->assertSee('B2B přihlášení')
+        ->assertSee('Přihlášení pro interiérová studia')
+        ->assertSee('noindex', false)
+        ->assertSee('Přihlásit se');
+});
+
+it('renders the catalog page', function () {
+    $this->get('/sortiment')
+        ->assertOk()
+        ->assertSee('Náš sortiment')
+        ->assertSee('Záclony')
+        ->assertSee('Římské rolety');
 });
 
 it('renders the privacy page', function () {

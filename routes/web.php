@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 
 // Veřejný web — marketing, kalkulačka a poptávky (bez přihlášení)
 Route::get('/', [Web\PageController::class, 'home'])->name('web.home');
+Route::get('/sortiment', [Web\PageController::class, 'sortiment'])->name('web.sortiment');
+Route::get('/kalkulacka', [Web\PageController::class, 'kalkulacka'])->name('web.kalkulacka');
+Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
+Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
+Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
+Route::get('/b2b', [Web\PageController::class, 'b2b'])->name('web.b2b');
 Route::get('/ochrana-osobnich-udaju', [Web\PageController::class, 'privacy'])->name('web.privacy');
 Route::get('/poptavka', [Web\InquiryController::class, 'create'])->name('web.inquiry.create');
 Route::post('/poptavka', [Web\InquiryController::class, 'store'])

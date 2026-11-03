@@ -8,6 +8,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Po úpravě CSS/JS ať prohlížeč nenačte starou cache (hlavně Chrome).
+        Vite::createAssetPathsUsing(function (string $path, ?bool $secure = null): string {
+            $url = asset($path, $secure);
+
+            return $url.(str_contains($url, '?') ? '&' : '?').'v=3';
+        });
+
         // Ochrana veřejného poptávkového formuláře před spamem.
         RateLimiter::for('inquiries', fn (Request $request) => [
             Limit::perMinute(3)->by($request->ip()),

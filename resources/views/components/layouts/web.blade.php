@@ -1,6 +1,7 @@
 @props([
     'title' => null,
     'description' => 'Zakázková výroba bytového textilu od roku 1992. Záclony, závěsy, polštáře, sedáky a římské rolety šité na míru pro domácnosti, hotely i firmy. Boskovice.',
+    'robots' => null,
 ])
 <!DOCTYPE html>
 <html lang="cs" class="scroll-smooth">
@@ -9,6 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ? $title.' – Textil na míru' : 'Textil na míru | Zakázková výroba bytového textilu od roku 1992' }}</title>
     <meta name="description" content="{{ $description }}">
+    @if ($robots)
+        <meta name="robots" content="{{ $robots }}">
+    @endif
 
     <meta property="og:title" content="{{ $title ?? 'Textil na míru | Zakázková výroba bytového textilu' }}">
     <meta property="og:description" content="Rodinná šicí dílna s tradicí od roku 1992. Záclony, závěsy a stínicí technika šitá na míru pro váš interiér.">
@@ -56,8 +60,8 @@
     </a>
 
     <header class="sticky top-0 z-40 border-b border-line bg-white/95 shadow-sm backdrop-blur">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-            <a href="{{ route('web.home') }}" class="flex items-center gap-2.5" aria-label="Textil na míru — domovská stránka">
+        <div class="relative mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+            <a href="{{ route('web.home') }}" class="flex shrink-0 items-center gap-2.5" aria-label="Textil na míru — domovská stránka">
                 <x-web.logo class="h-9 w-9 text-brand-500" />
                 <span class="text-lg leading-tight tracking-tight">
                     <span class="font-extrabold">Textil</span>
@@ -65,35 +69,43 @@
                 </span>
             </a>
 
-            <button
-                type="button"
-                class="rounded-lg p-2 text-ink hover:bg-surface-alt md:hidden"
-                data-nav-toggle
-                aria-expanded="false"
-                aria-controls="hlavni-navigace"
-                aria-label="Otevřít menu"
-            >
-                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <path d="M4 7h16M4 12h16M4 17h16"/>
-                </svg>
-            </button>
-
             <nav
                 id="hlavni-navigace"
                 data-nav-menu
-                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 md:static md:block md:border-0 md:bg-transparent md:p-0"
+                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 md:static md:block md:flex-1 md:border-0 md:bg-transparent md:p-0"
                 aria-label="Hlavní navigace"
             >
                 <ul class="flex flex-col gap-1 pt-2 md:flex-row md:items-center md:gap-6 md:pt-0">
-                    <li><a href="{{ route('web.home') }}#sortiment" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">Sortiment</a></li>
-                    <li><a href="{{ route('web.home') }}#kalkulacka" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">Kalkulačka</a></li>
-                    <li><a href="{{ route('web.home') }}#realizace" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">Realizace</a></li>
+                    <li><a href="{{ route('web.vypinany-podhled') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.vypinany-podhled') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Vypínaný podhled</a></li>
+                    <li><a href="{{ route('web.stinici-technika') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.stinici-technika') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Stínící technika</a></li>
+                    <li><a href="{{ route('web.sortiment') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.sortiment') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Sortiment</a></li>
+                    <li><a href="{{ route('web.kalkulacka') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.kalkulacka') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Kalkulačka</a></li>
+                    <li><a href="{{ route('web.realizace') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.realizace') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Realizace</a></li>
                     <li><a href="{{ route('web.home') }}#o-nas" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">O nás</a></li>
                     <li class="pt-2 md:pt-0">
                         <a href="{{ route('web.inquiry.create') }}" class="btn-primary !px-5 !py-2.5 text-sm">Nezávazná poptávka</a>
                     </li>
                 </ul>
             </nav>
+
+            <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0">
+                <a
+                    href="{{ route('web.b2b') }}"
+                    class="btn-secondary !px-4 !py-2 text-sm font-extrabold tracking-wide {{ request()->routeIs('web.b2b') ? '!bg-ink !text-white' : '' }}"
+                >B2B</a>
+                <button
+                    type="button"
+                    class="rounded-lg p-2 text-ink hover:bg-surface-alt md:hidden"
+                    data-nav-toggle
+                    aria-expanded="false"
+                    aria-controls="hlavni-navigace"
+                    aria-label="Otevřít menu"
+                >
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 7h16M4 12h16M4 17h16"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -138,9 +150,9 @@
                 <div>
                     <h2 class="text-sm font-semibold uppercase tracking-[0.08em] text-white/60">Rychlé odkazy</h2>
                     <ul class="mt-3 space-y-2 text-white/85">
-                        <li><a href="{{ route('web.home') }}#sortiment" class="transition hover:text-white">Sortiment</a></li>
-                        <li><a href="{{ route('web.home') }}#kalkulacka" class="transition hover:text-white">Kalkulačka</a></li>
-                        <li><a href="{{ route('web.home') }}#realizace" class="transition hover:text-white">Realizace</a></li>
+                        <li><a href="{{ route('web.sortiment') }}" class="transition hover:text-white">Sortiment</a></li>
+                        <li><a href="{{ route('web.kalkulacka') }}" class="transition hover:text-white">Kalkulačka</a></li>
+                        <li><a href="{{ route('web.realizace') }}" class="transition hover:text-white">Realizace</a></li>
                         <li><a href="{{ route('web.inquiry.create') }}" class="font-semibold text-brand-400 transition hover:text-brand-300">Nezávazná poptávka</a></li>
                     </ul>
                 </div>

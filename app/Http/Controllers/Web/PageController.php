@@ -13,9 +13,39 @@ class PageController extends Controller
 {
     public function home(): View
     {
-        return view('web.home', [
+        return view('web.home');
+    }
+
+    public function sortiment(): View
+    {
+        return view('web.sortiment', [
             'pricesFrom' => $this->pricesFrom(),
         ]);
+    }
+
+    public function kalkulacka(): View
+    {
+        return view('web.kalkulacka');
+    }
+
+    public function realizace(): View
+    {
+        return view('web.realizace');
+    }
+
+    public function vypinanyPodhled(): View
+    {
+        return view('web.vypinany-podhled');
+    }
+
+    public function stiniciTechnika(): View
+    {
+        return view('web.stinici-technika');
+    }
+
+    public function b2b(): View
+    {
+        return view('web.b2b');
     }
 
     public function privacy(): View

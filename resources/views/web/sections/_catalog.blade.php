@@ -14,12 +14,18 @@
         ['produkt' => 'shades', 'img' => 'tile-shades', 'title' => 'Žaluzie a stínění', 'alt' => 'Žaluzie na slunném okně'],
         ['produkt' => 'panels', 'img' => 'tile-panels', 'title' => 'Japonské stěny', 'alt' => 'Japonské posuvné stěny v interiéru'],
     ];
+
+    $asPage = $asPage ?? false;
 @endphp
 
 <section id="sortiment" aria-labelledby="sortiment-nadpis" class="scroll-mt-20 bg-paper">
     <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
         <p class="eyebrow">Katalog</p>
-        <h2 id="sortiment-nadpis" class="text-section-title mt-2">Náš sortiment</h2>
+        @if ($asPage)
+            <h1 id="sortiment-nadpis" class="text-section-title mt-2">Náš sortiment</h1>
+        @else
+            <h2 id="sortiment-nadpis" class="text-section-title mt-2">Náš sortiment</h2>
+        @endif
         <p class="mt-3 max-w-2xl text-lg text-muted">
             Vše šijeme na míru podle vašich rozměrů. Ceny za ušití spočítáte rovnou
             v&nbsp;kalkulačce — látku vybereme společně při konzultaci.
@@ -32,7 +38,7 @@
                     :alt="$tile['alt']"
                     :title="$tile['title']"
                     :price="$pricesFrom[$tile['type']->value] ?? null"
-                    :href="route('web.home', ['typ' => $tile['type']->value]).'#kalkulacka'"
+                    :href="route('web.kalkulacka', ['typ' => $tile['type']->value])"
                     cta="Spočítat cenu"
                 />
             @endforeach

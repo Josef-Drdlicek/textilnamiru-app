@@ -66,6 +66,26 @@
     }
 }
 
+/* Posuv úvodního slideru je v CSS (ne inline), ať ho Chrome nepřeskočí.
+   Třída is-hero-instant jen při parkování snímku a při tažení prstem. */
+[data-hero-slide],
+[data-hero-copy] {
+    transform: translate3d(100%, 0, 0);
+    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+[data-hero-slide]:first-child,
+[data-hero-copy]:first-child {
+    transform: translate3d(0, 0, 0);
+}
+
+[data-hero-root].is-hero-instant [data-hero-slide],
+[data-hero-root].is-hero-instant [data-hero-copy] {
+    transition: none;
+}
+
 /* Jemné odhalení sekcí při scrollu — pouze pro uživatele bez omezení pohybu;
    bez JS (nebo s reduced-motion) zůstává vše viditelné. */
 @media (prefers-reduced-motion: no-preference) {
