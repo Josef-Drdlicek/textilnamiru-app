@@ -4,17 +4,37 @@ use App\Models\User;
 
 it('shows the login page to guests', function () {
     $this->get('/login')
-        ->assertOk()
-        ->assertSee('Přihlašovací jméno');
+        ->assertRedirect(route('web.b2b'));
 });
 
 it('logs in a user with valid credentials', function () {
     $user = User::factory()->create(['username' => 'lucien']);
 
     $this->post('/login', ['username' => 'lucien', 'password' => 'password'])
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('web.b2b.aplikace'));
 
     $this->assertAuthenticatedAs($user);
+});
+
+it('logs in from the public b2b form', function () {
+    $user = User::factory()->create(['username' => 'lucien']);
+
+    $this->from('/b2b')
+        ->post('/login', ['username' => 'lucien', 'password' => 'password'])
+        ->assertRedirect(route('web.b2b.aplikace'));
+
+    $this->assertAuthenticatedAs($user);
+});
+
+it('returns validation errors back to the b2b form', function () {
+    User::factory()->create(['username' => 'lucien']);
+
+    $this->from('/b2b')
+        ->post('/login', ['username' => 'lucien', 'password' => 'wrong'])
+        ->assertRedirect('/b2b')
+        ->assertSessionHasErrors('username');
+
+    $this->assertGuest();
 });
 
 it('rejects invalid credentials', function () {
@@ -44,7 +64,7 @@ it('logs out a user whose account was deactivated mid-session', function () {
 
     $user->update(['is_active' => false]);
 
-    $this->get('/prehled')->assertRedirect('/login');
+    $this->get('/prehled')->assertRedirect(route('web.b2b'));
     $this->assertGuest();
 });
 
@@ -53,7 +73,7 @@ it('logs out via POST', function () {
 
     $this->actingAs($user)
         ->post('/logout')
-        ->assertRedirect('/login');
+        ->assertRedirect(route('web.b2b'));
 
     $this->assertGuest();
 });

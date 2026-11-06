@@ -80,6 +80,47 @@ it('stores a server-built snapshot in the session and redirects to the inquiry f
         ->and($snapshot['summary'])->toContain('Záclona');
 });
 
+it('selecting a placeholder tile only changes the visual selection', function () {
+    $component = Livewire::test(PriceEstimator::class, ['asPage' => true])
+        ->assertSet('type', 'curtain')
+        ->assertNotSet('totalPriceVat', null);
+
+    $price = $component->get('totalPriceVat');
+
+    $component->call('vybratNahradniDlazdici', 0)
+        ->assertSet('vybranaDlazdice', 'extra-0')
+        ->assertSet('type', 'curtain')
+        ->assertSet('totalPriceVat', $price);
+});
+
+it('hides dimension fields for vypinany podhled but keeps them for other tiles', function () {
+    $component = Livewire::test(PriceEstimator::class, ['asPage' => true])
+        ->set('width', 180)
+        ->assertSee('2. Rozměry')
+        ->assertSee('Hotová výška');
+
+    $component->call('vybratNahradniDlazdici', 0)
+        ->assertSee('2. Rozměry')
+        ->assertSee('Šířka')
+        ->assertDontSee('Hotová výška')
+        ->assertDontSee('Nařasení')
+        ->assertSet('width', 180.0);
+
+    $price = $component->get('totalPriceVat');
+
+    $component->set('extra0Sirka', '999')
+        ->set('extra0Vyska', '888')
+        ->set('extra0Pocet', '7')
+        ->set('extra0Vyplne', true)
+        ->assertSet('totalPriceVat', $price)
+        ->assertSet('width', 180.0);
+
+    $component->set('vybranaDlazdice', 'curtain')
+        ->assertSee('Hotová výška')
+        ->assertSee('Počet kusů')
+        ->assertSet('width', 180.0);
+});
+
 it('does not store a snapshot for invalid input', function () {
     Livewire::test(PriceEstimator::class)
         ->set('width', 5)

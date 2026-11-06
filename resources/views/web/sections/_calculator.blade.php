@@ -17,7 +17,7 @@
         </p>
 
         <div class="mt-10">
-            <livewire:web.price-estimator />
+            <livewire:web.price-estimator :as-page="$asPage" />
         </div>
     </div>
 </section>

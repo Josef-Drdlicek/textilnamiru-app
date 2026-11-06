@@ -22,7 +22,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'));
+        return redirect()->intended(route('web.b2b.aplikace'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -32,6 +32,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('web.b2b');
     }
 }

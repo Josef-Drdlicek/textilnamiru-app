@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [Web\PageController::class, 'home'])->name('web.home');
 Route::get('/sortiment', [Web\PageController::class, 'sortiment'])->name('web.sortiment');
 Route::get('/kalkulacka', [Web\PageController::class, 'kalkulacka'])->name('web.kalkulacka');
+Route::get('/kalkulacka/zakazkove-sivani', [Web\PageController::class, 'kalkulackaSivani'])->name('web.kalkulacka.sivani');
+Route::get('/kalkulacka/vypinane-stropy', [Web\PageController::class, 'kalkulackaStropy'])->name('web.kalkulacka.stropy');
+Route::get('/kalkulacka/stinici-technika', [Web\PageController::class, 'kalkulackaStinici'])->name('web.kalkulacka.stinici');
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
@@ -29,12 +32,15 @@ Route::get('/poptavka/dekujeme', [Web\InquiryController::class, 'thanks'])->name
 Route::get('/sitemap.xml', Web\SitemapController::class)->name('web.sitemap');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::get('/login', fn () => redirect()->route('web.b2b'))->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 });
 
 Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // Sestavená JS aplikace zakázek (soubor mimo public/)
+    Route::get('/b2b/aplikace', Web\B2bAppController::class)->name('web.b2b.aplikace');
 
     Route::get('/prehled', HomeController::class)->name('home');
 

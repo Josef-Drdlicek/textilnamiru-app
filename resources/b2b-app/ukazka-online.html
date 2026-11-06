@@ -418,15 +418,40 @@ a {
   overflow-x: auto;
 }
 
+/* Jen admin Zakázky. Původní mezera = vycentrování .site-main (max 1100px) + padding 1.5rem. */
+.seznam-zakazek-admin {
+  --zakazky-menu-sirka: 220px;
+  --zakazky-obsah-max: 1100px;
+  --zakazky-obsah-padding: 1.5rem;
+  --zakazky-mezera-od-menu-puvodni: calc(
+    max(0px, (100vw - var(--zakazky-menu-sirka) - var(--zakazky-obsah-max)) / 2) + var(--zakazky-obsah-padding)
+  );
+  --zakazky-mezera-od-menu: calc(var(--zakazky-mezera-od-menu-puvodni) / 2);
+  /* Stejný okraj vlevo i vpravo; width:auto se zápornými okraji blok rozšíří. */
+  margin-left: calc(var(--zakazky-mezera-od-menu) - var(--zakazky-mezera-od-menu-puvodni));
+  margin-right: calc(var(--zakazky-mezera-od-menu) - var(--zakazky-mezera-od-menu-puvodni));
+}
+
+@media (max-width: 800px) {
+  .seznam-zakazek-admin {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 .order-section {
   margin-bottom: 2rem;
-  /* Pravítko: C 4cm, F 10cm, I 16cm, L 22cm, N 26cm. */
-  --sloupec-nazev: 4cm;
+  /* Pravítko: A 0 cm, D 6 cm, F 10 cm, G 12 cm, I 16 cm, L 22 cm, N 26 cm, P 30 cm. */
   --sloupec-zakaznik: 6cm;
-  --sloupec-cena-bez: 6cm;
-  --sloupec-cena-dph: 6cm;
+  --sloupec-nazev: 4cm;
   --sloupec-datum: 4cm;
+  --mezera-pred-cenou-bez: 2cm;
+  --sloupec-cena-bez: 2cm;
+  --sloupec-cena-dph: 8cm;
   --sloupec-akce: 18rem;
+  /* Levý okraj Smazat = čára P; začátek sloupce Akce = čára N. */
+  --pozice-smazat: 30cm;
+  --sloupec-akce-od-leva: 26cm;
 }
 
 .order-section .data-table {
@@ -459,10 +484,42 @@ a {
   width: var(--sloupec-akce);
 }
 
-/* První písmeno u čáry pravítka: vlevo bez odsazení, vpravo běžné. */
-.order-section .data-table th:nth-child(n + 2),
-.order-section .data-table td:nth-child(n + 2) {
+.order-section .col-mezera-hi {
+  width: var(--mezera-pred-cenou-bez);
+}
+
+/* Zákazník na A, Název na D, Cena bez DPH na I, Akce na N: text / tlačítko u čáry. */
+.order-section .data-table th:nth-child(1),
+.order-section .data-table td:nth-child(1),
+.order-section .data-table th:nth-child(2),
+.order-section .data-table td:nth-child(2),
+.order-section .data-table th:nth-child(5),
+.order-section .data-table td:nth-child(5),
+.order-section .data-table th:nth-child(7),
+.order-section .data-table td:nth-child(7) {
   padding-left: 0;
+}
+
+/* Datum na G a Cena vč. DPH na L — střed sloupce beze změny. */
+.order-section .data-table th:nth-child(3),
+.order-section .data-table td:nth-child(3),
+.order-section .data-table th:nth-child(6),
+.order-section .data-table td:nth-child(6) {
+  text-align: center;
+}
+
+.order-section .data-table th:nth-child(5),
+.order-section .data-table td:nth-child(5) {
+  text-align: left;
+}
+
+/* Dlouhý text se zalamuje, neořezává. */
+.order-section .data-table td:nth-child(1),
+.order-section .data-table td:nth-child(2),
+.order-section .data-table th:nth-child(5),
+.order-section .data-table td:nth-child(5) {
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .order-section .data-table .actions,
@@ -476,10 +533,38 @@ a {
 
 .order-section .data-table .actions {
   justify-content: flex-start;
+  position: relative;
+}
+
+/* Smazat na čáře P; černá akce zůstává na začátku sloupce Akce. */
+.order-section .data-table .smazat-na-pravitku {
+  position: absolute;
+  left: calc(var(--pozice-smazat) - var(--sloupec-akce-od-leva));
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .seznam-zakazek .data-table .actions {
   justify-content: flex-end;
+}
+
+/* Studio Zakázky: sloupec akcí drží naměřenou šířku 363 px, ať Detail a Smazat zůstanou. */
+.seznam-zakazek .data-table {
+  table-layout: fixed;
+}
+
+.seznam-zakazek .col-akce {
+  width: 363px;
+}
+
+.seznam-zakazek .data-table th:nth-child(3),
+.seznam-zakazek .data-table td:nth-child(3) {
+  text-align: left;
+}
+
+.seznam-zakazek .data-table td:nth-child(1) {
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 /* Rezerva šířky Smazat, ať Detail sedí ve všech řádcích stejně. */
@@ -498,11 +583,31 @@ a {
     min-width: 0;
   }
 
+  .order-section .col-mezera-hi,
+  .order-section .data-table .col-mezera-hi {
+    display: none;
+  }
+
   .order-section .data-table .actions,
   .seznam-zakazek .data-table .actions {
     flex-wrap: wrap;
     white-space: normal;
     row-gap: 0.35rem;
+  }
+
+  .order-section .data-table .smazat-na-pravitku {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+  }
+
+  .seznam-zakazek .data-table {
+    table-layout: auto;
+  }
+
+  .seznam-zakazek .col-akce {
+    width: auto;
   }
 }
 
@@ -715,59 +820,6 @@ a {
     padding: 1rem;
   }
 }
-
-/* DOČASNÉ SLOUPCE START */
-.docasne-sloupce-obal {
-  position: relative;
-}
-
-.docasne-sloupce-vrstva {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.docasne-sloupce-meric {
-  position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.docasne-sloupce-cara {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 0;
-  border-left: 1px solid rgba(200, 20, 40, 0.55);
-  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.45);
-}
-
-.docasne-sloupce-stitk {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translateX(-50%);
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #9b1230;
-  background: rgba(255, 255, 255, 0.88);
-  padding: 0 0.2rem;
-  white-space: nowrap;
-}
-
-.docasne-sloupce-stitk-prvni {
-  transform: none;
-}
-
-@media (max-width: 40rem) {
-  .docasne-sloupce-vrstva {
-    display: none;
-  }
-}
-/* DOČASNÉ SLOUPCE KONEC */
 
 #logo-svg { height: 40px; }
   </style>
@@ -1811,7 +1863,7 @@ function htmlSeznamZakazek(user) {
       <tr>
         <td>${esc(o.oznaceni || '')}</td>
         <td>${formatDate(o.created_at)}</td>
-        <td>${o.items.length}</td>
+        <td>${formatMoney(soucetNabidkyBezDph(o))} Kč</td>
         <td>${ORDER_STATUS[o.status]?.label || o.status}</td>
         <td class="actions"><a href="#/zakazka/${o.order_id}" class="btn btn-sm">Detail</a><span class="akce-smazat-misto">${smazat}</span></td>
       </tr>`;
@@ -1824,7 +1876,14 @@ function htmlSeznamZakazek(user) {
     </div>
     <div class="table-wrap seznam-zakazek">
       <table class="data-table">
-        <thead><tr><th>Název zakázky</th><th>Vytvořeno</th><th>Položek</th><th>Stav</th><th class="actions"></th></tr></thead>
+        <colgroup>
+          <col class="col-nazev">
+          <col class="col-datum">
+          <col class="col-cena-bez">
+          <col class="col-stav">
+          <col class="col-akce">
+        </colgroup>
+        <thead><tr><th>Název zakázky</th><th>Vytvořeno</th><th>Cena bez DPH</th><th>Stav</th><th class="actions"></th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
@@ -2092,7 +2151,7 @@ function renderAdminOrders(user) {
       const list = orders.filter((o) => o.status === key);
       const rows =
         list.length === 0
-          ? '<tr><td colspan="6" class="empty">—</td></tr>'
+          ? '<tr><td colspan="7" class="empty">—</td></tr>'
           : list
               .map((o) => {
                 const st = ORDER_STATUS[key];
@@ -2100,14 +2159,15 @@ function renderAdminOrders(user) {
                   ? `<button type="button" class="btn btn-sm btn-primary" data-action="order-action" data-order-id="${o.order_id}" data-next-status="${st.next}">${st.action}</button>`
                   : '';
                 const delBtn = user.admin
-                  ? `<button type="button" class="btn btn-sm btn-danger" data-action="delete-order" data-order-id="${o.order_id}">Smazat</button>`
+                  ? `<button type="button" class="btn btn-sm btn-danger smazat-na-pravitku" data-action="delete-order" data-order-id="${o.order_id}">Smazat</button>`
                   : '';
                 return `<tr>
+                  <td>${esc(getUserName(o.user_id))}</td>
                   <td>${esc(nazevZakazkyProSeznam(o))}</td>
-                  <td>${getUserName(o.user_id)}</td>
+                  <td>${formatDate(o.created_at)}</td>
+                  <td class="col-mezera-hi" aria-hidden="true"></td>
                   <td>${formatMoney(soucetNabidkyBezDph(o))} Kč</td>
                   <td>${formatMoney(soucetNabidky(o))} Kč</td>
-                  <td>${formatDate(o.created_at)}</td>
                   <td class="actions">${actionBtn}${delBtn}</td>
                 </tr>`;
               })
@@ -2117,14 +2177,15 @@ function renderAdminOrders(user) {
           <h2>${title} (${list.length})</h2>
           <table class="data-table">
             <colgroup>
-              <col class="col-nazev">
               <col class="col-zakaznik">
+              <col class="col-nazev">
+              <col class="col-datum">
+              <col class="col-mezera-hi">
               <col class="col-cena-bez">
               <col class="col-cena-dph">
-              <col class="col-datum">
               <col class="col-akce">
             </colgroup>
-            <thead><tr><th>Název zakázky</th><th>Zákazník</th><th>Cena bez DPH</th><th>Cena vč. DPH</th><th>Datum</th><th class="actions">Akce</th></tr></thead>
+            <thead><tr><th>Zákazník</th><th>Název zakázky</th><th>Datum</th><th class="col-mezera-hi" aria-hidden="true"></th><th>Cena bez DPH</th><th>Cena vč. DPH</th><th class="actions">Akce</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </section>`;
@@ -2135,71 +2196,10 @@ function renderAdminOrders(user) {
     user,
     'Přehled zakázek',
     hlaseni +
-      `<div class="order-tables-posuv">
-<!-- DOČASNÉ SLOUPCE START -->
-<div class="docasne-sloupce-obal">
-<div class="docasne-sloupce-vrstva" aria-hidden="true"></div>
-${html}
-</div>
-<!-- DOČASNÉ SLOUPCE KONEC -->
-</div>`,
+      `<div class="order-tables-posuv seznam-zakazek-admin">${html}</div>`,
     { mode: 'admin', active: 'zakazky' }
   );
-  /* DOČASNÉ SLOUPCE START */
-  vykresliDocasneSloupce();
-  /* DOČASNÉ SLOUPCE KONEC */
 }
-
-/* DOČASNÉ SLOUPCE START */
-function stitekDocasnehoSloupce(index) {
-  if (index < 26) return String.fromCharCode(97 + index);
-  const n = index - 26;
-  return String.fromCharCode(97 + Math.floor(n / 26)) + String.fromCharCode(97 + (n % 26));
-}
-
-function vykresliDocasneSloupce() {
-  const vrstva = document.querySelector('.docasne-sloupce-vrstva');
-  if (!vrstva) return;
-  vrstva.replaceChildren();
-  const sirka = vrstva.clientWidth;
-  if (!sirka) return;
-  const meric = document.createElement('div');
-  meric.className = 'docasne-sloupce-meric';
-  meric.style.width = '2cm';
-  vrstva.appendChild(meric);
-  const krok = meric.offsetWidth;
-  meric.remove();
-  if (!krok) return;
-  let i = 0;
-  while (i * krok <= sirka + 0.5) {
-    const cara = document.createElement('div');
-    cara.className = 'docasne-sloupce-cara';
-    cara.style.left = `calc(${i} * 2cm)`;
-    const stitek = document.createElement('span');
-    stitek.className = 'docasne-sloupce-stitk' + (i === 0 ? ' docasne-sloupce-stitk-prvni' : '');
-    stitek.textContent = stitekDocasnehoSloupce(i);
-    cara.appendChild(stitek);
-    vrstva.appendChild(cara);
-    i += 1;
-  }
-}
-
-function odstranDocasneSloupce() {
-  document.querySelectorAll('.docasne-sloupce-vrstva').forEach((el) => el.remove());
-  const obal = document.querySelector('.docasne-sloupce-obal');
-  if (obal) {
-    const rodic = obal.parentNode;
-    while (obal.firstChild) rodic.insertBefore(obal.firstChild, obal);
-    obal.remove();
-  }
-  window.removeEventListener('resize', vykresliDocasneSloupce);
-}
-
-if (!window.__docasneSloupceResize) {
-  window.__docasneSloupceResize = true;
-  window.addEventListener('resize', vykresliDocasneSloupce);
-}
-/* DOČASNÉ SLOUPCE KONEC */
 
 function renderAdminPlaceholder(user, title, active) {
   app.innerHTML = shell(user, title, '<p>DOPLNIT OBSAH</p>', { mode: 'admin', active });

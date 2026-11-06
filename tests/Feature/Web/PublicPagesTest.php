@@ -16,6 +16,13 @@ it('renders the public homepage for guests', function () {
         ->assertSee('Stínění pro každou situaci');
 });
 
+it('links the header B2B button to the b2b page', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('href="'.route('web.b2b').'"', false)
+        ->assertSee('>B2B</a>', false);
+});
+
 it('shows catalog prices from the live price list', function () {
     $this->get('/sortiment')
         ->assertOk()
@@ -50,12 +57,54 @@ it('renders the homepage for authenticated users without redirecting', function 
         ->assertSee('Náš sortiment');
 });
 
-it('renders the calculator page', function () {
+it('renders the calculator hub with three tiles', function () {
     $this->get('/kalkulacka')
+        ->assertOk()
+        ->assertSee('Kalkulačka')
+        ->assertSee('Zakázkové šití')
+        ->assertSee('Vypínané stropy')
+        ->assertSee('Stínící technika')
+        ->assertSee('DOPLNIT OBRÁZEK')
+        ->assertDontSee('Kolik bude stát ušití?')
+        ->assertDontSee('Záclona');
+});
+
+it('renders the sewing calculator on the subpage', function () {
+    $this->get('/kalkulacka/zakazkove-sivani')
         ->assertOk()
         ->assertSee('Kolik bude stát ušití?')
         ->assertSee('Orientační kalkulačka')
-        ->assertSee('Záclona');
+        ->assertSee('Záclona')
+        ->assertSee('Zpět na výběr kalkulace');
+});
+
+it('renders visual calculator placeholders without sewing prices', function () {
+    $this->get('/kalkulacka/vypinane-stropy')
+        ->assertOk()
+        ->assertSee('Vypínané stropy')
+        ->assertSee('Zpět na výběr kalkulace')
+        ->assertSee('1. DOPLNIT TEXT')
+        ->assertSee('2. Rozměry')
+        ->assertSee('3. DOPLNIT TEXT')
+        ->assertSee('DOPLNIT NÁZEV')
+        ->assertSee('DOPLNIT TEXT')
+        ->assertDontSee('Kolik bude stát ušití?')
+        ->assertDontSee('Záclona')
+        ->assertDontSee('wire:model', false);
+
+    $this->get('/kalkulacka/stinici-technika')
+        ->assertOk()
+        ->assertSee('Stínící technika')
+        ->assertSee('Zpět na výběr kalkulace')
+        ->assertSee('1. DOPLNIT TEXT')
+        ->assertSee('2. Rozměry')
+        ->assertDontSee('Kolik bude stát ušití?')
+        ->assertDontSee('Záclona');
+});
+
+it('redirects the old calculator type query to the sewing subpage', function () {
+    $this->get('/kalkulacka?typ=curtain')
+        ->assertRedirect(route('web.kalkulacka.sivani', ['typ' => 'curtain']));
 });
 
 it('renders the gallery page', function () {
@@ -69,8 +118,15 @@ it('renders the gallery page', function () {
 it('renders the stretched-ceiling page', function () {
     $this->get('/vypinany-podhled')
         ->assertOk()
-        ->assertSee('Vypínaný podhled')
-        ->assertSee('DOPLNIT OBSAH');
+        ->assertSee('Napínané stropy – dokonalý vzhled vašeho interiéru')
+        ->assertSee('Napínaný strop v interiéru – fotka 1 z 5')
+        ->assertSee('images/vypinany-podhled/01.png', false)
+        ->assertSee('Předchozí obrázek')
+        ->assertSee('Další obrázek')
+        ->assertSee('Co jsou napínané stropy?')
+        ->assertSee('Hlavní výhody napínaných stropů')
+        ->assertSee('Varianty provedení')
+        ->assertSee('Kde lze napínané stropy využít?');
 });
 
 it('renders the shading-technology page', function () {
@@ -86,7 +142,9 @@ it('renders the b2b login page with noindex', function () {
         ->assertSee('B2B přihlášení')
         ->assertSee('Přihlášení pro interiérová studia')
         ->assertSee('noindex', false)
-        ->assertSee('Přihlásit se');
+        ->assertSee('Přihlásit se')
+        ->assertSee('name="username"', false)
+        ->assertSee('action="'.route('login.store').'"', false);
 });
 
 it('renders the catalog page', function () {
@@ -120,11 +178,15 @@ it('serves the sitemap as xml', function () {
     $this->get('/sitemap.xml')
         ->assertOk()
         ->assertHeader('Content-Type', 'application/xml')
-        ->assertSee(route('web.inquiry.create'), false);
+        ->assertSee(route('web.inquiry.create'), false)
+        ->assertSee(route('web.kalkulacka'), false)
+        ->assertSee(route('web.kalkulacka.sivani'), false)
+        ->assertSee(route('web.kalkulacka.stropy'), false)
+        ->assertSee(route('web.kalkulacka.stinici'), false);
 });
 
 it('redirects guests from the internal dashboard to login', function () {
-    $this->get('/prehled')->assertRedirect('/login');
+    $this->get('/prehled')->assertRedirect(route('web.b2b'));
 });
 
 it('redirects authenticated users from the internal dashboard by role', function () {

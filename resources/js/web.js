@@ -411,14 +411,3 @@ if (heroRoot && heroSlider) {
     startTimer();
 }
 
-// B2B formulář je zatím jen vzhled — nic se neodesílá.
-const b2bForm = document.querySelector('[data-b2b-form]');
-const b2bMessage = document.querySelector('[data-b2b-message]');
-
-if (b2bForm && b2bMessage) {
-    b2bForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        // DOPLNIT: napojení na backend
-        b2bMessage.classList.remove('hidden');
-    });
-}

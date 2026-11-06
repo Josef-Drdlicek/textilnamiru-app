@@ -1,0 +1,871 @@
+================================================================================
+routes/web.php (výřez — celý soubor se do balíčku nekopíruje)
+================================================================================
+
+Route::get('/kalkulacka', [Web\PageController::class, 'kalkulacka'])->name('web.kalkulacka');
+
+================================================================================
+app/Http/Controllers/Web/PageController.php
+================================================================================
+
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Domain\Pricing\ItemPricer;
+use App\Domain\Pricing\PublicPresets;
+use App\Enums\ItemType;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
+
+class PageController extends Controller
+{
+    public function home(): View
+    {
+        return view('web.home');
+    }
+
+    public function sortiment(): View
+    {
+        return view('web.sortiment', [
+            'pricesFrom' => $this->pricesFrom(),
+        ]);
+    }
+
+    public function kalkulacka(): View
+    {
+        return view('web.kalkulacka');
+    }
+
+    public function realizace(): View
+    {
+        return view('web.realizace');
+    }
+
+    public function vypinanyPodhled(): View
+    {
+        return view('web.vypinany-podhled');
+    }
+
+    public function stiniciTechnika(): View
+    {
+        return view('web.stinici-technika');
+    }
+
+    public function b2b(): View
+    {
+        return view('web.b2b');
+    }
+
+    public function privacy(): View
+    {
+        return view('web.gdpr');
+    }
+
+    /**
+     * Katalogová „cena od" pro každý typ — s DPH, zaokrouhlená na desítky
+     * korun nahoru. Ceník se mění zřídka, hodinová cache bohatě stačí.
+     *
+     * @return array<string, int>
+     */
+    private function pricesFrom(): array
+    {
+        return Cache::remember('web.prices-from', now()->addHour(), function (): array {
+            $pricer = app(ItemPricer::class);
+
+            try {
+                $vatRate = $pricer->vatRate();
+            } catch (\DomainException $e) {
+                report($e);
+
+                return [];
+            }
+
+            $prices = [];
+
+            foreach (ItemType::cases() as $type) {
+                // Díra v ceníku nesmí shodit celý web — dlaždice bez ceny
+                // spadne na chip „Na poptávku".
+                try {
+                    $price = $pricer->price($type, PublicPresets::referenceParameters($type));
+                    $prices[$type->value] = (int) (ceil($price->unitPriceWithVat($vatRate) / 10) * 10);
+                } catch (\DomainException $e) {
+                    report($e);
+                }
+            }
+
+            return $prices;
+        });
+    }
+}
+
+
+================================================================================
+resources/views/web/kalkulacka.blade.php
+================================================================================
+
+{{-- Samostatná stránka kalkulačky — stejný formulář a výpočty jako na úvodu. --}}
+<x-layouts.web
+    title="Kalkulačka"
+    description="Orientační kalkulačka ušití záclon, závěsů, polštářů, sedáků a římských rolet. Cena za ušití bez látky, s DPH."
+>
+    @include('web.sections._calculator', ['asPage' => true])
+</x-layouts.web>
+
+
+================================================================================
+resources/views/web/sections/_calculator.blade.php
+================================================================================
+
+{{-- Stejný blok jako na úvodu; na samostatné stránce je nadpis h1. --}}
+@php
+    $asPage = $asPage ?? false;
+@endphp
+
+<section id="kalkulacka" aria-labelledby="kalkulacka-nadpis" class="scroll-mt-20 border-y border-line bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
+        <p class="eyebrow">Orientační kalkulačka</p>
+        @if ($asPage)
+            <h1 id="kalkulacka-nadpis" class="text-section-title mt-2">Kolik bude stát ušití?</h1>
+        @else
+            <h2 id="kalkulacka-nadpis" class="text-section-title mt-2">Kolik bude stát ušití?</h2>
+        @endif
+        <p class="mt-3 max-w-2xl text-lg text-muted">
+            Vyberte produkt, zadejte rozměry a hned vidíte orientační cenu za ušití.
+            Přesnou nabídku včetně látky připravíme zdarma po zaměření.
+        </p>
+
+        <div class="mt-10">
+            <livewire:web.price-estimator />
+        </div>
+    </div>
+</section>
+
+
+================================================================================
+app/Livewire/Web/PriceEstimator.php
+================================================================================
+
+<?php
+
+namespace App\Livewire\Web;
+
+use App\Domain\Pricing\ItemPricer;
+use App\Domain\Pricing\PublicPresets;
+use App\Enums\ItemType;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+use Livewire\Component;
+
+/**
+ * Veřejná orientační kalkulačka. Vystavuje jen laické parametry (rozměry,
+ * počet, nařasení, výplň) — odborné parametry doplňuje PublicPresets, takže
+ * čísla sedí s katalogovou „cenou od". Cena se počítá výhradně na serveru.
+ */
+class PriceEstimator extends Component
+{
+    public string $type = 'curtain';
+
+    public ?float $width = null;
+
+    public ?float $height = null;
+
+    public ?int $count = 1;
+
+    /** Klíč z PublicPresets::RUFFLE_OPTIONS (jen záclony a závěsy). */
+    public string $ruffle = 'standard';
+
+    /** Včetně výplně (jen polštáře a sedáky). */
+    public bool $stuffing = false;
+
+    // Výstupy kalkulace — pouze pro zobrazení; snapshot pro poptávku vzniká
+    // vždy znovu na serveru v sendToInquiry().
+    public ?float $unitPriceVat = null;
+
+    public ?float $totalPrice = null;
+
+    public ?float $totalPriceVat = null;
+
+    /** @var list<array{label: string, amount: float}> */
+    public array $priceLines = [];
+
+    public function mount(): void
+    {
+        $requested = ItemType::tryFrom((string) request()->query('typ'));
+
+        if ($requested !== null) {
+            $this->type = $requested->value;
+        }
+
+        $this->prefillDimensions();
+        $this->recalculate();
+    }
+
+    public function itemType(): ItemType
+    {
+        return ItemType::from($this->type);
+    }
+
+    public function updated(string $property): void
+    {
+        $this->recalculate();
+
+        if ($property !== 'type') {
+            $this->validateOnly($property);
+        }
+    }
+
+    public function updatedType(): void
+    {
+        $this->resetValidation();
+        $this->prefillDimensions();
+        $this->recalculate();
+    }
+
+    /**
+     * Uloží serverový snapshot konfigurace do session a přejde na poptávku.
+     */
+    public function sendToInquiry()
+    {
+        $this->validate();
+
+        $pricer = app(ItemPricer::class);
+        $type = $this->itemType();
+        $parameters = PublicPresets::estimatorParameters($type, $this->estimatorInput());
+
+        try {
+            $result = $pricer->price($type, $parameters);
+        } catch (\DomainException) {
+            $this->addError('width', 'Tuto konfiguraci neumíme nacenit online — poptejte nás prosím napřímo.');
+
+            return null;
+        }
+
+        $vatRate = $pricer->vatRate();
+        $count = (int) $this->count;
+
+        session()->put('inquiry.configuration', [
+            'type' => $type->value,
+            'parameters' => $parameters->toArray(),
+            'count' => $count,
+            'unit_price' => $result->unitPrice,
+            'unit_price_vat' => $result->unitPriceWithVat($vatRate),
+            'total_price_vat' => $result->totalPriceWithVat($vatRate, $count),
+            'vat_rate' => $vatRate,
+            'price_lines' => $result->linesToArray(),
+            'summary' => $this->summary(),
+            'calculated_at' => now()->toIso8601String(),
+        ]);
+
+        return $this->redirectRoute('web.inquiry.create');
+    }
+
+    public function isFabricType(): bool
+    {
+        return in_array($this->itemType(), [ItemType::Curtain, ItemType::Drape], true);
+    }
+
+    public function hasStuffingOption(): bool
+    {
+        return in_array($this->itemType(), [ItemType::Pillow, ItemType::Cushion], true);
+    }
+
+    /**
+     * @return array<string, list<mixed>>
+     */
+    protected function rules(): array
+    {
+        [$maxWidth, $maxHeight] = match ($this->itemType()) {
+            ItemType::Curtain, ItemType::Drape => [2000, 500],
+            ItemType::Blind => [300, 300],
+            ItemType::Pillow, ItemType::Cushion => [100, 100],
+        };
+
+        return [
+            'type' => ['required', Rule::enum(ItemType::class)],
+            'width' => ['required', 'numeric', 'min:10', "max:{$maxWidth}"],
+            'height' => ['required', 'numeric', 'min:10', "max:{$maxHeight}"],
+            'count' => ['required', 'integer', 'min:1', 'max:999'],
+            'ruffle' => ['required', Rule::in(array_keys(PublicPresets::RUFFLE_OPTIONS))],
+            'stuffing' => ['boolean'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function validationAttributes(): array
+    {
+        return [
+            'width' => 'šířka',
+            'height' => 'výška',
+            'count' => 'počet kusů',
+            'ruffle' => 'nařasení',
+        ];
+    }
+
+    /**
+     * Lidsky čitelný souhrn konfigurace pro poptávku a admin.
+     */
+    public function summary(): string
+    {
+        $parts = [
+            $this->itemType()->label(),
+            sprintf('%s × %s cm', rtrim(rtrim(number_format((float) $this->width, 1, ',', ' '), '0'), ','), rtrim(rtrim(number_format((float) $this->height, 1, ',', ' '), '0'), ',')),
+            $this->count.' ks',
+        ];
+
+        if ($this->isFabricType()) {
+            $parts[] = mb_strtolower(PublicPresets::RUFFLE_OPTIONS[$this->ruffle]['label']).' nařasení';
+        }
+
+        if ($this->hasStuffingOption()) {
+            $parts[] = $this->stuffing ? 'včetně výplně' : 'bez výplně';
+        }
+
+        return implode(' · ', $parts);
+    }
+
+    /**
+     * @return array{width: float, height: float, ratio: float, stuffing: bool}
+     */
+    protected function estimatorInput(): array
+    {
+        return [
+            'width' => (float) $this->width,
+            'height' => (float) $this->height,
+            'ratio' => PublicPresets::RUFFLE_OPTIONS[$this->ruffle]['ratio'],
+            'stuffing' => $this->stuffing,
+        ];
+    }
+
+    protected function prefillDimensions(): void
+    {
+        $reference = PublicPresets::referenceParameters($this->itemType())->toArray();
+
+        $this->width = $reference['width'];
+        $this->height = $reference['height'];
+        $this->count = 1;
+        $this->ruffle = 'standard';
+        $this->stuffing = false;
+    }
+
+    protected function recalculate(): void
+    {
+        if (! $this->hasValidInput()) {
+            $this->clearPrice();
+
+            return;
+        }
+
+        $pricer = app(ItemPricer::class);
+
+        try {
+            $result = $pricer->price(
+                $this->itemType(),
+                PublicPresets::estimatorParameters($this->itemType(), $this->estimatorInput()),
+            );
+            $vatRate = $pricer->vatRate();
+        } catch (\DomainException) {
+            $this->clearPrice();
+
+            return;
+        }
+
+        $this->unitPriceVat = $result->unitPriceWithVat($vatRate);
+        $this->totalPrice = $result->totalPrice((int) $this->count);
+        $this->totalPriceVat = $result->totalPriceWithVat($vatRate, (int) $this->count);
+        $this->priceLines = $result->linesToArray();
+    }
+
+    protected function clearPrice(): void
+    {
+        $this->unitPriceVat = null;
+        $this->totalPrice = null;
+        $this->totalPriceVat = null;
+        $this->priceLines = [];
+    }
+
+    protected function hasValidInput(): bool
+    {
+        $rules = $this->rules();
+
+        $data = [];
+
+        foreach (array_keys($rules) as $field) {
+            $data[$field] = $this->{$field};
+        }
+
+        return ! Validator::make($data, $rules)->fails();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.web.price-estimator');
+    }
+}
+
+
+================================================================================
+resources/views/livewire/web/price-estimator.blade.php
+================================================================================
+
+@php
+    use App\Domain\Pricing\PublicPresets;
+    use App\Enums\ItemType;
+@endphp
+
+<div class="grid gap-10 lg:grid-cols-[1fr_380px]">
+    <div>
+        <fieldset>
+            <legend class="text-lg font-extrabold">1. Co potřebujete ušít?</legend>
+            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+                @foreach (ItemType::cases() as $itemType)
+                    <label
+                        class="flex cursor-pointer flex-col items-center gap-2 border-2 border-line bg-white p-4 text-center transition hover:border-ink/40 has-checked:border-brand-600 has-checked:bg-brand-50 has-focus-visible:ring-2 has-focus-visible:ring-brand-600 has-focus-visible:ring-offset-2"
+                    >
+                        <input
+                            type="radio"
+                            name="estimator-type"
+                            value="{{ $itemType->value }}"
+                            wire:model.live="type"
+                            class="sr-only"
+                        >
+                        <x-item-type-icon :type="$itemType" class="h-10 w-10 {{ $type === $itemType->value ? 'text-brand-600' : 'text-muted' }}" />
+                        <span class="text-sm font-semibold">{{ $itemType->label() }}</span>
+                    </label>
+                @endforeach
+            </div>
+        </fieldset>
+
+        <fieldset class="mt-8">
+            <legend class="text-lg font-extrabold">2. Rozměry</legend>
+            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div>
+                    <label for="estimator-width" class="block text-sm font-medium">
+                        {{ $this->isFabricType() ? 'Hotová šířka' : 'Šířka' }}
+                    </label>
+                    <div class="relative mt-1">
+                        <input
+                            id="estimator-width"
+                            type="number"
+                            inputmode="decimal"
+                            min="10"
+                            wire:model.live.debounce.400ms="width"
+                            class="block w-full rounded-lg border border-line bg-white px-3 py-2.5 pr-12 focus:border-brand-600 focus:ring-brand-600"
+                            @error('width') aria-invalid="true" aria-describedby="estimator-width-error" @enderror
+                        >
+                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted">cm</span>
+                    </div>
+                    @error('width')
+                        <p id="estimator-width-error" class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="estimator-height" class="block text-sm font-medium">
+                        {{ $this->isFabricType() ? 'Hotová výška' : 'Výška' }}
+                    </label>
+                    <div class="relative mt-1">
+                        <input
+                            id="estimator-height"
+                            type="number"
+                            inputmode="decimal"
+                            min="10"
+                            wire:model.live.debounce.400ms="height"
+                            class="block w-full rounded-lg border border-line bg-white px-3 py-2.5 pr-12 focus:border-brand-600 focus:ring-brand-600"
+                            @error('height') aria-invalid="true" aria-describedby="estimator-height-error" @enderror
+                        >
+                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted">cm</span>
+                    </div>
+                    @error('height')
+                        <p id="estimator-height-error" class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="estimator-count" class="block text-sm font-medium">Počet kusů</label>
+                    <input
+                        id="estimator-count"
+                        type="number"
+                        inputmode="numeric"
+                        min="1"
+                        max="999"
+                        wire:model.live.debounce.400ms="count"
+                        class="mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2.5 focus:border-brand-600 focus:ring-brand-600"
+                    >
+                    @error('count')
+                        <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            @if ($this->isFabricType())
+                <div class="mt-5 max-w-sm">
+                    <label for="estimator-ruffle" class="block text-sm font-medium">Nařasení</label>
+                    <select
+                        id="estimator-ruffle"
+                        wire:model.live="ruffle"
+                        class="mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2.5 focus:border-brand-600 focus:ring-brand-600"
+                    >
+                        @foreach (PublicPresets::RUFFLE_OPTIONS as $key => $option)
+                            <option value="{{ $key }}">{{ $option['label'] }}</option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-xs text-muted">Čím bohatší nařasení, tím plnější vzhled — a víc látky.</p>
+                </div>
+            @endif
+
+            @if ($this->hasStuffingOption())
+                <label class="mt-5 flex max-w-sm cursor-pointer items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 transition has-checked:border-brand-600 has-checked:bg-brand-50">
+                    <input
+                        type="checkbox"
+                        wire:model.live="stuffing"
+                        class="h-5 w-5 rounded border-line text-brand-600 focus:ring-brand-600"
+                    >
+                    <span class="font-medium">Včetně výplně</span>
+                </label>
+            @endif
+        </fieldset>
+    </div>
+
+    <div>
+        <div class="border-2 border-ink bg-white p-7" aria-live="polite">
+            <h3 class="text-lg font-extrabold">3. Orientační cena</h3>
+
+            @if ($totalPriceVat !== null)
+                <p class="text-price-xl mt-4">
+                    {{ number_format($totalPriceVat, 0, ',', ' ') }}&nbsp;Kč
+                </p>
+                <p class="text-sm text-muted">
+                    vč. DPH za {{ $count }}&nbsp;{{ $count === 1 ? 'kus' : ($count < 5 ? 'kusy' : 'kusů') }}
+                    ({{ number_format($totalPrice, 0, ',', ' ') }}&nbsp;Kč bez DPH)
+                </p>
+
+                @if (count($priceLines))
+                    <details class="mt-4 border-t border-line pt-3 text-sm">
+                        <summary class="cursor-pointer font-semibold text-brand-600">Z čeho se cena skládá</summary>
+                        <ul class="mt-2 space-y-1">
+                            @foreach ($priceLines as $line)
+                                <li class="flex justify-between gap-3">
+                                    <span class="text-muted">{{ $line['label'] }}</span>
+                                    <span class="tabular-nums">{{ number_format($line['amount'], 2, ',', ' ') }} Kč</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <p class="mt-2 text-xs text-muted">Rozpis platí pro 1 kus, bez DPH.</p>
+                    </details>
+                @endif
+            @else
+                <p class="mt-4 text-muted">Zadejte rozměry a cena se hned objeví.</p>
+            @endif
+
+            <p class="mt-5 text-xs leading-relaxed text-muted">
+                Orientační cena za ušití. Nezahrnuje látku, dopravu a montáž — přesnou
+                nabídku připravíme zdarma po zaměření.
+                @if ($this->isFabricType())
+                    Počítáme se šíří látky {{ $this->itemType() === ItemType::Curtain ? '300' : '140' }}&nbsp;cm.
+                @endif
+            </p>
+
+            <button
+                type="button"
+                wire:click="sendToInquiry"
+                class="btn-primary mt-6 w-full disabled:pointer-events-none disabled:opacity-40"
+                @if ($totalPriceVat === null) disabled aria-disabled="true" @endif
+            >
+                Poptat s touto konfigurací
+            </button>
+            <p class="mt-2 text-center text-xs text-muted">Nezávazně — konfigurace se přiloží k poptávce.</p>
+        </div>
+    </div>
+</div>
+
+
+================================================================================
+app/Domain/Pricing/PublicPresets.php
+================================================================================
+
+<?php
+
+namespace App\Domain\Pricing;
+
+use App\Domain\Pricing\Parameters\BlindParameters;
+use App\Domain\Pricing\Parameters\CurtainParameters;
+use App\Domain\Pricing\Parameters\CushionParameters;
+use App\Domain\Pricing\Parameters\DrapeParameters;
+use App\Domain\Pricing\Parameters\ItemParameters;
+use App\Domain\Pricing\Parameters\PillowParameters;
+use App\Enums\ItemType;
+use App\Enums\RightLeft;
+use App\Enums\ZipperSide;
+
+/**
+ * Referenční konfigurace pro veřejný web. Jediné místo, kde se laický vstup
+ * z kalkulačky (rozměry, nařasení, výplň) doplňuje o odborné parametry,
+ * které běžný zákazník nezná — díky tomu „cena od" v katalogu i orientační
+ * cena v kalkulačce počítají vždy nad stejnými předpoklady.
+ */
+final class PublicPresets
+{
+    /** Kód výchozí řasící stuhy (povolené poměry 1.5 / 1.85 / 2 / 2.5). */
+    public const string DEFAULT_RIBBON = 'siroky70';
+
+    /** Šířka role materiálu předpokládaná u záclon [cm] (voály se šijí z výšky role). */
+    public const float CURTAIN_MATERIAL_WIDTH = 300.0;
+
+    /** Šířka role materiálu předpokládaná u závěsů [cm] (dekorační látky). */
+    public const float DRAPE_MATERIAL_WIDTH = 140.0;
+
+    /** Veřejné volby nařasení: klíč => [popisek, poměr]. */
+    public const array RUFFLE_OPTIONS = [
+        'light' => ['label' => 'Jemné (1 : 1,5)', 'ratio' => 1.5],
+        'standard' => ['label' => 'Standardní (1 : 2)', 'ratio' => 2.0],
+        'rich' => ['label' => 'Bohaté (1 : 2,5)', 'ratio' => 2.5],
+    ];
+
+    /**
+     * Parametry pro orientační kalkulačku — laický vstup doplněný o defaulty.
+     *
+     * @param  array{width: float, height: float, ratio?: float, stuffing?: bool}  $input
+     */
+    public static function estimatorParameters(ItemType $type, array $input): ItemParameters
+    {
+        return match ($type) {
+            ItemType::Curtain => new CurtainParameters(
+                width: $input['width'],
+                height: $input['height'],
+                materialWidth: self::CURTAIN_MATERIAL_WIDTH,
+                ribbonCode: self::DEFAULT_RIBBON,
+                ratio: $input['ratio'] ?? 2.0,
+                kanyr: false,
+                kanyrHeight: null,
+                rightLeft: RightLeft::Right,
+                corners: false,
+                bottom: false,
+                narasit: false,
+                snails: false,
+            ),
+            ItemType::Drape => new DrapeParameters(
+                width: $input['width'],
+                height: $input['height'],
+                materialWidth: self::DRAPE_MATERIAL_WIDTH,
+                ribbonCode: self::DEFAULT_RIBBON,
+                ratio: $input['ratio'] ?? 2.0,
+                raport: null,
+                folding: null,
+                kanyr: false,
+                kanyrHeight: null,
+                rightLeft: RightLeft::Right,
+                corners: false,
+                bottom: false,
+                narasit: false,
+                snails: false,
+            ),
+            ItemType::Pillow => new PillowParameters(
+                width: $input['width'],
+                height: $input['height'],
+                stuffing: $input['stuffing'] ?? false,
+                zipper: ZipperSide::Short,
+            ),
+            ItemType::Cushion => new CushionParameters(
+                width: $input['width'],
+                height: $input['height'],
+                depth: 5.0,
+                stuffing: $input['stuffing'] ?? false,
+                zipper: ZipperSide::Short,
+            ),
+            ItemType::Blind => new BlindParameters(
+                width: $input['width'],
+                height: $input['height'],
+                mechanism: false,
+                tunnels: true,
+                finishing: true,
+                cells: null,
+                cellHeightTop: null,
+                cellHeight: null,
+                cellHeightBottom: null,
+            ),
+        };
+    }
+
+    /**
+     * Nejmenší rozumná konfigurace typu — základ katalogové „ceny od".
+     */
+    public static function referenceParameters(ItemType $type): ItemParameters
+    {
+        return self::estimatorParameters($type, match ($type) {
+            ItemType::Curtain => ['width' => 100.0, 'height' => 120.0],
+            ItemType::Drape => ['width' => 140.0, 'height' => 250.0],
+            ItemType::Pillow => ['width' => 40.0, 'height' => 40.0],
+            ItemType::Cushion => ['width' => 40.0, 'height' => 40.0],
+            ItemType::Blind => ['width' => 60.0, 'height' => 120.0],
+        });
+    }
+}
+
+
+================================================================================
+app/Enums/ItemType.php
+================================================================================
+
+<?php
+
+namespace App\Enums;
+
+use App\Domain\Pricing\Calculators\BlindPriceCalculator;
+use App\Domain\Pricing\Calculators\CurtainPriceCalculator;
+use App\Domain\Pricing\Calculators\CushionPriceCalculator;
+use App\Domain\Pricing\Calculators\DrapePriceCalculator;
+use App\Domain\Pricing\Calculators\PillowPriceCalculator;
+use App\Domain\Pricing\Parameters\BlindParameters;
+use App\Domain\Pricing\Parameters\CurtainParameters;
+use App\Domain\Pricing\Parameters\CushionParameters;
+use App\Domain\Pricing\Parameters\DrapeParameters;
+use App\Domain\Pricing\Parameters\ItemParameters;
+use App\Domain\Pricing\Parameters\PillowParameters;
+use App\Domain\Pricing\PriceCalculator;
+use App\Domain\Schema\Renderers\BlindSchemaRenderer;
+use App\Domain\Schema\Renderers\CurtainSchemaRenderer;
+use App\Domain\Schema\Renderers\CushionSchemaRenderer;
+use App\Domain\Schema\Renderers\DrapeSchemaRenderer;
+use App\Domain\Schema\Renderers\PillowSchemaRenderer;
+use App\Domain\Schema\SchemaRenderer;
+use App\Livewire\Configurators\AbstractConfigurator;
+use App\Livewire\Configurators\BlindConfigurator;
+use App\Livewire\Configurators\CurtainConfigurator;
+use App\Livewire\Configurators\CushionConfigurator;
+use App\Livewire\Configurators\DrapeConfigurator;
+use App\Livewire\Configurators\PillowConfigurator;
+
+enum ItemType: string
+{
+    case Curtain = 'curtain';
+    case Drape = 'drape';
+    case Pillow = 'pillow';
+    case Cushion = 'cushion';
+    case Blind = 'blind';
+
+    /**
+     * @return class-string<PriceCalculator>
+     */
+    public function calculatorClass(): string
+    {
+        return match ($this) {
+            self::Curtain => CurtainPriceCalculator::class,
+            self::Drape => DrapePriceCalculator::class,
+            self::Pillow => PillowPriceCalculator::class,
+            self::Cushion => CushionPriceCalculator::class,
+            self::Blind => BlindPriceCalculator::class,
+        };
+    }
+
+    /**
+     * @return class-string<ItemParameters>
+     */
+    public function parametersClass(): string
+    {
+        return match ($this) {
+            self::Curtain => CurtainParameters::class,
+            self::Drape => DrapeParameters::class,
+            self::Pillow => PillowParameters::class,
+            self::Cushion => CushionParameters::class,
+            self::Blind => BlindParameters::class,
+        };
+    }
+
+    /**
+     * @return class-string<AbstractConfigurator>
+     */
+    public function configuratorClass(): string
+    {
+        return match ($this) {
+            self::Curtain => CurtainConfigurator::class,
+            self::Drape => DrapeConfigurator::class,
+            self::Pillow => PillowConfigurator::class,
+            self::Cushion => CushionConfigurator::class,
+            self::Blind => BlindConfigurator::class,
+        };
+    }
+
+    /**
+     * @return class-string<SchemaRenderer>
+     */
+    public function schemaRendererClass(): string
+    {
+        return match ($this) {
+            self::Curtain => CurtainSchemaRenderer::class,
+            self::Drape => DrapeSchemaRenderer::class,
+            self::Pillow => PillowSchemaRenderer::class,
+            self::Cushion => CushionSchemaRenderer::class,
+            self::Blind => BlindSchemaRenderer::class,
+        };
+    }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Curtain => 'Záclona',
+            self::Drape => 'Závěs',
+            self::Pillow => 'Polštář',
+            self::Cushion => 'Sedák',
+            self::Blind => 'Římská roleta',
+        };
+    }
+}
+
+
+================================================================================
+resources/views/components/item-type-icon.blade.php
+================================================================================
+
+@props(['type'])
+
+@php use App\Enums\ItemType; @endphp
+
+<svg {{ $attributes }} viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    @switch($type)
+        @case(ItemType::Curtain)
+            {{-- Záclona: lehká látka s řasením --}}
+            <line x1="6" y1="8" x2="42" y2="8" />
+            <path d="M10 8v30c2-2 4-2 6 0V8" opacity="0.5" />
+            <path d="M18 8v32c2-2 4-2 6 0V8" />
+            <path d="M26 8v30c2-2 4-2 6 0V8" opacity="0.5" />
+            <path d="M34 8v32c2-2 4-2 6 0V8" />
+            @break
+
+        @case(ItemType::Drape)
+            {{-- Závěs: těžká látka stažená úvazem --}}
+            <line x1="6" y1="8" x2="42" y2="8" />
+            <path d="M14 8c0 10-2 14-4 18 4 6 4 10 4 14" />
+            <path d="M24 8c0 8-4 12-8 18 6 6 6 10 6 14" />
+            <path d="M34 8c0 10 2 14 4 18-4 6-4 10-4 14" />
+            <path d="M12 26h12" opacity="0.5" />
+            @break
+
+        @case(ItemType::Pillow)
+            {{-- Polštář --}}
+            <path d="M8 12c10-4 22-4 32 0 -4 8-4 16 0 24-10 4-22 4-32 0 4-8 4-16 0-24z" />
+            <circle cx="24" cy="24" r="1.5" fill="currentColor" stroke="none" />
+            @break
+
+        @case(ItemType::Cushion)
+            {{-- Sedák: hranatý s výškou --}}
+            <rect x="8" y="18" width="32" height="14" rx="4" />
+            <path d="M8 25h32" opacity="0.5" />
+            <path d="M14 32v4M34 32v4" />
+            @break
+
+        @case(ItemType::Blind)
+            {{-- Římská roleta: skládané pruhy --}}
+            <rect x="8" y="6" width="32" height="6" rx="1" />
+            <path d="M10 18h28M10 24h28M12 30h24" />
+            <path d="M14 36h20" />
+            <circle cx="24" cy="41" r="1.5" fill="currentColor" stroke="none" />
+            @break
+    @endswitch
+</svg>
+
+

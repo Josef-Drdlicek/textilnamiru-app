@@ -60,26 +60,32 @@
     </a>
 
     <header class="sticky top-0 z-40 border-b border-line bg-white/95 shadow-sm backdrop-blur">
-        <div class="relative mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
-            <a href="{{ route('web.home') }}" class="flex shrink-0 items-center gap-2.5" aria-label="Textil na míru — domovská stránka">
-                <x-web.logo class="h-9 w-9 text-brand-500" />
-                <span class="text-lg leading-tight tracking-tight">
-                    <span class="font-extrabold">Textil</span>
-                    <span class="font-normal text-muted">na míru</span>
+        {{-- Původní vnitřek: max-w-7xl px-4 py-3 sm:px-6 (výška pruhu 65 px, svislý padding 12 px). Nový padding 13,8 px (= 12 × 1,15). --}}
+        {{-- Od lg: nav má flex-1 a odkazy justify-center — název i B2B zůstanou na krajích, menu ve středu mezery. Pod lg zůstává hamburger, ať se odkazy nepřekrývají s názvem. --}}
+        <div class="relative flex items-center gap-3 pr-4 pl-4 sm:pr-6 sm:pl-5 lg:pl-6" style="padding-top: 13.8px; padding-bottom: 13.8px;">
+            <a href="{{ route('web.home') }}" class="flex min-w-0 shrink items-center gap-3" aria-label="Textil na míru — domovská stránka">
+                {{-- Výška 36 px jako dříve, ať se hlavička nezvýší. --}}
+                <x-logo class="h-9 w-9" width="36" height="36" loading="eager" decoding="async" />
+                <span class="min-w-0 leading-tight tracking-tight">
+                    <span class="block text-lg">
+                        <span class="font-extrabold">Textil</span>
+                        <span class="font-normal text-muted">na míru</span>
+                    </span>
+                    <span class="mt-0.5 block truncate text-[11px] font-normal text-muted sm:whitespace-normal sm:text-xs">Dáváme interiérům nový rozměr</span>
                 </span>
             </a>
 
             <nav
                 id="hlavni-navigace"
                 data-nav-menu
-                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 md:static md:block md:flex-1 md:border-0 md:bg-transparent md:p-0"
+                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 lg:static lg:block lg:flex-1 lg:border-0 lg:bg-transparent lg:p-0"
                 aria-label="Hlavní navigace"
             >
-                <ul class="flex flex-col gap-1 pt-2 md:flex-row md:items-center md:gap-6 md:pt-0">
+                <ul class="flex flex-col gap-1 pt-2 lg:flex-row lg:items-center lg:justify-center lg:gap-6 lg:pt-0">
                     <li><a href="{{ route('web.vypinany-podhled') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.vypinany-podhled') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Vypínaný podhled</a></li>
                     <li><a href="{{ route('web.stinici-technika') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.stinici-technika') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Stínící technika</a></li>
                     <li><a href="{{ route('web.sortiment') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.sortiment') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Sortiment</a></li>
-                    <li><a href="{{ route('web.kalkulacka') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.kalkulacka') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Kalkulačka</a></li>
+                    <li><a href="{{ route('web.kalkulacka') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.kalkulacka', 'web.kalkulacka.*') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Kalkulačka</a></li>
                     <li><a href="{{ route('web.realizace') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.realizace') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Realizace</a></li>
                     <li><a href="{{ route('web.home') }}#o-nas" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">O nás</a></li>
                     <li class="pt-2 md:pt-0">
@@ -88,14 +94,14 @@
                 </ul>
             </nav>
 
-            <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0">
+            <div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
                 <a
                     href="{{ route('web.b2b') }}"
                     class="btn-secondary !px-4 !py-2 text-sm font-extrabold tracking-wide {{ request()->routeIs('web.b2b') ? '!bg-ink !text-white' : '' }}"
                 >B2B</a>
                 <button
                     type="button"
-                    class="rounded-lg p-2 text-ink hover:bg-surface-alt md:hidden"
+                    class="rounded-lg p-2 text-ink hover:bg-surface-alt lg:hidden"
                     data-nav-toggle
                     aria-expanded="false"
                     aria-controls="hlavni-navigace"
@@ -118,7 +124,14 @@
             <div class="grid gap-10 md:grid-cols-4">
                 <div>
                     <a href="{{ route('web.home') }}" class="flex items-center gap-2.5" aria-label="Textil na míru">
-                        <x-web.logo class="h-9 w-9 text-brand-400" />
+                        {{-- LOGO PATIČKA: ořez do kruhu kvůli bílým rohům v souboru loga --}}
+                        <span class="inline-block shrink-0 overflow-hidden rounded-full bg-ink" style="width: 32px; height: 32px;">
+                            <x-logo
+                                width="32"
+                                height="32"
+                                style="width: 32px; height: 32px; object-fit: cover; transform: scale(1.06);"
+                            />
+                        </span>
                         <span class="text-lg leading-tight tracking-tight">
                             <span class="font-extrabold">Textil</span>
                             <span class="font-normal text-white/70">na míru</span>

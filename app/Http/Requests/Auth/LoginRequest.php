@@ -38,7 +38,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $credentials = [
-            'username' => $this->string('username')->toString(),
+            'username' => $this->string('username')->trim()->toString(),
             'password' => $this->string('password')->toString(),
             'is_active' => true,
         ];

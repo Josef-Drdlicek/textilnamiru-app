@@ -42,13 +42,36 @@ class PriceEstimator extends Component
     /** @var list<array{label: string, amount: float}> */
     public array $priceLines = [];
 
-    public function mount(): void
+    /** True jen na samostatné stránce Kalkulačka (ne na úvodu). */
+    public bool $asPage = false;
+
+    /** Vizuální výběr dlaždice (typ výpočtu, nebo extra-0 …). Nemění cenu. */
+    public string $vybranaDlazdice = 'curtain';
+
+    // ROZMĚRY extra-0: pouze vizuální, napojení na výpočet a cenu DOPLNIT v dalším kroku
+    public ?string $extra0Sirka = null;
+
+    public ?string $extra0Vyska = null;
+
+    public ?string $extra0Pocet = null;
+
+    public bool $extra0Vyplne = false;
+
+    public bool $extra0Volba1 = false;
+
+    public bool $extra0Volba2 = false;
+
+    public function mount(bool $asPage = false): void
     {
+        $this->asPage = $asPage;
+
         $requested = ItemType::tryFrom((string) request()->query('typ'));
 
         if ($requested !== null) {
             $this->type = $requested->value;
         }
+
+        $this->vybranaDlazdice = $this->type;
 
         $this->prefillDimensions();
         $this->recalculate();
@@ -61,6 +84,10 @@ class PriceEstimator extends Component
 
     public function updated(string $property): void
     {
+        if ($property === 'vybranaDlazdice' || str_starts_with($property, 'extra0')) {
+            return;
+        }
+
         $this->recalculate();
 
         if ($property !== 'type') {
@@ -70,9 +97,16 @@ class PriceEstimator extends Component
 
     public function updatedType(): void
     {
+        $this->vybranaDlazdice = $this->type;
         $this->resetValidation();
         $this->prefillDimensions();
         $this->recalculate();
+    }
+
+    /** Rámeček na náhradní dlaždici; výpočet se nemění. */
+    public function vybratNahradniDlazdici(int $index): void
+    {
+        $this->vybranaDlazdice = 'extra-'.$index;
     }
 
     /**

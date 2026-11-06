@@ -122,7 +122,7 @@
             </div>
 
             <div class="mt-7 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('web.kalkulacka') }}" class="btn-primary">Spočítat orientační cenu</a>
+                <a href="{{ route('web.kalkulacka.sivani') }}" class="btn-primary">Spočítat orientační cenu</a>
                 <a href="{{ route('web.inquiry.create') }}" class="btn-secondary">Nezávazná poptávka</a>
             </div>
         </div>

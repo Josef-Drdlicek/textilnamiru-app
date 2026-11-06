@@ -38,7 +38,7 @@
                     :alt="$tile['alt']"
                     :title="$tile['title']"
                     :price="$pricesFrom[$tile['type']->value] ?? null"
-                    :href="route('web.kalkulacka', ['typ' => $tile['type']->value])"
+                    :href="route('web.kalkulacka.sivani', ['typ' => $tile['type']->value])"
                     cta="Spočítat cenu"
                 />
             @endforeach

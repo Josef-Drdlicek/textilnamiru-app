@@ -83,5 +83,5 @@ it('blocks non-admins from all inquiry routes', function () {
 });
 
 it('redirects guests from inquiry administration to login', function () {
-    $this->get(route('admin.inquiries.index'))->assertRedirect('/login');
+    $this->get(route('admin.inquiries.index'))->assertRedirect(route('web.b2b'));
 });

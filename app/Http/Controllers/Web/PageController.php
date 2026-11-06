@@ -6,6 +6,8 @@ use App\Domain\Pricing\ItemPricer;
 use App\Domain\Pricing\PublicPresets;
 use App\Enums\ItemType;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -23,9 +25,29 @@ class PageController extends Controller
         ]);
     }
 
-    public function kalkulacka(): View
+    public function kalkulacka(Request $request): View|RedirectResponse
     {
+        // Starý odkaz /kalkulacka?typ=… mířil rovnou do kalkulačky šití.
+        if ($request->filled('typ')) {
+            return redirect()->route('web.kalkulacka.sivani', $request->only('typ'));
+        }
+
         return view('web.kalkulacka');
+    }
+
+    public function kalkulackaSivani(): View
+    {
+        return view('web.kalkulacka-sivani');
+    }
+
+    public function kalkulackaStropy(): View
+    {
+        return view('web.kalkulacka-stropy');
+    }
+
+    public function kalkulackaStinici(): View
+    {
+        return view('web.kalkulacka-stinici');
     }
 
     public function realizace(): View
@@ -43,8 +65,12 @@ class PageController extends Controller
         return view('web.stinici-technika');
     }
 
-    public function b2b(): View
+    public function b2b(Request $request): View|RedirectResponse
     {
+        if ($request->user()) {
+            return redirect()->route('web.b2b.aplikace');
+        }
+
         return view('web.b2b');
     }
 
