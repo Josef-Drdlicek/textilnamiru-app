@@ -1,0 +1,75 @@
+---
+description: Clean code a SOLID pro tento projekt. Platí pro každý řádek PHP, JS i Blade.
+alwaysApply: true
+---
+
+# Clean code a SOLID
+
+Kód čte příští člověk (nebo agent) bez tebe. Piš ho tak, aby pochopil záměr bez komentáře.
+
+## Pojmenování
+
+- Název říká, co věc je nebo dělá: `DeferOrder`, `priceCushion()`, `$materialsNote`. Žádné `data`,
+  `temp`, `helper`, `manager`, `x2`.
+- Třídy jsou podstatná jména, metody slovesa, booleany otázky (`isDraft()`, `hasZipper()`).
+- Jeden pojem = jedno slovo v celém projektu: zakázka = `Order`, nabídka = odložená zakázka
+  (`deferred_at`), studio = `User` bez `is_admin`, dílna = admin. Nezaváděj synonyma.
+- Konstanty místo magických čísel: `private const float FOAM_LAYER_CM = 2.0;` s komentářem proč.
+
+## Funkce a třídy
+
+- Metoda dělá jednu věc a vejde se na obrazovku. Když potřebuješ nadpis uvnitř metody, rozděl ji.
+- Žádné hluboké zanoření: guard clause (`if (...) { return; }`) místo `if` v `if` v `if`.
+- Parametry typované, návratový typ vždy. Pole s pevnou strukturou dostane PHPDoc tvar
+  (`@return array{label: string, amount: float}`) nebo vlastní readonly třídu.
+- Duplicitní blok na dvou místech = extrahovat (trait `AddsKanyrLine`, komponenta `x-web.back-link`,
+  partial `_price-bar`). Tři kopie jsou chyba.
+- Žádný mrtvý kód, žádné zakomentované bloky „pro jistotu“. Git si to pamatuje.
+
+## SOLID, jak ho tu používáme
+
+- **S** Jedna odpovědnost: controller přijímá request, Action mění data, kalkulátor počítá, presenter
+  formátuje. Když třída dělá dvě věci, rozděl ji.
+- **O** Nový výrobek nepřepisuje existující kalkulátory. Přidáš case do `ItemType` a nové třídy,
+  staré se nemění (otevřené pro rozšíření, uzavřené pro změnu).
+- **L** Každý `PriceCalculator` vrací `PriceResult`, každé `ItemParameters` umí `fromArray/toArray`.
+  Nikdy neporušuj smlouvu rozhraní „protože tenhle typ je jiný“.
+- **I** Malá rozhraní: `PriceCalculator` má jednu metodu, `SchemaRenderer` jednu metodu.
+  Nepřidávej do rozhraní metody, které polovina implementací nepotřebuje.
+- **D** Závislosti přes konstruktor a kontejner (`ItemPricer` dostane `PriceList`), ne `new` uvnitř
+  metody a ne statické volání databáze z doménové třídy. Doména (`app/Domain`) nezná Eloquent ani HTTP.
+
+## Žádné natvrdo psané hodnoty
+
+| Hodnota | Kam patří |
+|---|---|
+| Ceny, sazby, DPH | tabulka `pricing_variables` (seeder jen výchozí hodnoty) |
+| Kontakty, adresa, otevírací doba | `config/company.php` / `.env` |
+| Hesla, klíče, tokeny, URL služeb | `.env`, nikdy do repa |
+| Texty pro web | pole na začátku Blade šablony nebo `lang/cs/*.php` |
+| Limity (max. rozměr, počet kusů) | validační pravidla v Livewire/FormRequest nebo `PublicPresets` |
+| Cesty a routy | `route('name')`, `asset()`, `config()` |
+| Barvy, mezery, písmo | tokeny v `resources/css/app.css` a Tailwind třídy |
+
+Pokud nevíš, kam hodnota patří, patří do konfigurace nebo databáze, ne do kódu.
+
+## Chyby a okraje
+
+- Validuj na hranici (FormRequest, Livewire rules). Uvnitř domény předpokládej validní data
+  a při porušení vyhoď výjimku (`UnknownPricingVariable`, `InvalidStatusTransition`), netiš ji.
+- Žádné `try { } catch (Exception) { }` bez reakce. Buď chybu ošetříš smysluplně, nebo ji necháš bublat.
+- Peníze a rozměry jsou `float` zaokrouhlené až na výstupu (`PriceResult`), ne v každém mezikroku.
+
+## Testy jako součást kódu
+
+- Test popisuje chování, ne implementaci: „odloží zakázku s materiálem a nepovinným termínem“,
+  ne „zavolá update na modelu“.
+- Jeden test = jedna věc. Očekávané číslo má v komentáři výpočet.
+- Nový kód bez testu není hotový.
+
+## Komentáře
+
+- Komentář vysvětluje *proč* nebo varuje před záludností („Nulová šířka = materiál nezadán“).
+  Nepopisuje *co* dělá řádek pod ním.
+- Docblock třídy říká, k čemu třída je a odkud vzorec pochází (zadání §7.1, majitel dílny).
+- Česky, bez emoji, bez formátování z chatu.

@@ -44,6 +44,16 @@ Pak zadej konkrétní úkol. Dobré zadání říká **co** a **kde to uživatel
 Špatné zadání: „Udělej mi novou aplikaci na zakázky“ nebo „ulož to do prohlížeče“. Agent to má
 zakázané a měl by se ohradit.
 
+## 2b. Když vymýšlíš něco nového
+
+Nová stránka, nový výrobek, nové pole, jiný vzorec: agent nesmí začít programovat rovnou.
+Podle pravidla `tym-specialistu` nejdřív pustí **architekta**, který vrátí plán a otázky. Ty plán
+schválíš (nebo doplníš odpovědi), pak teprve jedou **backend → frontend → tester → reviewer**.
+Prompty všech rolí jsou v `.cursor/agents/`. Když Cursor subagenty neumí, otevři pro roli nový chat
+a vlož obsah jejího souboru jako první zprávu, pak zadání a plán.
+
+Chceš to spustit? Napiš: „Postupuj podle tym-specialistu. Zadání: …“
+
 ## 3. Postup pro každou změnu (agent ho zná, ty ho hlídáš)
 
 1. `git checkout -b nazev-zmeny` (z aktuálního `main`).

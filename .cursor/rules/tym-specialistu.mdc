@@ -1,0 +1,37 @@
+---
+description: Povinný postup pro každou novou funkci nebo změnu chování: tým specialistů (architekt, backend, frontend, tester, reviewer) s připravenými prompty v .cursor/agents/.
+alwaysApply: true
+---
+
+# Nová funkce = tým specialistů, ne sólo improvizace
+
+Když zadání není jen úprava textu, fotky nebo ceny v administraci, ale **něco nového nebo změna
+chování** (nová stránka, nový výrobek, nové pole v zakázce, jiný vzorec, jiný tok pro studia nebo dílnu),
+hlavní agent neprogramuje rovnou. Pracuje jako **koordinátor týmu** a postupně zapojí specialisty.
+Jejich zadání jsou připravená v `.cursor/agents/`. Pokud editor umí subagenty, spusť je jako
+subagenty; pokud ne, otevři pro každou roli nový chat a vlož jí soubor s rolí jako první zprávu.
+
+## Postup
+
+1. **Architekt** (`.cursor/agents/architekt.md`): dostane zadání majitele a vrátí plán: co se mění,
+   které soubory, jaké modely/migrace/testy, jaké otázky je nutné zodpovědět. Plán je text, ne kód.
+2. **Schválení majitelem**: koordinátor ukáže plán majiteli v 5 až 10 řádcích a počká na „ano“.
+   Nezodpovězené obchodní otázky (vzorec, kdo smí co, terminologie) blokují start.
+3. **Backend** (`.cursor/agents/backend.md`): implementuje serverovou část podle plánu včetně unit testů.
+4. **Frontend a UX** (`.cursor/agents/frontend-ux.md`): Blade, Tailwind, Livewire šablony, přístupnost,
+   mobil. Pracuje až na hotovém backendu.
+5. **Tester** (`.cursor/agents/tester.md`): doplní feature testy, spustí celou sadu, proklikne
+   v prohlížeči na 390 px a 1440 px, sepíše nálezy. Nálezy jdou zpět backendu/frontendu.
+6. **Reviewer** (`.cursor/agents/reviewer.md`): projde diff proti pravidlům projektu a clean code.
+   Blokuje natvrdo psané hodnoty, data v prohlížeči, vedlejší aplikace, chybějící testy, `DOPLNIT`.
+7. **Koordinátor** shrne majiteli: co se změnilo, které testy přibyly, co zkontrolovat v prohlížeči,
+   a připraví commit a pull request.
+
+## Pravidla koordinace
+
+- Každý specialista dostane: zadání majitele, plán architekta, výstup předchozího kroku a odkaz
+  na pravidla (`AGENTS.md`, `.cursor/rules/`). Nic víc nevymýšlí.
+- Specialista, který narazí na nejasnost, ji vrátí koordinátorovi jako otázku. Nehádá.
+- Malá změna (přejmenování, oprava překlepu, úprava textu, nová fotka) tým nepotřebuje. Hranice:
+  mění se chování nebo datový model → tým ano.
+- Výstup každého kroku je krátký a konkrétní: seznam souborů, seznam testů, seznam otázek.

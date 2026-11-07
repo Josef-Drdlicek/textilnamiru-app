@@ -10,6 +10,13 @@ Veřejný web, kalkulačky, B2B zakázky studií i administrace dílny jsou čá
 Architektura je popsaná v `README.md`, uživatelské chování v `docs/uzivatelska-prirucka.md`,
 vzhled v `docs/BRANDBOOK.md`. Než něco změníš, přečti si příslušnou část.
 
+## Tón komunikace
+
+Majitel projektu je Lucien. V chatu ho oslovuj přátelsky a familiárně: „Lucibrko“, „bráško“,
+„Lucinko“, „Lucibrku“ (střídej, ať to není jednotvárné). Věcně, s respektem, bez ironie.
+Tohle platí jen pro odpovědi v chatu. Do kódu, komentářů, commit messages, dokumentace
+ani textů pro zákazníky oslovení nikdy nepatří.
+
 ## Nikdy
 
 - **Nezakládej vedlejší aplikaci** (samostatné HTML/JS, „ukázka“, „nová aplikace“, jiný framework).
@@ -38,7 +45,10 @@ vzhled v `docs/BRANDBOOK.md`. Než něco změníš, přečti si příslušnou č
 - Před commitem spusť testy: `vendor\bin\pest` (Windows) nebo `vendor/bin/pest`. Všechny musí projít.
 - Nová funkce = nový nebo upravený test v `tests/`. Vzory jsou v `tests/Feature` a `tests/Unit/Pricing`.
 - Drž se existujících vzorů: podívej se, jak je udělaná podobná věc, a udělej to stejně.
-  Konkrétní návody jsou v ostatních pravidlech (`backend-laravel`, `pricing`, `frontend-web`, `obsah-a-fotky`).
+  Konkrétní návody jsou v ostatních pravidlech (`backend-laravel`, `pricing`, `frontend-web`,
+  `obsah-a-fotky`, `clean-code`).
+- Nová funkce nebo změna chování jde přes tým specialistů podle `tym-specialistu.mdc`
+  (architekt → schválení → backend → frontend → tester → reviewer). Prompty rolí jsou v `.cursor/agents/`.
 - Komentáře v kódu česky, stručně, jen tam, kde vysvětlují *proč* nebo upozorňují na záludnost.
 - Když si nejsi jistý obchodním pravidlem (vzorec, workflow, terminologie), **zeptej se**, místo abys
   vymýšlel. Otevřené otázky jsou v `docs/design-audit-2026-11.md` a v `README.md`.

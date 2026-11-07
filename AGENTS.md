@@ -10,6 +10,9 @@ Podrobná pravidla jsou v `.cursor/rules/`:
 - `pricing.mdc` – ceny a vzorce
 - `frontend-web.mdc` – Blade, Tailwind, obrázky, přístupnost
 - `obsah-a-fotky.mdc` – kde se mění texty, fotky a ceník
+- `clean-code.mdc` – clean code, SOLID, žádné natvrdo psané hodnoty (platí vždy)
+- `tym-specialistu.mdc` – nová funkce jde přes tým specialistů; role jsou v `.cursor/agents/`
+  (architekt, backend, frontend-ux, tester, reviewer)
 
 Než začneš: přečti `README.md` (architektura) a pravidlo odpovídající části kódu, na které pracuješ.
 
