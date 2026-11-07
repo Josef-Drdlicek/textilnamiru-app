@@ -38,6 +38,60 @@ it('filters orders by submission date', function () {
         ->assertDontSee('Stará zakázka');
 });
 
+it('filters orders by customer', function () {
+    $lucie = User::factory()->create(['name' => 'Lucie Designérka']);
+    $eva = User::factory()->create(['name' => 'Eva Designérka']);
+
+    Order::factory()->submitted()->for($lucie)->create(['name' => 'Zakázka Lucie']);
+    Order::factory()->submitted()->for($eva)->create(['name' => 'Zakázka Evy']);
+
+    $this->actingAs(admin())
+        ->get(route('admin.orders.index', ['user_id' => $lucie->id]))
+        ->assertOk()
+        ->assertSee('Zakázka Lucie')
+        ->assertDontSee('Zakázka Evy');
+});
+
+it('combines the customer filter with the date filter', function () {
+    $lucie = User::factory()->create(['name' => 'Lucie Designérka']);
+
+    Order::factory()->submitted()->for($lucie)->create(['name' => 'Stará Lucie', 'submitted_at' => now()->subMonths(2)]);
+    Order::factory()->submitted()->for($lucie)->create(['name' => 'Čerstvá Lucie', 'submitted_at' => now()]);
+    Order::factory()->submitted()->create(['name' => 'Cizí čerstvá', 'submitted_at' => now()]);
+
+    $this->actingAs(admin())
+        ->get(route('admin.orders.index', [
+            'user_id' => $lucie->id,
+            'submitted_from' => now()->subWeek()->toDateString(),
+        ]))
+        ->assertOk()
+        ->assertSee('Čerstvá Lucie')
+        ->assertDontSee('Stará Lucie')
+        ->assertDontSee('Cizí čerstvá');
+});
+
+it('offers only customers with submitted orders in the filter', function () {
+    $sOdeslanou = User::factory()->create(['name' => 'Klara Sodeslanou']);
+    $jenDraft = User::factory()->create(['name' => 'Petra Jendraft']);
+    User::factory()->create(['name' => 'Nikola Bezzakazky']);
+
+    Order::factory()->submitted()->for($sOdeslanou)->create();
+    Order::factory()->for($jenDraft)->create();
+
+    $this->actingAs(admin())
+        ->get(route('admin.orders.index'))
+        ->assertOk()
+        ->assertSee('Klara Sodeslanou')
+        ->assertDontSee('Petra Jendraft')
+        ->assertDontSee('Nikola Bezzakazky');
+});
+
+it('rejects a filter by a non-existent customer', function () {
+    $this->actingAs(admin())
+        ->get(route('admin.orders.index', ['user_id' => 999999]))
+        ->assertSessionHasErrors('user_id');
+});
+
 it('walks an order through the whole workflow with an audit trail', function () {
     $order = Order::factory()->submitted()->create();
     $boss = admin();

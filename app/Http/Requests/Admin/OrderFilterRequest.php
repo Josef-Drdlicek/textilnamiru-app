@@ -19,6 +19,7 @@ class OrderFilterRequest extends FormRequest
         return [
             'submitted_from' => ['nullable', 'date'],
             'submitted_to' => ['nullable', 'date', 'after_or_equal:submitted_from'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ];
     }
 
@@ -30,6 +31,7 @@ class OrderFilterRequest extends FormRequest
         return [
             'submitted_from' => 'datum od',
             'submitted_to' => 'datum do',
+            'user_id' => 'zákazník',
         ];
     }
 }
