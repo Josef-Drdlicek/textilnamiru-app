@@ -83,7 +83,7 @@
             >
                 <ul class="flex flex-col gap-1 pt-2 lg:flex-row lg:items-center lg:justify-center lg:gap-6 lg:pt-0">
                     <li><a href="{{ route('web.vypinany-podhled') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.vypinany-podhled') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Vypínaný podhled</a></li>
-                    <li><a href="{{ route('web.stinici-technika') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.stinici-technika') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Stínící technika</a></li>
+                    <li><a href="{{ route('web.stinici-technika') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.stinici-technika') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Stínicí technika</a></li>
                     <li><a href="{{ route('web.sortiment') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.sortiment') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Sortiment</a></li>
                     <li><a href="{{ route('web.kalkulacka') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.kalkulacka', 'web.kalkulacka.*') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Kalkulačka</a></li>
                     <li><a href="{{ route('web.realizace') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.realizace') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Realizace</a></li>

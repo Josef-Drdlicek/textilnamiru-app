@@ -23,12 +23,12 @@
         ],
         [
             'name' => 'hero-3',
-            'alt' => 'Stínící technika v interiéru',
-            'label' => 'Stínící technika v interiéru',
+            'alt' => 'Stínicí technika v interiéru',
+            'label' => 'Stínicí technika v interiéru',
             'eager' => false,
             'object' => 'object-[center]',
             'eyebrow' => 'Stínění pro každou situaci',
-            'title' => 'Stínící technika',
+            'title' => 'Stínicí technika',
             'text' => 'Zaměříme, ušijeme, pověsíme. Rodinná dílna s více než 30letou tradicí vytváří záclony, závěsy a stínicí techniku pro domácnosti, hotely i firmy.',
         ],
     ];

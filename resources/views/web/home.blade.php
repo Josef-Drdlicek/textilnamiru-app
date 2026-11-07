@@ -11,9 +11,9 @@
     ])
     @include('web.sections._page-teaser', [
         'class' => 'bg-paper',
-        'title' => 'Stínící technika',
+        'title' => 'Stínicí technika',
         'href' => route('web.stinici-technika'),
-        'cta' => 'Stínící technika',
+        'cta' => 'Stínicí technika',
     ])
     @include('web.sections._page-teaser', [
         'class' => 'bg-paper',

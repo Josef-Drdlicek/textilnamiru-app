@@ -27,22 +27,12 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>{{ route('web.kalkulacka.stinici') }}</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
         <loc>{{ route('web.realizace') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>{{ route('web.vypinany-podhled') }}</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>{{ route('web.stinici-technika') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>

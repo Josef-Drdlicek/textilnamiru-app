@@ -10,7 +10,7 @@ it('renders the public homepage for guests', function () {
         ->assertSee('Kolik bude stát ušití?')
         ->assertSee('Rodinná tradice od roku 1992')
         ->assertSee('Vypínaný stropní podhled v interiéru')
-        ->assertSee('Stínící technika v interiéru')
+        ->assertSee('Stínicí technika v interiéru')
         ->assertSee('Vypínaný stropní podhled')
         ->assertSee('Nová technologie stropů')
         ->assertSee('Stínění pro každou situaci');
@@ -62,8 +62,8 @@ it('renders the calculator hub with three tiles', function () {
         ->assertSee('Kalkulačka')
         ->assertSee('Zakázkové šití')
         ->assertSee('Vypínané stropy')
-        ->assertSee('Stínící technika')
-        ->assertSee('DOPLNIT OBRÁZEK')
+        ->assertSee('Stínicí technika')
+        ->assertDontSee('DOPLNIT')
         ->assertDontSee('Kolik bude stát ušití?')
         ->assertDontSee('Záclona');
 });
@@ -116,8 +116,8 @@ it('renders the stretched-ceiling page', function () {
 it('renders the shading-technology page', function () {
     $this->get('/stinici-technika')
         ->assertOk()
-        ->assertSee('Stínící technika')
-        ->assertSee('DOPLNIT OBSAH');
+        ->assertSee('Stínicí technika')
+        ->assertSee('noindex', false);
 });
 
 it('renders the b2b login page with noindex', function () {
@@ -166,7 +166,8 @@ it('serves the sitemap as xml', function () {
         ->assertSee(route('web.kalkulacka'), false)
         ->assertSee(route('web.kalkulacka.sivani'), false)
         ->assertSee(route('web.kalkulacka.stropy'), false)
-        ->assertSee(route('web.kalkulacka.stinici'), false);
+        ->assertDontSee(route('web.kalkulacka.stinici'), false)
+        ->assertDontSee(route('web.stinici-technika'), false);
 });
 
 it('redirects guests from the internal dashboard to login', function () {

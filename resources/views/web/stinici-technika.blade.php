@@ -1,11 +1,12 @@
-{{-- Samostatná stránka — texty a fotky zatím chybí. --}}
+{{-- Obsah dodá majitel; do té doby noindex a mimo sitemap. --}}
 <x-layouts.web
-    title="Stínící technika"
-    description="Stínící technika."
+    title="Stínicí technika"
+    description="Stínicí technika."
+    robots="noindex, follow"
 >
     <section class="bg-paper">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
-            <h1 class="text-section-title">Stínící technika</h1>
+            <h1 class="text-section-title">Stínicí technika</h1>
 
             {{-- DOPLNIT OBSAH: úvodní odstavec --}}
             <p class="mt-3 max-w-2xl text-lg text-muted">DOPLNIT OBSAH</p>
