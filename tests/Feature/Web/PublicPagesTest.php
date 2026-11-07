@@ -77,30 +77,15 @@ it('renders the sewing calculator on the subpage', function () {
         ->assertSee('Zpět na výběr kalkulace');
 });
 
-it('renders visual calculator placeholders without sewing prices', function () {
+it('renders the stretch ceiling calculator with a live price', function () {
     $this->get('/kalkulacka/vypinane-stropy')
         ->assertOk()
-        ->assertSee('Vypínané stropy')
+        ->assertSee('Kolik bude stát vypínaný strop?')
+        ->assertSee('Vypínaný strop')
         ->assertSee('Zpět na výběr kalkulace')
-        ->assertSee('1. DOPLNIT TEXT')
-        ->assertSee('2. Rozměry')
-        ->assertSee('3. DOPLNIT TEXT')
-        ->assertSee('DOPLNIT NÁZEV')
-        ->assertSee('DOPLNIT TEXT')
-        ->assertDontSee('Kolik bude stát ušití?')
         ->assertDontSee('Záclona')
-        ->assertDontSee('wire:model', false);
-
-    $this->get('/kalkulacka/stinici-technika')
-        ->assertOk()
-        ->assertSee('Stínící technika')
-        ->assertSee('Zpět na výběr kalkulace')
-        ->assertSee('1. DOPLNIT TEXT')
-        ->assertSee('2. Rozměry')
-        ->assertDontSee('Kolik bude stát ušití?')
-        ->assertDontSee('Záclona');
+        ->assertDontSee('DOPLNIT');
 });
-
 it('redirects the old calculator type query to the sewing subpage', function () {
     $this->get('/kalkulacka?typ=curtain')
         ->assertRedirect(route('web.kalkulacka.sivani', ['typ' => 'curtain']));

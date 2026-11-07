@@ -14,6 +14,7 @@ enum InquiryProduct: string
     case Pillows = 'pillows';
     case Cushions = 'cushions';
     case Blinds = 'blinds';
+    case StretchCeilings = 'stretch_ceilings';
     case Rails = 'rails';
     case Shades = 'shades';
     case Panels = 'panels';
@@ -26,6 +27,7 @@ enum InquiryProduct: string
             self::Pillows => 'Polštáře',
             self::Cushions => 'Sedáky',
             self::Blinds => 'Římské rolety',
+            self::StretchCeilings => 'Vypínané stropy',
             self::Rails => 'Garnýže a kolejnice',
             self::Shades => 'Žaluzie a stínění',
             self::Panels => 'Japonské stěny',
@@ -43,6 +45,7 @@ enum InquiryProduct: string
             self::Pillows => ItemType::Pillow,
             self::Cushions => ItemType::Cushion,
             self::Blinds => ItemType::Blind,
+            self::StretchCeilings => ItemType::StretchCeiling,
             self::Rails, self::Shades, self::Panels => null,
         };
     }
@@ -55,6 +58,7 @@ enum InquiryProduct: string
             ItemType::Pillow => self::Pillows,
             ItemType::Cushion => self::Cushions,
             ItemType::Blind => self::Blinds,
+            ItemType::StretchCeiling => self::StretchCeilings,
         };
     }
 }

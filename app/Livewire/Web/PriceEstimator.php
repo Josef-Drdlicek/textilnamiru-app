@@ -5,19 +5,26 @@ namespace App\Livewire\Web;
 use App\Domain\Pricing\ItemPricer;
 use App\Domain\Pricing\PublicPresets;
 use App\Enums\ItemType;
+use App\Enums\ProductCategory;
+use DomainException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
- * Veřejná orientační kalkulačka. Vystavuje jen laické parametry (rozměry,
- * počet, nařasení, výplň) — odborné parametry doplňuje PublicPresets, takže
- * čísla sedí s katalogovou „cenou od". Cena se počítá výhradně na serveru.
+ * Veřejná orientační kalkulačka jednoho oboru (šití, vypínané stropy).
+ * Vystavuje jen laické parametry (rozměry, počet, nařasení, výplň) —
+ * odborné parametry doplňuje PublicPresets, takže čísla sedí s katalogovou
+ * „cenou od". Cena se počítá výhradně na serveru.
  */
 class PriceEstimator extends Component
 {
-    public string $type = 'curtain';
+    #[Locked]
+    public string $category = ProductCategory::Sewing->value;
+
+    public string $type = '';
 
     public ?float $width = null;
 
@@ -42,39 +49,22 @@ class PriceEstimator extends Component
     /** @var list<array{label: string, amount: float}> */
     public array $priceLines = [];
 
-    /** True jen na samostatné stránce Kalkulačka (ne na úvodu). */
-    public bool $asPage = false;
-
-    /** Vizuální výběr dlaždice (typ výpočtu, nebo extra-0 …). Nemění cenu. */
-    public string $vybranaDlazdice = 'curtain';
-
-    // ROZMĚRY extra-0: pouze vizuální, napojení na výpočet a cenu DOPLNIT v dalším kroku
-    public ?string $extra0Sirka = null;
-
-    public ?string $extra0Vyska = null;
-
-    public ?string $extra0Pocet = null;
-
-    public bool $extra0Vyplne = false;
-
-    public bool $extra0Volba1 = false;
-
-    public bool $extra0Volba2 = false;
-
-    public function mount(bool $asPage = false): void
+    public function mount(string $category = 'sewing'): void
     {
-        $this->asPage = $asPage;
+        $this->category = ProductCategory::from($category)->value;
 
         $requested = ItemType::tryFrom((string) request()->query('typ'));
+        $types = $this->productCategory()->itemTypes();
 
-        if ($requested !== null) {
-            $this->type = $requested->value;
-        }
-
-        $this->vybranaDlazdice = $this->type;
+        $this->type = ($requested !== null && in_array($requested, $types, true) ? $requested : $types[0])->value;
 
         $this->prefillDimensions();
         $this->recalculate();
+    }
+
+    public function productCategory(): ProductCategory
+    {
+        return ProductCategory::from($this->category);
     }
 
     public function itemType(): ItemType
@@ -84,10 +74,6 @@ class PriceEstimator extends Component
 
     public function updated(string $property): void
     {
-        if ($property === 'vybranaDlazdice' || str_starts_with($property, 'extra0')) {
-            return;
-        }
-
         $this->recalculate();
 
         if ($property !== 'type') {
@@ -97,16 +83,9 @@ class PriceEstimator extends Component
 
     public function updatedType(): void
     {
-        $this->vybranaDlazdice = $this->type;
         $this->resetValidation();
         $this->prefillDimensions();
         $this->recalculate();
-    }
-
-    /** Rámeček na náhradní dlaždici; výpočet se nemění. */
-    public function vybratNahradniDlazdici(int $index): void
-    {
-        $this->vybranaDlazdice = 'extra-'.$index;
     }
 
     /**
@@ -122,7 +101,7 @@ class PriceEstimator extends Component
 
         try {
             $result = $pricer->price($type, $parameters);
-        } catch (\DomainException) {
+        } catch (DomainException) {
             $this->addError('width', 'Tuto konfiguraci neumíme nacenit online — poptejte nás prosím napřímo.');
 
             return null;
@@ -162,16 +141,12 @@ class PriceEstimator extends Component
      */
     protected function rules(): array
     {
-        [$maxWidth, $maxHeight] = match ($this->itemType()) {
-            ItemType::Curtain, ItemType::Drape => [2000, 500],
-            ItemType::Blind => [300, 300],
-            ItemType::Pillow, ItemType::Cushion => [100, 100],
-        };
+        $max = PublicPresets::maxDimensions($this->itemType());
 
         return [
-            'type' => ['required', Rule::enum(ItemType::class)],
-            'width' => ['required', 'numeric', 'min:10', "max:{$maxWidth}"],
-            'height' => ['required', 'numeric', 'min:10', "max:{$maxHeight}"],
+            'type' => ['required', Rule::in(array_map(fn (ItemType $type) => $type->value, $this->productCategory()->itemTypes()))],
+            'width' => ['required', 'numeric', 'min:10', "max:{$max['width']}"],
+            'height' => ['required', 'numeric', 'min:10', "max:{$max['height']}"],
             'count' => ['required', 'integer', 'min:1', 'max:999'],
             'ruffle' => ['required', Rule::in(array_keys(PublicPresets::RUFFLE_OPTIONS))],
             'stuffing' => ['boolean'],
@@ -185,7 +160,7 @@ class PriceEstimator extends Component
     {
         return [
             'width' => 'šířka',
-            'height' => 'výška',
+            'height' => mb_strtolower($this->itemType()->heightLabel()),
             'count' => 'počet kusů',
             'ruffle' => 'nařasení',
         ];
@@ -198,7 +173,7 @@ class PriceEstimator extends Component
     {
         $parts = [
             $this->itemType()->label(),
-            sprintf('%s × %s cm', rtrim(rtrim(number_format((float) $this->width, 1, ',', ' '), '0'), ','), rtrim(rtrim(number_format((float) $this->height, 1, ',', ' '), '0'), ',')),
+            sprintf('%s × %s cm', $this->formatNumber((float) $this->width), $this->formatNumber((float) $this->height)),
             $this->count.' ks',
         ];
 
@@ -228,7 +203,7 @@ class PriceEstimator extends Component
 
     protected function prefillDimensions(): void
     {
-        $reference = PublicPresets::referenceParameters($this->itemType())->toArray();
+        $reference = PublicPresets::referenceDimensions($this->itemType());
 
         $this->width = $reference['width'];
         $this->height = $reference['height'];
@@ -253,7 +228,7 @@ class PriceEstimator extends Component
                 PublicPresets::estimatorParameters($this->itemType(), $this->estimatorInput()),
             );
             $vatRate = $pricer->vatRate();
-        } catch (\DomainException) {
+        } catch (DomainException) {
             $this->clearPrice();
 
             return;
@@ -284,6 +259,11 @@ class PriceEstimator extends Component
         }
 
         return ! Validator::make($data, $rules)->fails();
+    }
+
+    private function formatNumber(float $value): string
+    {
+        return rtrim(rtrim(number_format($value, 1, ',', ' '), '0'), ',');
     }
 
     public function render(): View

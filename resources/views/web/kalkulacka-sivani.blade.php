@@ -1,4 +1,3 @@
-{{-- Stávající kalkulačka zakázkového šití — formulář beze změny. --}}
 <x-layouts.web
     title="Kalkulačka"
     description="Orientační kalkulačka ušití záclon, závěsů, polštářů, sedáků a římských rolet. Cena za ušití bez látky, s DPH."
@@ -11,5 +10,5 @@
         </div>
     </div>
 
-    @include('web.sections._calculator', ['asPage' => true])
+    @include('web.sections._calculator', ['asPage' => true, 'category' => \App\Enums\ProductCategory::Sewing])
 </x-layouts.web>

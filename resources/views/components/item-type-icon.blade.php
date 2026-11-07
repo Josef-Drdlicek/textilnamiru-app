@@ -42,5 +42,12 @@
             <path d="M14 36h20" />
             <circle cx="24" cy="41" r="1.5" fill="currentColor" stroke="none" />
             @break
+
+        @case(ItemType::StretchCeiling)
+            {{-- Vypínaný strop: napnutá plocha v perspektivě se světlem --}}
+            <path d="M6 14h36l-6 10H12z" />
+            <path d="M12 24v14M36 24v14" opacity="0.5" />
+            <circle cx="24" cy="19" r="1.5" fill="currentColor" stroke="none" />
+            @break
     @endswitch
 </svg>

@@ -8,6 +8,8 @@ use App\Domain\Pricing\Parameters\CushionParameters;
 use App\Domain\Pricing\Parameters\DrapeParameters;
 use App\Domain\Pricing\Parameters\ItemParameters;
 use App\Domain\Pricing\Parameters\PillowParameters;
+use App\Domain\Pricing\Parameters\StretchCeilingParameters;
+use App\Enums\CeilingSurface;
 use App\Enums\ItemType;
 use App\Enums\RightLeft;
 use App\Enums\ZipperSide;
@@ -106,6 +108,13 @@ final class PublicPresets
                 cellHeight: null,
                 cellHeightBottom: null,
             ),
+            ItemType::StretchCeiling => new StretchCeilingParameters(
+                width: $input['width'],
+                length: $input['height'],
+                surface: CeilingSurface::Matte,
+                ledLength: 0.0,
+                distance: 0.0,
+            ),
         };
     }
 
@@ -114,12 +123,50 @@ final class PublicPresets
      */
     public static function referenceParameters(ItemType $type): ItemParameters
     {
-        return self::estimatorParameters($type, match ($type) {
+        return self::estimatorParameters($type, self::referenceDimensions($type));
+    }
+
+    /**
+     * Rozměry referenční konfigurace — kalkulačka jimi předvyplňuje formulář.
+     *
+     * @return array{width: float, height: float}
+     */
+    public static function referenceDimensions(ItemType $type): array
+    {
+        return match ($type) {
             ItemType::Curtain => ['width' => 100.0, 'height' => 120.0],
             ItemType::Drape => ['width' => 140.0, 'height' => 250.0],
             ItemType::Pillow => ['width' => 40.0, 'height' => 40.0],
             ItemType::Cushion => ['width' => 40.0, 'height' => 40.0],
             ItemType::Blind => ['width' => 60.0, 'height' => 120.0],
-        });
+            ItemType::StretchCeiling => ['width' => 300.0, 'height' => 400.0],
+        };
+    }
+
+    /**
+     * Horní meze rozměrů ve veřejné kalkulačce [cm].
+     *
+     * @return array{width: int, height: int}
+     */
+    public static function maxDimensions(ItemType $type): array
+    {
+        return match ($type) {
+            ItemType::Curtain, ItemType::Drape => ['width' => 2000, 'height' => 500],
+            ItemType::Blind => ['width' => 300, 'height' => 300],
+            ItemType::Pillow, ItemType::Cushion => ['width' => 100, 'height' => 100],
+            ItemType::StretchCeiling => ['width' => 2000, 'height' => 2000],
+        };
+    }
+
+    /**
+     * Šíře role materiálu, se kterou kalkulačka počítá; null u výrobků bez role.
+     */
+    public static function materialWidth(ItemType $type): ?float
+    {
+        return match ($type) {
+            ItemType::Curtain => self::CURTAIN_MATERIAL_WIDTH,
+            ItemType::Drape => self::DRAPE_MATERIAL_WIDTH,
+            default => null,
+        };
     }
 }

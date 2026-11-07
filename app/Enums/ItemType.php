@@ -7,18 +7,21 @@ use App\Domain\Pricing\Calculators\CurtainPriceCalculator;
 use App\Domain\Pricing\Calculators\CushionPriceCalculator;
 use App\Domain\Pricing\Calculators\DrapePriceCalculator;
 use App\Domain\Pricing\Calculators\PillowPriceCalculator;
+use App\Domain\Pricing\Calculators\StretchCeilingPriceCalculator;
 use App\Domain\Pricing\Parameters\BlindParameters;
 use App\Domain\Pricing\Parameters\CurtainParameters;
 use App\Domain\Pricing\Parameters\CushionParameters;
 use App\Domain\Pricing\Parameters\DrapeParameters;
 use App\Domain\Pricing\Parameters\ItemParameters;
 use App\Domain\Pricing\Parameters\PillowParameters;
+use App\Domain\Pricing\Parameters\StretchCeilingParameters;
 use App\Domain\Pricing\PriceCalculator;
 use App\Domain\Schema\Renderers\BlindSchemaRenderer;
 use App\Domain\Schema\Renderers\CurtainSchemaRenderer;
 use App\Domain\Schema\Renderers\CushionSchemaRenderer;
 use App\Domain\Schema\Renderers\DrapeSchemaRenderer;
 use App\Domain\Schema\Renderers\PillowSchemaRenderer;
+use App\Domain\Schema\Renderers\StretchCeilingSchemaRenderer;
 use App\Domain\Schema\SchemaRenderer;
 use App\Livewire\Configurators\AbstractConfigurator;
 use App\Livewire\Configurators\BlindConfigurator;
@@ -26,6 +29,7 @@ use App\Livewire\Configurators\CurtainConfigurator;
 use App\Livewire\Configurators\CushionConfigurator;
 use App\Livewire\Configurators\DrapeConfigurator;
 use App\Livewire\Configurators\PillowConfigurator;
+use App\Livewire\Configurators\StretchCeilingConfigurator;
 
 enum ItemType: string
 {
@@ -34,6 +38,7 @@ enum ItemType: string
     case Pillow = 'pillow';
     case Cushion = 'cushion';
     case Blind = 'blind';
+    case StretchCeiling = 'stretch_ceiling';
 
     /**
      * @return class-string<PriceCalculator>
@@ -46,6 +51,7 @@ enum ItemType: string
             self::Pillow => PillowPriceCalculator::class,
             self::Cushion => CushionPriceCalculator::class,
             self::Blind => BlindPriceCalculator::class,
+            self::StretchCeiling => StretchCeilingPriceCalculator::class,
         };
     }
 
@@ -60,6 +66,7 @@ enum ItemType: string
             self::Pillow => PillowParameters::class,
             self::Cushion => CushionParameters::class,
             self::Blind => BlindParameters::class,
+            self::StretchCeiling => StretchCeilingParameters::class,
         };
     }
 
@@ -74,6 +81,7 @@ enum ItemType: string
             self::Pillow => PillowConfigurator::class,
             self::Cushion => CushionConfigurator::class,
             self::Blind => BlindConfigurator::class,
+            self::StretchCeiling => StretchCeilingConfigurator::class,
         };
     }
 
@@ -88,6 +96,15 @@ enum ItemType: string
             self::Pillow => PillowSchemaRenderer::class,
             self::Cushion => CushionSchemaRenderer::class,
             self::Blind => BlindSchemaRenderer::class,
+            self::StretchCeiling => StretchCeilingSchemaRenderer::class,
+        };
+    }
+
+    public function category(): ProductCategory
+    {
+        return match ($this) {
+            self::StretchCeiling => ProductCategory::Ceiling,
+            default => ProductCategory::Sewing,
         };
     }
 
@@ -99,6 +116,42 @@ enum ItemType: string
             self::Pillow => 'Polštář',
             self::Cushion => 'Sedák',
             self::Blind => 'Římská roleta',
+            self::StretchCeiling => 'Vypínaný strop',
+        };
+    }
+
+    /**
+     * Popisek druhého rozměru (u sedáku a stropu jde o délku, ne výšku).
+     */
+    public function heightLabel(): string
+    {
+        return match ($this) {
+            self::Cushion, self::StretchCeiling => 'Délka',
+            default => 'Výška',
+        };
+    }
+
+    public function materialLabel(): string
+    {
+        return match ($this) {
+            self::StretchCeiling => 'Fólie',
+            default => 'Materiál (látka)',
+        };
+    }
+
+    public function materialHint(): string
+    {
+        return match ($this) {
+            self::StretchCeiling => 'Typ a barva fólie.',
+            default => 'Název látky, kterou dodáte — dílna podle něj sčítá spotřebu.',
+        };
+    }
+
+    public function materialPlaceholder(): string
+    {
+        return match ($this) {
+            self::StretchCeiling => 'např. bílá matná',
+            default => 'např. voal bílý',
         };
     }
 }
