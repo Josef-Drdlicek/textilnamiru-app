@@ -33,7 +33,6 @@ it('shows catalog prices from the live price list', function () {
 it('renders the catalog even when the price list is empty', function () {
     \DB::table('pricing_variables')->delete();
     \DB::table('ribbons')->delete();
-    \DB::table('blind_price_bands')->delete();
     \Cache::flush();
 
     $this->get('/sortiment')

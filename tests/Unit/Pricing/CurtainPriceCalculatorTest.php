@@ -81,13 +81,18 @@ it('keeps decimal dimensions in the calculation', function () {
     expect($result->unitPrice)->toEqualWithDelta(682.07, 0.001);
 });
 
-it('does not change the price for kanyr or side selection', function () {
-    $base = priceCurtain();
-    $withProduction = priceCurtain([
-        'kanyr' => true, 'kanyr_height' => 30, 'right_left' => RightLeft::Mirror->value,
-    ]);
+// Kanýr: 2 m šířky × 0,3 m výšky × OBNITKOVANI 7 = 4,20
+it('adds the kanyr surcharge by kanyr area', function () {
+    expect(priceCurtain(['kanyr' => true, 'kanyr_height' => 30])->unitPrice - priceCurtain()->unitPrice)
+        ->toEqualWithDelta(4.20, 0.001);
+});
 
-    expect($withProduction->unitPrice)->toBe($base->unitPrice);
+it('ignores kanyr height when kanyr is not selected', function () {
+    expect(priceCurtain(['kanyr' => false, 'kanyr_height' => 30])->unitPrice)->toBe(priceCurtain()->unitPrice);
+});
+
+it('does not change the price for side selection', function () {
+    expect(priceCurtain(['right_left' => RightLeft::Mirror->value])->unitPrice)->toBe(priceCurtain()->unitPrice);
 });
 
 it('exposes a VAT price consistent with the original app rounding', function () {

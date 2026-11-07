@@ -5,14 +5,25 @@ namespace App\Livewire\Configurators;
 use App\Domain\Pricing\Parameters\CushionParameters;
 use App\Domain\Pricing\Parameters\ItemParameters;
 use App\Enums\ItemType;
+use App\Enums\ZipperSide;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
-/**
- * Sedák = polštář s hloubkou navíc; hloubka do ceny nevstupuje (zadání §7.4).
- */
-class CushionConfigurator extends PillowConfigurator
+class CushionConfigurator extends AbstractConfigurator
 {
+    public ?float $width = null;
+
+    public ?float $height = null;
+
     public ?float $depth = null;
+
+    public bool $foam = true;
+
+    public bool $felt = false;
+
+    public bool $ties = false;
+
+    public string $zipper = ZipperSide::None->value;
 
     public function itemType(): ItemType
     {
@@ -22,16 +33,23 @@ class CushionConfigurator extends PillowConfigurator
     protected function typeRules(): array
     {
         return [
-            ...parent::typeRules(),
-            'depth' => ['required', 'numeric', 'min:1', 'max:300'],
+            'width' => ['required', 'numeric', 'min:10', 'max:200'],
+            'height' => ['required', 'numeric', 'min:10', 'max:200'],
+            'depth' => ['required', 'numeric', 'min:1', 'max:50'],
+            'foam' => ['boolean'],
+            'felt' => ['boolean'],
+            'ties' => ['boolean'],
+            'zipper' => ['required', Rule::enum(ZipperSide::class)],
         ];
     }
 
     protected function typeValidationAttributes(): array
     {
         return [
-            ...parent::typeValidationAttributes(),
-            'depth' => 'hloubka',
+            'width' => 'šířka',
+            'height' => 'délka',
+            'depth' => 'tloušťka',
+            'zipper' => 'zip',
         ];
     }
 
@@ -41,16 +59,24 @@ class CushionConfigurator extends PillowConfigurator
             'width' => (float) $this->width,
             'height' => (float) $this->height,
             'depth' => (float) $this->depth,
-            'stuffing' => $this->stuffing,
+            'foam' => $this->foam,
+            'felt' => $this->felt,
+            'ties' => $this->ties,
             'zipper' => $this->zipper,
         ]);
     }
 
     protected function fillFromParameters(ItemParameters $parameters): void
     {
-        parent::fillFromParameters($parameters);
+        $data = $parameters->toArray();
 
-        $this->depth = $parameters->toArray()['depth'];
+        $this->width = $data['width'];
+        $this->height = $data['height'];
+        $this->depth = $data['depth'];
+        $this->foam = $data['foam'];
+        $this->felt = $data['felt'];
+        $this->ties = $data['ties'];
+        $this->zipper = $data['zipper'];
     }
 
     public function render(): View

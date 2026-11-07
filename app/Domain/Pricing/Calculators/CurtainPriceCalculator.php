@@ -2,6 +2,7 @@
 
 namespace App\Domain\Pricing\Calculators;
 
+use App\Domain\Pricing\Calculators\Concerns\AddsKanyrLine;
 use App\Domain\Pricing\Parameters\CurtainParameters;
 use App\Domain\Pricing\Parameters\ItemParameters;
 use App\Domain\Pricing\PriceCalculator;
@@ -11,12 +12,14 @@ use App\Domain\Pricing\PriceResult;
 use InvalidArgumentException;
 
 /**
- * Záclona — vzorec dle zadání §7.1.
+ * Záclona — vzorec dle zadání §7.1 + příplatek za kanýr.
  *
- * `kanyr`, `kanyr_height` a `right_left` cenu neovlivňují (jen výroba/nákres).
+ * `right_left` cenu neovlivňuje (jen výroba/nákres).
  */
 class CurtainPriceCalculator implements PriceCalculator
 {
+    use AddsKanyrLine;
+
     public function calculate(ItemParameters $parameters, PriceList $prices): PriceResult
     {
         if (! $parameters instanceof CurtainParameters) {
@@ -51,6 +54,10 @@ class CurtainPriceCalculator implements PriceCalculator
 
         if ($parameters->snails) {
             $lines[] = new PriceLine('Navlečení háčků', ceil($consumed / 0.08) * $prices->var('SNECEK'));
+        }
+
+        if ($kanyr = $this->kanyrLine($parameters->kanyr, $parameters->kanyrHeight, $parameters->width, $prices)) {
+            $lines[] = $kanyr;
         }
 
         return PriceResult::fromLines($lines, consumedMeters: $consumed);

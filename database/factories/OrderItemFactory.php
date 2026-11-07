@@ -28,6 +28,7 @@ class OrderItemFactory extends Factory
                 width: 50,
                 height: 50,
                 stuffing: false,
+                complex: false,
                 zipper: ZipperSide::Short,
             ),
             'unit_price' => 110.0,

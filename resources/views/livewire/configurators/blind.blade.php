@@ -8,14 +8,16 @@
             <x-form.field name="height" label="Výška" hint="10–300 cm">
                 <x-form.input name="height" type="number" min="10" max="300" step="0.1" wire:model.live.debounce.400ms="height" unit="cm" />
             </x-form.field>
+
+            <x-form.field name="tunnels" label="Počet tunýlků">
+                <x-form.input name="tunnels" type="number" min="1" max="30" step="1" wire:model.live.debounce.400ms="tunnels" />
+            </x-form.field>
         </div>
 
         <fieldset>
             <legend class="text-sm font-medium text-stone-500">Provedení</legend>
             <div class="mt-2 grid gap-2 sm:grid-cols-2">
                 <x-form.checkbox name="mechanism" label="Vlastní mechanizmus" hint="Dodáte svůj mechanizmus rolety." wire:model.live="mechanism" />
-                <x-form.checkbox name="tunnels" label="Odšité tunýlky" wire:model.live="tunnels" />
-                <x-form.checkbox name="finishing" label="Kompletace" hint="Sestavení rolety včetně mechaniky." wire:model.live="finishing" />
             </div>
         </fieldset>
 

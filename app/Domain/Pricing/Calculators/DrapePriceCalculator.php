@@ -2,6 +2,7 @@
 
 namespace App\Domain\Pricing\Calculators;
 
+use App\Domain\Pricing\Calculators\Concerns\AddsKanyrLine;
 use App\Domain\Pricing\Parameters\DrapeParameters;
 use App\Domain\Pricing\Parameters\ItemParameters;
 use App\Domain\Pricing\PriceCalculator;
@@ -12,13 +13,15 @@ use InvalidArgumentException;
 
 /**
  * Závěs — vzorec dle zadání §7.2. Oproti zácloně navíc ušití spodní záložky,
- * těžší rohová olůvka (50g) a sešití dílů u úzkého materiálu.
+ * těžší rohová olůvka (50g) a sešití dílů u úzkého materiálu. Příplatky
+ * za zalomení a kanýr doplnil majitel dílny.
  *
- * `raport`, `folding`, `kanyr`, `right_left` a `bottom` cenu neovlivňují
- * (jen výroba/nákres) — potvrzení správnosti u dílny viz zadání §13.2.
+ * `raport`, `right_left` a `bottom` cenu neovlivňují (jen výroba/nákres).
  */
 class DrapePriceCalculator implements PriceCalculator
 {
+    use AddsKanyrLine;
+
     public function calculate(ItemParameters $parameters, PriceList $prices): PriceResult
     {
         if (! $parameters instanceof DrapeParameters) {
@@ -51,9 +54,21 @@ class DrapePriceCalculator implements PriceCalculator
         }
 
         // Sešití více pruhů, když je dodaný materiál užší než výška závěsu + 10 cm.
-        if ($parameters->materialWidth < $parameters->height + 10) {
+        // Nulová šířka = materiál nezadán, sešití se neúčtuje.
+        if ($parameters->materialWidth > 0 && $parameters->materialWidth < $parameters->height + 10) {
             $joins = floor(($consumed * 100) / ($parameters->materialWidth + 25));
             $lines[] = new PriceLine('Sešití dílů', $joins * $heightMeters * $prices->var('SESITI_DILU'));
+        }
+
+        if ($parameters->folding > 0) {
+            $lines[] = new PriceLine(
+                'Zalomení',
+                $parameters->folding * ($parameters->width / 100) * $prices->var('NADSITI_ZACLONA'),
+            );
+        }
+
+        if ($kanyr = $this->kanyrLine($parameters->kanyr, $parameters->kanyrHeight, $parameters->width, $prices)) {
+            $lines[] = $kanyr;
         }
 
         return PriceResult::fromLines($lines, consumedMeters: $consumed);

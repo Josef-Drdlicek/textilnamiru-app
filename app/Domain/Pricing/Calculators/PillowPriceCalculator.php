@@ -11,7 +11,8 @@ use App\Domain\Pricing\PriceResult;
 use InvalidArgumentException;
 
 /**
- * Polštář — vzorec dle zadání §7.3. `zipper` cenu neovlivňuje.
+ * Polštář — vzorec dle zadání §7.3, doplněný majitelem dílny o ušití
+ * (běžné / složitý tvar) a příplatek za zip.
  */
 class PillowPriceCalculator implements PriceCalculator
 {
@@ -21,28 +22,18 @@ class PillowPriceCalculator implements PriceCalculator
             throw new InvalidArgumentException('Kalkulátor polštáře vyžaduje PillowParameters.');
         }
 
-        return PriceResult::fromLines(
-            $this->buildLines($parameters->width, $parameters->height, $parameters->stuffing, $prices),
-        );
-    }
-
-    /**
-     * Sdíleno se sedákem ({@see CushionPriceCalculator}), který se v původní
-     * aplikaci počítá identicky jako polštář.
-     *
-     * @return list<PriceLine>
-     */
-    public function buildLines(float $width, float $height, bool $stuffing, PriceList $prices): array
-    {
         // Součet rozměrů zaokrouhlený po 10 cm nahoru.
-        $size = ceil($width / 10) + ceil($height / 10);
+        $size = ceil($parameters->width / 10) + ceil($parameters->height / 10);
 
         $lines = [
             new PriceLine('Základ ceny', $prices->var('POLSTAR_ZAKLAD')),
             new PriceLine('Cena dle rozměru', $size * $prices->var('POLSTAR_10CM')),
+            $parameters->complex
+                ? new PriceLine('Ušití polštáře (složitý tvar)', $prices->var('USITI_POLSTAR_C'))
+                : new PriceLine('Ušití polštáře', $prices->var('USITI_POLSTAR')),
         ];
 
-        if ($stuffing) {
+        if ($parameters->stuffing) {
             $lines[] = new PriceLine('Výplň — základ', $prices->var('POLSTAR_VYPLN_MIN_CENA'));
 
             $minSize = $prices->var('POLSTAR_VYPLN_MIN');
@@ -55,6 +46,10 @@ class PillowPriceCalculator implements PriceCalculator
             }
         }
 
-        return $lines;
+        if ($parameters->zipper->hasZipper()) {
+            $lines[] = new PriceLine('Zip', $prices->var('USITI_ZALOZKA'));
+        }
+
+        return PriceResult::fromLines($lines);
     }
 }

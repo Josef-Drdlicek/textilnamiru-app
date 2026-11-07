@@ -79,8 +79,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         // Ceník
         Route::get('/pricing', [Admin\PricingController::class, 'index'])->name('pricing.index');
         Route::put('/pricing/variables', [Admin\PricingVariableController::class, 'update'])->name('pricing.variables.update');
+        Route::post('/pricing/variables', [Admin\PricingVariableController::class, 'store'])->name('pricing.variables.store');
+        Route::delete('/pricing/variables/{variable}', [Admin\PricingVariableController::class, 'destroy'])->name('pricing.variables.destroy');
         Route::put('/pricing/ribbons/{ribbon}', [Admin\RibbonController::class, 'update'])->name('pricing.ribbons.update');
-        Route::put('/pricing/blind-prices', [Admin\BlindPriceController::class, 'update'])->name('pricing.blind-prices.update');
 
         // Uživatelé
         Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');

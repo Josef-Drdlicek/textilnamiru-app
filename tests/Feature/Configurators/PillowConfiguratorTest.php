@@ -20,12 +20,12 @@ it('recalculates the price live on the server', function () {
     $order = Order::factory()->create();
 
     pillowComponent($order)
-        ->assertSet('unitPrice', 100.0)
-        ->assertSet('unitPriceVat', 121.0)
+        ->assertSet('unitPrice', 193.0)
+        ->assertSet('unitPriceVat', 233.53)
         ->set('stuffing', true)
-        ->assertSet('unitPrice', 263.0)
+        ->assertSet('unitPrice', 356.0)
         ->set('count', 3)
-        ->assertSet('totalPrice', 789.0);
+        ->assertSet('totalPrice', 1068.0);
 });
 
 it('hides the price while inputs are invalid', function () {
@@ -52,8 +52,8 @@ it('saves the item with a server-calculated price', function () {
         ->type->toBe(ItemType::Pillow)
         ->material->toBe('bavlna')
         ->count->toBe(2)
-        ->unit_price->toBe(100.0)
-        ->total_price->toBe(200.0)
+        ->unit_price->toBe(193.0)
+        ->total_price->toBe(386.0)
         ->consumed_meters->toBe(0.0)
         ->and($item->parameters->width)->toBe(45.0);
 });
@@ -67,7 +67,7 @@ it('ignores a tampered price — the stored price always comes from the calculat
         ->call('save')
         ->assertHasNoErrors();
 
-    expect($order->items()->sole()->unit_price)->toBe(100.0);
+    expect($order->items()->sole()->unit_price)->toBe(193.0);
 });
 
 it('validates dimensions within 10–100 cm', function () {
@@ -105,7 +105,7 @@ it('loads a stored item for editing and reprices it on save', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    expect($item->refresh()->unit_price)->toBe(263.0);
+    expect($item->refresh()->unit_price)->toBe(356.0);
 });
 
 it('refuses configuration of a foreign order (IDOR)', function () {

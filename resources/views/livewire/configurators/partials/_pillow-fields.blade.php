@@ -7,21 +7,13 @@
         <x-form.input name="height" type="number" min="10" max="100" step="0.1" wire:model.live.debounce.400ms="height" unit="cm" />
     </x-form.field>
 
-    @if ($showDepth ?? false)
-        <x-form.field name="depth" label="Hloubka">
-            <x-form.input name="depth" type="number" min="1" max="300" step="0.1" wire:model.live.debounce.400ms="depth" unit="cm" />
-        </x-form.field>
-    @endif
-
-    <x-form.field name="zipper" label="Umístění zipu">
-        <x-form.select name="zipper" wire:model.live="zipper">
-            @foreach (\App\Enums\ZipperSide::cases() as $side)
-                <option value="{{ $side->value }}">{{ $side->label() }}</option>
-            @endforeach
-        </x-form.select>
-    </x-form.field>
-
-    <div class="{{ ($showDepth ?? false) ? '' : 'sm:col-span-2' }}">
-        <x-form.checkbox name="stuffing" label="Včetně výplně" hint="Duté vlákno — příplatek dle rozměru." wire:model.live="stuffing" />
-    </div>
+    @include('livewire.configurators.partials._zipper-field')
 </div>
+
+<fieldset>
+    <legend class="text-sm font-medium text-stone-500">Provedení</legend>
+    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+        <x-form.checkbox name="stuffing" label="Včetně výplně" hint="Duté vlákno — příplatek dle rozměru." wire:model.live="stuffing" />
+        <x-form.checkbox name="complex" label="Složitý tvar" hint="Náročnější ušití." wire:model.live="complex" />
+    </div>
+</fieldset>

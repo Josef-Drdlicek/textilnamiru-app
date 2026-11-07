@@ -90,19 +90,10 @@
                     </div>
 
                     <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
-                        @foreach ($configuration['parameters'] ?? [] as $key => $value)
-                            @continue($value === null)
+                        @foreach (app(\App\Support\ItemParameterPresenter::class)->rows($configuration['parameters'] ?? []) as $row)
                             <div class="flex justify-between gap-3 border-b border-stone-100 py-1">
-                                <dt class="text-stone-500">{{ __('parameters.'.$key) }}</dt>
-                                <dd class="font-medium tabular-nums">
-                                    @if (is_bool($value))
-                                        {{ $value ? 'ano' : 'ne' }}
-                                    @elseif (is_string($value) && __('parameters.values.'.$value) !== 'parameters.values.'.$value)
-                                        {{ __('parameters.values.'.$value) }}
-                                    @else
-                                        {{ $value }}
-                                    @endif
-                                </dd>
+                                <dt class="text-stone-500">{{ $row['label'] }}</dt>
+                                <dd class="font-medium tabular-nums">{{ $row['value'] }}</dd>
                             </div>
                         @endforeach
                     </dl>

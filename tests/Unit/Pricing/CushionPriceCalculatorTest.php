@@ -1,9 +1,7 @@
 <?php
 
 use App\Domain\Pricing\Calculators\CushionPriceCalculator;
-use App\Domain\Pricing\Calculators\PillowPriceCalculator;
 use App\Domain\Pricing\Parameters\CushionParameters;
-use App\Domain\Pricing\Parameters\PillowParameters;
 use App\Domain\Pricing\PriceResult;
 use App\Enums\ZipperSide;
 use Tests\Support\PriceLists;
@@ -11,41 +9,40 @@ use Tests\Support\PriceLists;
 function priceCushion(array $overrides = []): PriceResult
 {
     $parameters = CushionParameters::fromArray($overrides + [
-        'width' => 45,
-        'height' => 38,
-        'depth' => 60,
-        'stuffing' => false,
-        'zipper' => ZipperSide::Short->value,
+        'width' => 40,
+        'height' => 40,
+        'depth' => 8,
+        'foam' => false,
+        'felt' => false,
+        'ties' => false,
+        'zipper' => ZipperSide::None->value,
     ]);
 
-    return (new CushionPriceCalculator(new PillowPriceCalculator))->calculate($parameters, PriceLists::standard());
+    return (new CushionPriceCalculator)->calculate($parameters, PriceLists::standard());
 }
 
-/**
- * GOLDEN TEST ZNÁMÉ PODIVNOSTI (zadání §7.4 / §13.1): sedák se v původní
- * aplikaci cení identicky jako polštář — hloubka i sedákové ceníkové položky
- * se ignorují. Tento test to vědomě zamyká; až dílna dodá správný vzorec,
- * test MÁ spadnout a bude nahrazen.
- */
-it('prices a cushion exactly like a pillow of the same width and height', function (float $width, float $height, bool $stuffing) {
-    $cushion = priceCushion(['width' => $width, 'height' => $height, 'stuffing' => $stuffing, 'depth' => 75]);
+// ušití 105 + 0,16 m² × příprava 33
+it('prices sewing and preparation by area', function () {
+    expect(priceCushion()->unitPrice)->toEqualWithDelta(110.28, 0.001);
+});
 
-    $pillow = (new PillowPriceCalculator)->calculate(
-        PillowParameters::fromArray([
-            'width' => $width, 'height' => $height, 'stuffing' => $stuffing, 'zipper' => ZipperSide::Short->value,
-        ]),
-        PriceLists::standard(),
-    );
+// 0,16 m² × 4 vrstvy (8 cm / 2 cm) × 225 = 144
+it('adds one foam layer per started 2 cm of depth', function () {
+    expect(priceCushion(['foam' => true])->unitPrice)->toEqualWithDelta(254.28, 0.001)
+        ->and(priceCushion(['foam' => true, 'depth' => 7])->unitPrice)->toEqualWithDelta(254.28, 0.001)
+        ->and(priceCushion(['foam' => true, 'depth' => 1])->unitPrice)->toEqualWithDelta(146.28, 0.001);
+});
 
-    expect($cushion->unitPrice)->toBe($pillow->unitPrice);
-})->with([
-    [45.0, 38.0, false],
-    [45.0, 38.0, true],
-    [100.0, 100.0, true],
-    [10.0, 10.0, false],
-]);
+// Majitelův vzorec beze změny: 1 600 cm² / 0,25 = 6 400 jednotek / 100 × 38 = 2 432
+it('prices felt per 100 units of 0.25 cm2 exactly as the owner defined it', function () {
+    expect(priceCushion(['felt' => true])->unitPrice)->toEqualWithDelta(2542.28, 0.001)
+        ->and(priceCushion(['width' => 120, 'height' => 80, 'felt' => true])->unitPrice)->toEqualWithDelta(14728.68, 0.001);
+});
 
-it('ignores depth entirely', function () {
-    expect(priceCushion(['depth' => 10])->unitPrice)
-        ->toBe(priceCushion(['depth' => 200])->unitPrice);
+it('adds ties once per piece', function () {
+    expect(priceCushion(['ties' => true])->unitPrice)->toEqualWithDelta(230.28, 0.001);
+});
+
+it('does not change the price for the zipper side', function () {
+    expect(priceCushion(['zipper' => ZipperSide::Long->value])->unitPrice)->toBe(priceCushion()->unitPrice);
 });

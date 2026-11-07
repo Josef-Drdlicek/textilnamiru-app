@@ -6,16 +6,17 @@ use App\Models\PricingVariable;
 use Illuminate\Database\Seeder;
 
 /**
- * Ceník úkonů a materiálových položek — hodnoty 1:1 dle zadání §8.
+ * Systémové položky ceníku — výchozí hodnoty dle zadání §8, doplněné
+ * majitelem dílny o vypínaný podhled, LED pásek a dopravu.
  *
- * Pozn.: část položek se v pozorovaných vzorcích nepoužívá (OBNITKOVANI,
- * SIKMINA, STUHA, NADSITI_ZACLONA, USITI_POLSTAR…); přenášíme je beze změny,
- * dokud dílna nerozhodne o jejich zapojení či odstranění (zadání §13.5).
+ * Idempotentní a šetrný k úpravám dílny: chybějící položky založí
+ * s výchozí cenou, u existujících mění jen název, jednotku a příznak
+ * systémové položky, nikdy hodnotu.
  */
 class PricingVariableSeeder extends Seeder
 {
     private const array VARIABLES = [
-        ['code' => 'VAT', 'name' => 'DPH (%)', 'value' => 21],
+        ['code' => 'VAT', 'name' => 'DPH', 'value' => 21, 'unit' => '%'],
         ['code' => 'PRIPRAVA', 'name' => 'Příprava', 'value' => 33],
         ['code' => 'OBNITKOVANI', 'name' => 'Obnitkování vrchu', 'value' => 7],
         ['code' => 'SIKMINA', 'name' => 'Stříhání šikmina, oblouk', 'value' => 50],
@@ -48,15 +49,27 @@ class PricingVariableSeeder extends Seeder
         ['code' => 'POLSTAR_VYPLN_MIN', 'name' => 'Polštář výplň minimum rozměr', 'value' => 80],
         ['code' => 'POLSTAR_VYPLN_MIN_CENA', 'name' => 'Polštář výplň minimum cena', 'value' => 130],
         ['code' => 'TUNYLKY_ROLETA', 'name' => 'Odšité tunýlky římské rolety', 'value' => 200],
+        ['code' => 'VYPINANY_PODHLED', 'name' => 'Vypínaný podhled', 'value' => 1500, 'unit' => 'm²'],
+        ['code' => 'LED_PASEK', 'name' => 'LED pásek', 'value' => 400, 'unit' => 'm'],
+        ['code' => 'DOPRAVA', 'name' => 'Doprava', 'value' => 12, 'unit' => 'km'],
     ];
 
     public function run(): void
     {
-        foreach (self::VARIABLES as $variable) {
-            PricingVariable::updateOrCreate(
-                ['code' => $variable['code']],
-                ['name' => $variable['name'], 'value' => $variable['value']],
-            );
+        foreach (self::VARIABLES as $default) {
+            $variable = PricingVariable::firstOrNew(['code' => $default['code']]);
+
+            $variable->fill([
+                'name' => $default['name'],
+                'unit' => $default['unit'] ?? null,
+                'is_system' => true,
+            ]);
+
+            if (! $variable->exists) {
+                $variable->value = $default['value'];
+            }
+
+            $variable->save();
         }
     }
 }

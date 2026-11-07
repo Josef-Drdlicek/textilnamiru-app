@@ -13,7 +13,7 @@ final readonly class DrapeParameters implements ItemParameters
         public string $ribbonCode,    // kód řasící stuhy (viz tabulka ribbons)
         public float $ratio,          // poměr řasení (u vlastní stuhy zadaný ručně)
         public ?float $raport,        // raport délky [cm]; do ceny nevstupuje (viz zadání §7.2)
-        public ?float $folding,       // spodní záložka [cm]; do ceny nevstupuje (viz zadání §7.2)
+        public ?float $folding,       // zalomení; násobí sazbu NADSITI_ZACLONA za metr šířky
         public bool $kanyr,
         public ?float $kanyrHeight,   // výška kanýru [cm]
         public RightLeft $rightLeft,

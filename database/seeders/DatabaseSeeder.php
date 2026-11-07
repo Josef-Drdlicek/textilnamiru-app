@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PricingVariableSeeder::class,
             RibbonSeeder::class,
-            BlindPriceBandSeeder::class,
         ]);
     }
 }

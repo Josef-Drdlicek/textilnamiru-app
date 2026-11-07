@@ -7,8 +7,8 @@
                 <x-form.input name="raport" type="number" min="0" max="500" step="0.1" wire:model.live.debounce.400ms="raport" unit="cm" />
             </x-form.field>
 
-            <x-form.field name="folding" label="Spodní záložka" hint="Nepovinné.">
-                <x-form.input name="folding" type="number" min="0" max="100" step="0.1" wire:model.live.debounce.400ms="folding" unit="cm" />
+            <x-form.field name="folding" label="Zalomení" hint="Nepovinné.">
+                <x-form.input name="folding" type="number" min="0" max="100" step="0.1" wire:model.live.debounce.400ms="folding" />
             </x-form.field>
         </div>
 

@@ -46,7 +46,7 @@ it('submits the order: freezes totals, VAT and records the audit trail', functio
 
     expect($order)
         ->status->toBe(OrderStatus::New)
-        ->total_price->toBe(200.0)
+        ->total_price->toBe(386.0)
         ->vat_rate->toBe(21.0)
         ->materials_note->toBe('bavlna režná – 3 m')
         ->submitted_at->not->toBeNull();
@@ -71,8 +71,8 @@ it('keeps frozen prices when the price list changes later', function () {
 
     $order->refresh();
 
-    expect($order->total_price)->toBe(200.0)
-        ->and($order->items()->sole()->unit_price)->toBe(100.0);
+    expect($order->total_price)->toBe(386.0)
+        ->and($order->items()->sole()->unit_price)->toBe(193.0);
 });
 
 it('requires a future deadline', function () {

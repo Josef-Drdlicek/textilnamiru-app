@@ -35,7 +35,7 @@ class DrapeConfigurator extends CurtainConfigurator
         return [
             ...parent::typeValidationAttributes(),
             'raport' => 'raport délky',
-            'folding' => 'spodní záložka',
+            'folding' => 'zalomení',
         ];
     }
 

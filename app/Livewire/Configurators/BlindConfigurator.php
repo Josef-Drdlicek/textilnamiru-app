@@ -13,11 +13,9 @@ class BlindConfigurator extends AbstractConfigurator
 
     public ?float $height = null;
 
+    public ?int $tunnels = null;
+
     public bool $mechanism = false;
-
-    public bool $tunnels = false;
-
-    public bool $finishing = false;
 
     public ?int $cells = null;
 
@@ -37,9 +35,8 @@ class BlindConfigurator extends AbstractConfigurator
         return [
             'width' => ['required', 'numeric', 'min:10', 'max:300'],
             'height' => ['required', 'numeric', 'min:10', 'max:300'],
+            'tunnels' => ['required', 'integer', 'min:1', 'max:30'],
             'mechanism' => ['boolean'],
-            'tunnels' => ['boolean'],
-            'finishing' => ['boolean'],
             'cells' => ['nullable', 'integer', 'min:1', 'max:12'],
             'cellHeightTop' => ['nullable', 'numeric', 'min:1', 'max:300'],
             'cellHeight' => ['nullable', 'numeric', 'min:1', 'max:300'],
@@ -52,6 +49,7 @@ class BlindConfigurator extends AbstractConfigurator
         return [
             'width' => 'šířka',
             'height' => 'výška',
+            'tunnels' => 'počet tunýlků',
             'cells' => 'počet polí',
             'cellHeightTop' => 'výška horního pole',
             'cellHeight' => 'výška pole',
@@ -64,9 +62,8 @@ class BlindConfigurator extends AbstractConfigurator
         return BlindParameters::fromArray([
             'width' => (float) $this->width,
             'height' => (float) $this->height,
+            'tunnels' => (int) $this->tunnels,
             'mechanism' => $this->mechanism,
-            'tunnels' => $this->tunnels,
-            'finishing' => $this->finishing,
             'cells' => $this->cells,
             'cell_height_top' => $this->cellHeightTop,
             'cell_height' => $this->cellHeight,
@@ -80,9 +77,8 @@ class BlindConfigurator extends AbstractConfigurator
 
         $this->width = $data['width'];
         $this->height = $data['height'];
-        $this->mechanism = $data['mechanism'];
         $this->tunnels = $data['tunnels'];
-        $this->finishing = $data['finishing'];
+        $this->mechanism = $data['mechanism'];
         $this->cells = $data['cells'];
         $this->cellHeightTop = $data['cell_height_top'];
         $this->cellHeight = $data['cell_height'];

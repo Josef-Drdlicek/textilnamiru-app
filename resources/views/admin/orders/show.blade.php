@@ -110,23 +110,10 @@
                                     <dt class="inline font-medium text-stone-500">Materiál:</dt>
                                     <dd class="inline">{{ $item->material }}</dd>
                                 </div>
-                                @foreach ($item->parameters->toArray() as $key => $value)
-                                    @continue($value === null || $value === false)
+                                @foreach (app(\App\Support\ItemParameterPresenter::class)->rows($item->parameters->toArray()) as $row)
                                     <div>
-                                        <dt class="inline font-medium text-stone-500">{{ __('parameters.'.$key) }}:</dt>
-                                        <dd class="inline">
-                                            @if ($value === true)
-                                                ano
-                                            @elseif (in_array($key, ['right_left', 'zipper'], true))
-                                                {{ __('parameters.values.'.$value) }}
-                                            @elseif ($key === 'ribbon_code')
-                                                {{ \App\Models\Ribbon::query()->where('code', $value)->value('name') ?? $value }}
-                                            @elseif (is_numeric($value) && ! in_array($key, ['ratio', 'cells'], true))
-                                                {{ number_format((float) $value, str_contains((string) $value, '.') ? 1 : 0, ',', ' ') }} cm
-                                            @else
-                                                {{ $value }}
-                                            @endif
-                                        </dd>
+                                        <dt class="inline font-medium text-stone-500">{{ $row['label'] }}:</dt>
+                                        <dd class="inline">{{ $row['value'] }}</dd>
                                     </div>
                                 @endforeach
                             </dl>

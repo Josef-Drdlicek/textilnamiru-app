@@ -53,9 +53,21 @@ it('uses the heavier 50g corner weights (2 × 67 = 134)', function () {
     expect(priceDrape(['corners' => true])->unitPrice)->toEqualWithDelta(1571.60, 0.001);
 });
 
-it('does not change the price for raport, folding or kanyr', function () {
-    $base = priceDrape();
-    $withProduction = priceDrape(['raport' => 64, 'folding' => 15, 'kanyr' => true, 'kanyr_height' => 25]);
+// Zalomení: 15 × 2 m šířky × NADSITI_ZACLONA 45 = 1 350
+it('adds the folding surcharge per meter of width', function () {
+    expect(priceDrape(['folding' => 15])->unitPrice - priceDrape()->unitPrice)->toEqualWithDelta(1350.0, 0.001);
+});
 
-    expect($withProduction->unitPrice)->toBe($base->unitPrice);
+// Kanýr: 2 m × 0,25 m × OBNITKOVANI 7 = 3,50
+it('adds the kanyr surcharge by kanyr area', function () {
+    expect(priceDrape(['kanyr' => true, 'kanyr_height' => 25])->unitPrice - priceDrape()->unitPrice)
+        ->toEqualWithDelta(3.50, 0.001);
+});
+
+it('skips seam joins when material width is not given', function () {
+    expect(priceDrape(['material_width' => 0])->unitPrice)->toEqualWithDelta(1202.60, 0.001);
+});
+
+it('does not change the price for raport', function () {
+    expect(priceDrape(['raport' => 64])->unitPrice)->toBe(priceDrape()->unitPrice);
 });

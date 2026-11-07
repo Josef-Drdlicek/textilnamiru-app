@@ -5,7 +5,7 @@ namespace Tests\Support;
 use App\Domain\Pricing\PriceList;
 
 /**
- * In-memory ceník s hodnotami přesně dle zadání §8 — golden testy kalkulátorů
+ * In-memory ceník s hodnotami dle zadání §8 a ceníku majitele dílny — golden testy kalkulátorů
  * počítají proti němu, bez databáze.
  */
 final class PriceLists
@@ -47,6 +47,9 @@ final class PriceLists
                 'POLSTAR_VYPLN_MIN' => 80,
                 'POLSTAR_VYPLN_MIN_CENA' => 130,
                 'TUNYLKY_ROLETA' => 200,
+                'VYPINANY_PODHLED' => 1500,
+                'LED_PASEK' => 400,
+                'DOPRAVA' => 12,
             ],
             ribbonPrices: [
                 'custom' => 0,
@@ -58,39 +61,7 @@ final class PriceLists
                 'double' => 52,
                 'triple' => 52,
             ],
-            blindBands: self::blindBands(),
         );
     }
 
-    /**
-     * @return list<array{max_width: int, max_height: int, price: float}>
-     */
-    private static function blindBands(): array
-    {
-        $widths = [80, 120, 160, 200, 250, 300];
-        $heights = [100, 150, 200, 250, 300];
-        $prices = [
-            [552, 672, 756, 852, 972, 1068],
-            [672, 756, 852, 972, 1068, 1188],
-            [756, 852, 972, 1068, 1188, 1308],
-            [852, 972, 1068, 1188, 1308, 1428],
-            [948, 1068, 1188, 1308, 1428, 1658],
-        ];
-
-        $bands = [];
-
-        foreach ($heights as $row => $maxHeight) {
-            foreach ($widths as $column => $maxWidth) {
-                $bands[] = [
-                    'max_width' => $maxWidth,
-                    'max_height' => $maxHeight,
-                    'price' => (float) $prices[$row][$column],
-                ];
-            }
-        }
-
-        usort($bands, fn (array $a, array $b) => [$a['max_width'], $a['max_height']] <=> [$b['max_width'], $b['max_height']]);
-
-        return $bands;
-    }
 }

@@ -7,10 +7,12 @@ use App\Enums\ZipperSide;
 final readonly class CushionParameters implements ItemParameters
 {
     public function __construct(
-        public float $width,      // [cm], 10–100
-        public float $height,     // [cm], 10–100
-        public float $depth,      // hloubka [cm]; do ceny nevstupuje (viz zadání §7.4)
-        public bool $stuffing,    // výplň
+        public float $width,       // [cm], 10–200
+        public float $height,      // délka [cm], 10–200
+        public float $depth,       // tloušťka [cm]; určuje počet vrstev molitanu
+        public bool $foam,         // molitan
+        public bool $felt,         // rouno
+        public bool $ties,         // úvazy
         public ZipperSide $zipper, // do ceny nevstupuje
     ) {}
 
@@ -20,7 +22,9 @@ final readonly class CushionParameters implements ItemParameters
             width: (float) $data['width'],
             height: (float) $data['height'],
             depth: (float) $data['depth'],
-            stuffing: (bool) $data['stuffing'],
+            foam: (bool) ($data['foam'] ?? false),
+            felt: (bool) ($data['felt'] ?? false),
+            ties: (bool) ($data['ties'] ?? false),
             zipper: ZipperSide::from($data['zipper']),
         );
     }
@@ -31,7 +35,9 @@ final readonly class CushionParameters implements ItemParameters
             'width' => $this->width,
             'height' => $this->height,
             'depth' => $this->depth,
-            'stuffing' => $this->stuffing,
+            'foam' => $this->foam,
+            'felt' => $this->felt,
+            'ties' => $this->ties,
             'zipper' => $this->zipper->value,
         ];
     }

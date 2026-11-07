@@ -11,8 +11,10 @@ use App\Domain\Pricing\PriceResult;
 use InvalidArgumentException;
 
 /**
- * Římská roleta — pevná cenová tabulka podle pásem šířka × výška (zadání §7.5)
- * + příplatky. `mechanism`, `cells` a výšky polí cenu neovlivňují.
+ * Římská roleta — model ceny stanovil majitel dílny: kompletace + tunýlky
+ * za metr šířky + příprava za metr výšky + ušití každého tunýlku.
+ * Nahrazuje původní tabulku pásem šířka × výška (zadání §7.5).
+ * `mechanism`, `cells` a výšky polí cenu neovlivňují.
  */
 class BlindPriceCalculator implements PriceCalculator
 {
@@ -22,21 +24,11 @@ class BlindPriceCalculator implements PriceCalculator
             throw new InvalidArgumentException('Kalkulátor rolety vyžaduje BlindParameters.');
         }
 
-        $lines = [
-            new PriceLine(
-                'Roleta dle rozměru',
-                $prices->blindPrice($parameters->width, $parameters->height),
-            ),
-        ];
-
-        if ($parameters->tunnels) {
-            $lines[] = new PriceLine('Odšité tunýlky', $prices->var('TUNYLKY_ROLETA'));
-        }
-
-        if ($parameters->finishing) {
-            $lines[] = new PriceLine('Kompletace', $prices->var('KOMPLET_ROLETA'));
-        }
-
-        return PriceResult::fromLines($lines);
+        return PriceResult::fromLines([
+            new PriceLine('Kompletace', $prices->var('KOMPLET_ROLETA')),
+            new PriceLine('Odšité tunýlky', ($parameters->width / 100) * $prices->var('TUNYLKY_ROLETA')),
+            new PriceLine('Příprava', ($parameters->height / 100) * $prices->var('PRIPRAVA')),
+            new PriceLine('Ušití tunýlků', $parameters->tunnels * $prices->var('USITI_ZALOZKA')),
+        ]);
     }
 }

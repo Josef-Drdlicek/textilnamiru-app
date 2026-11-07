@@ -17,7 +17,9 @@ class PillowConfigurator extends AbstractConfigurator
 
     public bool $stuffing = false;
 
-    public string $zipper = ZipperSide::Short->value;
+    public bool $complex = false;
+
+    public string $zipper = ZipperSide::None->value;
 
     public function itemType(): ItemType
     {
@@ -30,6 +32,7 @@ class PillowConfigurator extends AbstractConfigurator
             'width' => ['required', 'numeric', 'min:10', 'max:100'],
             'height' => ['required', 'numeric', 'min:10', 'max:100'],
             'stuffing' => ['boolean'],
+            'complex' => ['boolean'],
             'zipper' => ['required', Rule::enum(ZipperSide::class)],
         ];
     }
@@ -39,7 +42,7 @@ class PillowConfigurator extends AbstractConfigurator
         return [
             'width' => 'šířka',
             'height' => 'výška',
-            'zipper' => 'umístění zipu',
+            'zipper' => 'zip',
         ];
     }
 
@@ -49,6 +52,7 @@ class PillowConfigurator extends AbstractConfigurator
             'width' => (float) $this->width,
             'height' => (float) $this->height,
             'stuffing' => $this->stuffing,
+            'complex' => $this->complex,
             'zipper' => $this->zipper,
         ]);
     }
@@ -60,6 +64,7 @@ class PillowConfigurator extends AbstractConfigurator
         $this->width = $data['width'];
         $this->height = $data['height'];
         $this->stuffing = $data['stuffing'];
+        $this->complex = $data['complex'];
         $this->zipper = $data['zipper'];
     }
 

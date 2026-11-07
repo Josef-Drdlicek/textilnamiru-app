@@ -1,27 +1,20 @@
 <?php
 
-use Database\Seeders\BlindPriceBandSeeder;
-use Database\Seeders\PricingVariableSeeder;
 use Database\Seeders\RibbonSeeder;
 use Illuminate\Database\Migrations\Migration;
 
 /**
  * Doseje výchozí ceník do prostředí, kde nikdy neproběhl `db:seed`
- * (produkce měla prázdné pricing_variables/ribbons/blind_price_bands
- * a veřejný web bez ceníku nemůže počítat ceny).
+ * (produkce měla prázdný ceník a veřejný web bez něj nemůže počítat ceny).
  *
- * Seedery používají updateOrCreate — na již naplněné databázi resetují
- * výchozí položky na hodnoty ze seedu, vlastní úpravy dílny nad rámec
- * výchozích kódů nechávají být. Jako migrace běží právě jednou, takže
- * budoucí úpravy ceníku dílnou už žádný deploy nepřepíše.
+ * Ceníkové proměnné doseje až 2026_11_07_000001, protože seeder potřebuje
+ * sloupce přidané tam. Tabulka pásem rolet byla zrušena (2026_11_07_000002).
  */
 return new class extends Migration
 {
     public function up(): void
     {
-        (new PricingVariableSeeder)->run();
         (new RibbonSeeder)->run();
-        (new BlindPriceBandSeeder)->run();
     }
 
     public function down(): void

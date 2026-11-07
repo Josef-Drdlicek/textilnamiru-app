@@ -29,6 +29,12 @@ final class PublicPresets
     /** Šířka role materiálu předpokládaná u závěsů [cm] (dekorační látky). */
     public const float DRAPE_MATERIAL_WIDTH = 140.0;
 
+    /** Tloušťka sedáku předpokládaná ve veřejné kalkulačce [cm]. */
+    public const float CUSHION_DEPTH = 8.0;
+
+    /** Počet tunýlků římské rolety předpokládaný ve veřejné kalkulačce. */
+    public const int BLIND_TUNNELS = 4;
+
     /** Veřejné volby nařasení: klíč => [popisek, poměr]. */
     public const array RUFFLE_OPTIONS = [
         'light' => ['label' => 'Jemné (1 : 1,5)', 'ratio' => 1.5],
@@ -78,21 +84,23 @@ final class PublicPresets
                 width: $input['width'],
                 height: $input['height'],
                 stuffing: $input['stuffing'] ?? false,
+                complex: false,
                 zipper: ZipperSide::Short,
             ),
             ItemType::Cushion => new CushionParameters(
                 width: $input['width'],
                 height: $input['height'],
-                depth: 5.0,
-                stuffing: $input['stuffing'] ?? false,
+                depth: self::CUSHION_DEPTH,
+                foam: $input['stuffing'] ?? false,
+                felt: false,
+                ties: false,
                 zipper: ZipperSide::Short,
             ),
             ItemType::Blind => new BlindParameters(
                 width: $input['width'],
                 height: $input['height'],
+                tunnels: self::BLIND_TUNNELS,
                 mechanism: false,
-                tunnels: true,
-                finishing: true,
                 cells: null,
                 cellHeightTop: null,
                 cellHeight: null,
