@@ -19,7 +19,7 @@ it('renders the public homepage for guests', function () {
 it('links the header B2B button to the b2b page', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('href="'.route('web.b2b').'"', false)
+        ->assertSee('href="'.route('login').'"', false)
         ->assertSee('>B2B</a>', false);
 });
 
@@ -186,7 +186,7 @@ it('serves the sitemap as xml', function () {
 });
 
 it('redirects guests from the internal dashboard to login', function () {
-    $this->get('/prehled')->assertRedirect(route('web.b2b'));
+    $this->get('/prehled')->assertRedirect(route('login'));
 });
 
 it('redirects authenticated users from the internal dashboard by role', function () {

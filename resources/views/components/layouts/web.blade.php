@@ -96,8 +96,8 @@
 
             <div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
                 <a
-                    href="{{ route('web.b2b') }}"
-                    class="btn-secondary !px-4 !py-2 text-sm font-extrabold tracking-wide {{ request()->routeIs('web.b2b') ? '!bg-ink !text-white' : '' }}"
+                    href="{{ route('login') }}"
+                    class="btn-secondary !px-4 !py-2 text-sm font-extrabold tracking-wide {{ request()->routeIs('login') ? '!bg-ink !text-white' : '' }}"
                 >B2B</a>
                 <button
                     type="button"

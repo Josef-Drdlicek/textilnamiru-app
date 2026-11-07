@@ -3,25 +3,27 @@
 use App\Models\User;
 
 it('shows the login page to guests', function () {
-    $this->get('/login')
-        ->assertRedirect(route('web.b2b'));
+    $this->get(route('login'))
+        ->assertOk()
+        ->assertSee('Přihlášení pro interiérová studia');
 });
 
-it('logs in a user with valid credentials', function () {
-    $user = User::factory()->create(['username' => 'lucien']);
+it('permanently redirects the legacy login url', function () {
+    $this->get('/login')->assertRedirect(route('login'))->assertStatus(301);
+});
 
-    $this->post('/login', ['username' => 'lucien', 'password' => 'password'])
-        ->assertRedirect(route('web.b2b.aplikace'));
-
-    $this->assertAuthenticatedAs($user);
+it('sends an authenticated user from the login page to the overview', function () {
+    $this->actingAs(User::factory()->create())
+        ->get(route('login'))
+        ->assertRedirect(route('home'));
 });
 
 it('logs in from the public b2b form', function () {
     $user = User::factory()->create(['username' => 'lucien']);
 
-    $this->from('/b2b')
-        ->post('/login', ['username' => 'lucien', 'password' => 'password'])
-        ->assertRedirect(route('web.b2b.aplikace'));
+    $this->from(route('login'))
+        ->post(route('login.store'), ['username' => 'lucien', 'password' => 'password'])
+        ->assertRedirect(route('home'));
 
     $this->assertAuthenticatedAs($user);
 });
@@ -29,9 +31,9 @@ it('logs in from the public b2b form', function () {
 it('returns validation errors back to the b2b form', function () {
     User::factory()->create(['username' => 'lucien']);
 
-    $this->from('/b2b')
-        ->post('/login', ['username' => 'lucien', 'password' => 'wrong'])
-        ->assertRedirect('/b2b')
+    $this->from(route('login'))
+        ->post(route('login.store'), ['username' => 'lucien', 'password' => 'wrong'])
+        ->assertRedirect(route('login'))
         ->assertSessionHasErrors('username');
 
     $this->assertGuest();
@@ -40,9 +42,9 @@ it('returns validation errors back to the b2b form', function () {
 it('rejects invalid credentials', function () {
     User::factory()->create(['username' => 'lucien']);
 
-    $this->from('/login')
-        ->post('/login', ['username' => 'lucien', 'password' => 'wrong'])
-        ->assertRedirect('/login')
+    $this->from(route('login'))
+        ->post(route('login.store'), ['username' => 'lucien', 'password' => 'wrong'])
+        ->assertRedirect(route('login'))
         ->assertSessionHasErrors('username');
 
     $this->assertGuest();
@@ -51,7 +53,7 @@ it('rejects invalid credentials', function () {
 it('rejects a deactivated account with the same error as a wrong password', function () {
     User::factory()->inactive()->create(['username' => 'lucien']);
 
-    $this->post('/login', ['username' => 'lucien', 'password' => 'password'])
+    $this->post(route('login.store'), ['username' => 'lucien', 'password' => 'password'])
         ->assertSessionHasErrors('username');
 
     $this->assertGuest();
@@ -64,7 +66,7 @@ it('logs out a user whose account was deactivated mid-session', function () {
 
     $user->update(['is_active' => false]);
 
-    $this->get('/prehled')->assertRedirect(route('web.b2b'));
+    $this->get('/prehled')->assertRedirect(route('login'));
     $this->assertGuest();
 });
 
@@ -73,7 +75,7 @@ it('logs out via POST', function () {
 
     $this->actingAs($user)
         ->post('/logout')
-        ->assertRedirect(route('web.b2b'));
+        ->assertRedirect(route('login'));
 
     $this->assertGuest();
 });
@@ -98,10 +100,10 @@ it('rate limits repeated failed login attempts', function () {
     User::factory()->create(['username' => 'lucien']);
 
     foreach (range(1, 5) as $i) {
-        $this->post('/login', ['username' => 'lucien', 'password' => 'wrong']);
+        $this->post(route('login.store'), ['username' => 'lucien', 'password' => 'wrong']);
     }
 
-    $this->post('/login', ['username' => 'lucien', 'password' => 'password'])
+    $this->post(route('login.store'), ['username' => 'lucien', 'password' => 'password'])
         ->assertSessionHasErrors('username');
 
     $this->assertGuest();

@@ -22,7 +22,6 @@ Route::get('/kalkulacka/stinici-technika', [Web\PageController::class, 'kalkulac
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
-Route::get('/b2b', [Web\PageController::class, 'b2b'])->name('web.b2b');
 Route::get('/ochrana-osobnich-udaju', [Web\PageController::class, 'privacy'])->name('web.privacy');
 Route::get('/poptavka', [Web\InquiryController::class, 'create'])->name('web.inquiry.create');
 Route::post('/poptavka', [Web\InquiryController::class, 'store'])
@@ -32,15 +31,14 @@ Route::get('/poptavka/dekujeme', [Web\InquiryController::class, 'thanks'])->name
 Route::get('/sitemap.xml', Web\SitemapController::class)->name('web.sitemap');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', fn () => redirect()->route('web.b2b'))->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    // Přihlášení interiérových studií a dílny; /login zůstává kvůli starým odkazům.
+    Route::get('/b2b', [LoginController::class, 'create'])->name('login');
+    Route::post('/b2b', [LoginController::class, 'store'])->name('login.store');
+    Route::permanentRedirect('/login', '/b2b');
 });
 
 Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
-
-    // Sestavená JS aplikace zakázek (soubor mimo public/)
-    Route::get('/b2b/aplikace', Web\B2bAppController::class)->name('web.b2b.aplikace');
 
     Route::get('/prehled', HomeController::class)->name('home');
 

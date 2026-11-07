@@ -19,5 +19,5 @@ it('allows admins into admin routes', function () {
 });
 
 it('redirects guests to login', function () {
-    $this->get('/prehled')->assertRedirect(route('web.b2b'));
+    $this->get('/prehled')->assertRedirect(route('login'));
 });

@@ -65,15 +65,6 @@ class PageController extends Controller
         return view('web.stinici-technika');
     }
 
-    public function b2b(Request $request): View|RedirectResponse
-    {
-        if ($request->user()) {
-            return redirect()->route('web.b2b.aplikace');
-        }
-
-        return view('web.b2b');
-    }
-
     public function privacy(): View
     {
         return view('web.gdpr');
