@@ -30,7 +30,7 @@
                             <td class="px-5 py-3 font-medium text-stone-800">
                                 {{ $item->type->label() }}
                                 @if ($item->room)
-                                    <span class="text-stone-400">· {{ $item->room }}</span>
+                                    <span class="text-stone-500">· {{ $item->room }}</span>
                                 @endif
                             </td>
                             <td class="px-5 py-3">{{ $item->material }}</td>
@@ -57,7 +57,7 @@
 
             <div>
                 <label for="materials_note" class="block text-sm font-medium text-stone-700">Soupis dodaného materiálu</label>
-                <p class="text-xs text-stone-400">Vypište látky, které do dílny dodáte — typ, barvu a metráž.</p>
+                <p class="text-xs text-stone-500">Vypište látky, které do dílny dodáte — typ, barvu a metráž.</p>
                 <textarea
                     id="materials_note"
                     name="materials_note"

@@ -58,7 +58,7 @@
                                     <td class="px-5 py-3 font-medium text-stone-800">
                                         {{ $item->type->label() }}
                                         @if ($item->room)
-                                            <span class="text-stone-400">· {{ $item->room }}</span>
+                                            <span class="text-stone-500">· {{ $item->room }}</span>
                                         @endif
                                     </td>
                                     <td class="px-5 py-3">{{ $item->material }}</td>
@@ -109,7 +109,7 @@
                         Pokračovat k objednání →
                     </a>
                 @else
-                    <p class="text-sm text-stone-400">Přidejte alespoň jednu položku, pak můžete objednat.</p>
+                    <p class="text-sm text-stone-500">Přidejte alespoň jednu položku, pak můžete objednat.</p>
                 @endif
             </section>
         @else

@@ -64,7 +64,7 @@
                 </div>
 
                 @if ($sectionOrders->isEmpty())
-                    <p class="mt-2 rounded-xl border border-dashed border-stone-200 bg-white px-4 py-4 text-sm text-stone-400">
+                    <p class="mt-2 rounded-xl border border-dashed border-stone-200 bg-white px-4 py-4 text-sm text-stone-500">
                         Žádné zakázky v této fázi.
                     </p>
                 @else

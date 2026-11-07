@@ -28,7 +28,7 @@
                             @foreach ($variables as $variable)
                                 <tr>
                                     <td class="px-5 py-2.5 font-medium text-stone-800">{{ $variable->name }}</td>
-                                    <td class="px-5 py-2.5 font-mono text-xs text-stone-400">{{ $variable->code }}</td>
+                                    <td class="px-5 py-2.5 font-mono text-xs text-stone-500">{{ $variable->code }}</td>
                                     <td class="px-5 py-2.5 text-stone-500">{{ $variable->unit ?? '—' }}</td>
                                     <td class="px-5 py-2.5 text-right">
                                         <input
@@ -40,7 +40,7 @@
                                             required
                                             class="w-28 rounded-lg border border-stone-300 px-2 py-1 text-right tabular-nums shadow-sm focus:border-teal-500 focus:ring-teal-500"
                                         >
-                                        <span class="ml-1 text-xs text-stone-400">{{ $variable->valueSuffix() }}</span>
+                                        <span class="ml-1 text-xs text-stone-500">{{ $variable->valueSuffix() }}</span>
                                     </td>
                                     <td class="px-5 py-2.5 text-right">
                                         @unless ($variable->is_system)
@@ -134,7 +134,7 @@
                             <input id="ribbon-ratios-{{ $ribbon->id }}" name="allowed_ratios" type="text"
                                 value="{{ implode(', ', $ribbon->allowed_ratios) }}"
                                 @if ($ribbon->allows_custom_ratio) disabled placeholder="vlastní poměr zadává zákazník" @endif
-                                class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500 disabled:bg-stone-100 disabled:text-stone-400">
+                                class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500 disabled:bg-stone-100 disabled:text-stone-500">
                         </div>
 
                         <label class="flex items-center gap-2 pb-1.5 text-sm text-stone-600">

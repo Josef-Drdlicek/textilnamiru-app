@@ -13,12 +13,12 @@
     <div class="flex min-h-screen flex-col">
         @auth
             <header class="border-b border-stone-200 bg-white">
-                <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+                <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
                     <a href="{{ route('home') }}" class="text-lg font-bold tracking-tight text-teal-800">
                         {{ config('app.name') }}
                     </a>
 
-                    <nav class="flex items-center gap-4 text-sm">
+                    <nav class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('admin.inquiries.index') }}" class="inline-flex items-center gap-1.5 font-medium text-stone-600 hover:text-teal-800 {{ request()->routeIs('admin.inquiries.*') ? 'text-teal-800' : '' }}">
                                 Poptávky
@@ -45,7 +45,7 @@
                             </a>
                         @endunless
 
-                        <span class="hidden text-stone-500 sm:inline">{{ auth()->user()->name }}</span>
+                        <span class="hidden text-stone-500 md:inline">{{ auth()->user()->name }}</span>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -68,7 +68,7 @@
             {{ $slot }}
         </main>
 
-        <footer class="border-t border-stone-200 py-4 text-center text-xs text-stone-400">
+        <footer class="border-t border-stone-200 py-4 text-center text-xs text-stone-500">
             {{ config('app.name') }} — interní aplikace pro zadávání zakázek
         </footer>
     </div>

@@ -7,10 +7,10 @@
             <section>
                 <h2 class="text-lg font-extrabold">Kdo údaje zpracovává</h2>
                 <p class="mt-2">
-                    Správcem osobních údajů je Textil na míru, Masarykovo náměstí 49,
-                    680 01 Boskovice (dále „my"). Kontakt:
-                    <a href="mailto:info@textilnamiru.cz" class="font-medium text-brand-600 underline underline-offset-2">info@textilnamiru.cz</a>,
-                    tel. +420 516 453 000.
+                    Správcem osobních údajů je {{ config('company.name') }}, {{ config('company.street') }},
+                    {{ config('company.zip') }} {{ config('company.city') }} (dále „my"). Kontakt:
+                    <a href="mailto:{{ config('company.email') }}" class="font-medium text-brand-600 underline underline-offset-2">{{ config('company.email') }}</a>,
+                    tel. {{ config('company.phone_display') }}.
                 </p>
             </section>
 
@@ -46,7 +46,7 @@
                 <p class="mt-2">
                     Máte právo na přístup ke svým údajům, jejich opravu či výmaz, omezení
                     zpracování a právo vznést námitku. Stačí napsat na
-                    <a href="mailto:info@textilnamiru.cz" class="font-medium text-brand-600 underline underline-offset-2">info@textilnamiru.cz</a>.
+                    <a href="mailto:{{ config('company.email') }}" class="font-medium text-brand-600 underline underline-offset-2">{{ config('company.email') }}</a>.
                     Se stížností se můžete obrátit na Úřad pro ochranu osobních údajů (uoou.gov.cz).
                 </p>
             </section>
@@ -61,6 +61,6 @@
             </section>
         </div>
 
-        <p class="mt-10 text-sm text-muted">Poslední aktualizace: {{ now()->format('j. n. Y') }}</p>
+        <p class="mt-10 text-sm text-muted">Poslední aktualizace: {{ \Illuminate\Support\Carbon::parse(config('company.privacy_updated_at'))->format('j. n. Y') }}</p>
     </div>
 </x-layouts.web>

@@ -45,7 +45,7 @@
                         <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted">cm</span>
                     </div>
                     @error('width')
-                        <p id="estimator-width-error" class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                        <p id="estimator-width-error" class="mt-1 text-sm text-error" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -66,7 +66,7 @@
                         <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted">cm</span>
                     </div>
                     @error('height')
-                        <p id="estimator-height-error" class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                        <p id="estimator-height-error" class="mt-1 text-sm text-error" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -82,7 +82,7 @@
                         class="mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2.5 focus:border-brand-600 focus:ring-brand-600"
                     >
                     @error('count')
-                        <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
             </div>

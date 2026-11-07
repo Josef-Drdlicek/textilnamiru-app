@@ -98,7 +98,7 @@
                         @endforeach
                     </dl>
                 @else
-                    <p class="mt-4 rounded-lg border border-dashed border-stone-200 px-4 py-4 text-sm text-stone-400">
+                    <p class="mt-4 rounded-lg border border-dashed border-stone-200 px-4 py-4 text-sm text-stone-500">
                         Zákazník kalkulačku nepoužil.
                     </p>
                 @endif
@@ -141,7 +141,7 @@
                         ({{ $inquiry->order->user->name }}).
                     </p>
                 @elseif ($designers->isEmpty())
-                    <p class="mt-4 rounded-lg border border-dashed border-stone-200 px-4 py-4 text-sm text-stone-400">
+                    <p class="mt-4 rounded-lg border border-dashed border-stone-200 px-4 py-4 text-sm text-stone-500">
                         Nejdřív založte aktivní účet studia v sekci Uživatelé.
                     </p>
                 @else
@@ -165,7 +165,7 @@
                         <button type="submit" class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800">
                             Založit rozpracovanou zakázku
                         </button>
-                        <p class="text-xs text-stone-400">
+                        <p class="text-xs text-stone-500">
                             Vznikne cenová nabídka pro vybrané studio — kontakt a případná konfigurace
                             z kalkulačky se přenesou, ceny se spočítají znovu při odeslání.
                         </p>

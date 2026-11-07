@@ -53,4 +53,6 @@
         @include('livewire.configurators.partials._price-panel')
         @include('livewire.configurators.partials._schema')
     </aside>
+
+    @include('livewire.configurators.partials._price-bar')
 </div>

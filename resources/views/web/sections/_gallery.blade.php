@@ -19,7 +19,11 @@
 <section id="realizace" aria-labelledby="realizace-nadpis" class="scroll-mt-20 bg-paper">
     <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
         <p class="eyebrow">Reference</p>
-        <h2 id="realizace-nadpis" class="text-section-title mt-2">Naše realizace</h2>
+        @if ($asPage ?? false)
+            <h1 id="realizace-nadpis" class="text-section-title mt-2">Naše realizace</h1>
+        @else
+            <h2 id="realizace-nadpis" class="text-section-title mt-2">Naše realizace</h2>
+        @endif
         <p class="mt-3 max-w-2xl text-lg text-muted">
             Ukázky práce z domácností, hotelů i historických objektů.
         </p>

@@ -14,7 +14,7 @@
                     <label class="block text-sm font-medium text-stone-700">Přihlašovací jméno</label>
                     <input type="text" value="{{ $user->username }}" disabled
                         class="mt-1 block w-full rounded-lg border border-stone-200 bg-stone-100 px-3 py-2 text-stone-500">
-                    <p class="mt-1 text-xs text-stone-400">Přihlašovací jméno mění pouze správce.</p>
+                    <p class="mt-1 text-xs text-stone-500">Přihlašovací jméno mění pouze správce.</p>
                 </div>
 
                 <div>

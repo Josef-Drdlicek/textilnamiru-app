@@ -21,7 +21,7 @@
                 </div>
 
                 @if ($sectionInquiries->isEmpty())
-                    <p class="mt-2 rounded-xl border border-dashed border-stone-200 bg-white px-4 py-4 text-sm text-stone-400">
+                    <p class="mt-2 rounded-xl border border-dashed border-stone-200 bg-white px-4 py-4 text-sm text-stone-500">
                         Žádné poptávky v této fázi.
                     </p>
                 @else
@@ -45,7 +45,7 @@
                                                 {{ $inquiry->name }}
                                             </a>
                                             @if ($inquiry->city)
-                                                <span class="block text-xs text-stone-400">{{ $inquiry->city }}</span>
+                                                <span class="block text-xs text-stone-500">{{ $inquiry->city }}</span>
                                             @endif
                                         </td>
                                         <td class="px-5 py-3">

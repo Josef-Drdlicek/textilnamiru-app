@@ -29,6 +29,9 @@
     --color-surface-alt: #f2efe9;
     --color-line: #e7e2da;
     --color-muted: #5f5b55;
+
+    /* Stavová barva chyb dle brandbooku */
+    --color-error: #c62828;
 }
 
 @layer components {
@@ -42,6 +45,15 @@
 
     .btn-secondary {
         @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink px-7 py-3 text-base font-semibold text-ink transition hover:bg-ink hover:text-white focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    /* Menší varianta pro hlavičku; aktivní stránka se zvýrazní přes aria-current. */
+    .btn-sm {
+        @apply px-4 py-2 text-sm;
+    }
+
+    .btn-secondary[aria-current='page'] {
+        @apply bg-ink text-white;
     }
 
     .text-display {
@@ -64,26 +76,71 @@
         font-weight: 800;
         font-variant-numeric: tabular-nums;
     }
-}
 
-/* Posuv úvodního slideru je v CSS (ne inline), ať ho Chrome nepřeskočí.
-   Třída is-hero-instant jen při parkování snímku a při tažení prstem. */
-[data-hero-slide],
-[data-hero-copy] {
-    transform: translate3d(100%, 0, 0);
-    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
-    will-change: transform;
-    backface-visibility: hidden;
-}
+    /* Slider (resources/js/slider.js). `.slider-item` je cokoli, co se přepíná
+       (snímek i k němu svázaný text), `.slider-slide` navíc leží přes sebe.
+       Bez JS je vidět jen první položka (má is-active ze serveru). */
+    .slider-slide {
+        position: absolute;
+        inset: 0;
+    }
 
-[data-hero-slide]:first-child,
-[data-hero-copy]:first-child {
-    transform: translate3d(0, 0, 0);
-}
+    [data-slider]:not(.is-ready) .slider-item:not(.is-active) {
+        visibility: hidden;
+    }
 
-[data-hero-root].is-hero-instant [data-hero-slide],
-[data-hero-root].is-hero-instant [data-hero-copy] {
-    transition: none;
+    .slider-item {
+        transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .slider-item.is-before {
+        transform: translate3d(-100%, 0, 0);
+    }
+
+    .slider-item.is-after {
+        transform: translate3d(100%, 0, 0);
+    }
+
+    .slider-item.is-active {
+        transform: translate3d(0, 0, 0);
+    }
+
+    .slider-fade .slider-item {
+        opacity: 0;
+        transform: none;
+        transition: opacity 0.4s ease;
+    }
+
+    .slider-fade .slider-item.is-active {
+        opacity: 1;
+    }
+
+    .slider-dot {
+        @apply flex h-6 w-6 items-center justify-center rounded-full transition;
+    }
+
+    .slider-dot::before {
+        content: '';
+        @apply h-2.5 w-2.5 rounded-full bg-white/70 transition;
+    }
+
+    .slider-dot:hover::before {
+        @apply bg-white;
+    }
+
+    .slider-dot.is-active::before {
+        @apply scale-125 bg-ink;
+    }
+
+    .slider-arrow {
+        @apply flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-ink shadow-md transition hover:bg-white focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:outline-none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .slider-item {
+            transition: none;
+        }
+    }
 }
 
 /* Jemné odhalení sekcí při scrollu — pouze pro uživatele bez omezení pohybu;

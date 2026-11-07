@@ -1,25 +1,42 @@
 @props([
-    'name',          // název souboru bez přípony v public/images/web/
+    'name',          // základ názvu souboru v public/images/web/ (bez přípony a šířky)
     'alt',
     'width',
     'height',
     'eager' => false,
     'label' => null, // popisek placeholderu; default = alt
+    'widths' => [],  // dostupné šířky responzivních variant, např. [960, 1600, 2400] → {name}-{w}.webp
+    'sizes' => '100vw',
 ])
 
 @php
-    $webp = file_exists(public_path("images/web/{$name}.webp")) ? asset("images/web/{$name}.webp") : null;
-    $jpg = file_exists(public_path("images/web/{$name}.jpg")) ? asset("images/web/{$name}.jpg") : null;
+    $file = fn (string $suffix) => file_exists(public_path("images/web/{$name}{$suffix}")) ? asset("images/web/{$name}{$suffix}") : null;
+
+    // Responzivní varianty: {name}-{w}.webp (+ JPG fallback {name}-{w}.jpg u největší dostupné),
+    // jinak jednoduchý pár {name}.webp / {name}.jpg.
+    $variants = collect($widths)
+        ->map(fn (int $w) => ['w' => $w, 'webp' => $file("-{$w}.webp"), 'jpg' => $file("-{$w}.jpg")])
+        ->filter(fn (array $v) => $v['webp'] !== null)
+        ->values();
+
+    $srcset = $variants->map(fn (array $v) => "{$v['webp']} {$v['w']}w")->implode(', ');
+    $webp = $variants->isNotEmpty() ? null : $file('.webp');
+    $jpg = $variants->isNotEmpty()
+        ? ($variants->firstWhere('jpg', '!=', null)['jpg'] ?? null)
+        : $file('.jpg');
+    $hasImage = $srcset !== '' || $webp || $jpg;
     $patternId = 'weave-'.$name;
 @endphp
 
-@if ($webp || $jpg)
+@if ($hasImage)
     <picture>
-        @if ($webp && $jpg)
+        @if ($srcset !== '')
+            <source srcset="{{ $srcset }}" sizes="{{ $sizes }}" type="image/webp">
+        @elseif ($webp && $jpg)
             <source srcset="{{ $webp }}" type="image/webp">
         @endif
         <img
-            src="{{ $jpg ?? $webp }}"
+            src="{{ $jpg ?? $webp ?? $variants->last()['webp'] }}"
             alt="{{ $alt }}"
             width="{{ $width }}"
             height="{{ $height }}"

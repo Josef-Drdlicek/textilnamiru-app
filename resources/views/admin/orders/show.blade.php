@@ -73,7 +73,7 @@
             <div>
                 <h2 class="text-xs font-semibold uppercase tracking-wide text-stone-500">Spotřeba látky (odhad)</h2>
                 @if ($consumption === [])
-                    <p class="mt-1 text-stone-400">Žádná položka nepočítá spotřebu.</p>
+                    <p class="mt-1 text-stone-500">Žádná položka nepočítá spotřebu.</p>
                 @else
                     <ul class="mt-1 space-y-0.5 text-stone-700">
                         @foreach ($consumption as $row)
@@ -101,7 +101,7 @@
                                 <h3 class="font-semibold text-stone-900">
                                     {{ $loop->iteration }}. {{ $item->type->label() }}
                                     @if ($item->room)
-                                        <span class="font-normal text-stone-400">· {{ $item->room }}</span>
+                                        <span class="font-normal text-stone-500">· {{ $item->room }}</span>
                                     @endif
                                 </h3>
                                 <p class="text-sm tabular-nums text-stone-600">
@@ -156,12 +156,12 @@
                 <ol class="mt-3 space-y-2 text-sm">
                     @foreach ($order->statusChanges as $change)
                         <li class="flex flex-wrap items-center gap-2 text-stone-600">
-                            <span class="tabular-nums text-stone-400">{{ $change->created_at->format('j. n. Y H:i') }}</span>
+                            <span class="tabular-nums text-stone-500">{{ $change->created_at->format('j. n. Y H:i') }}</span>
                             <span>
                                 {{ $change->from_status !== null ? $change->from_status->label().' →' : '' }}
                                 <span class="font-medium text-stone-800">{{ $change->to_status->label() }}</span>
                             </span>
-                            <span class="text-stone-400">({{ $change->user->name }})</span>
+                            <span class="text-stone-500">({{ $change->user->name }})</span>
                         </li>
                     @endforeach
                 </ol>

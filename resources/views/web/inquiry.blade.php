@@ -28,25 +28,25 @@
                     <div>
                         <label for="name" class="block text-sm font-medium">Jméno a příjmení *</label>
                         <input type="text" id="name" name="name" value="{{ old('name') }}" required autocomplete="name" class="{{ $inputClasses }}">
-                        @error('name') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                        @error('name') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-medium">E-mail *</label>
                         <input type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="email" class="{{ $inputClasses }}">
-                        @error('email') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                        @error('email') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="phone" class="block text-sm font-medium">Telefon *</label>
                         <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required autocomplete="tel" class="{{ $inputClasses }}">
-                        @error('phone') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                        @error('phone') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="city" class="block text-sm font-medium">Město / obec</label>
                         <input type="text" id="city" name="city" value="{{ old('city') }}" autocomplete="address-level2" class="{{ $inputClasses }}">
-                        @error('city') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                        @error('city') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="sm:col-span-2">
@@ -57,7 +57,7 @@
                                 <option value="{{ $spaceType->value }}" @selected(old('space_type') === $spaceType->value)>{{ $spaceType->label() }}</option>
                             @endforeach
                         </select>
-                        @error('space_type') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                        @error('space_type') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
@@ -77,8 +77,8 @@
                             </label>
                         @endforeach
                     </div>
-                    @error('products') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
-                    @error('products.*') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                    @error('products') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
+                    @error('products.*') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                 </fieldset>
 
                 <fieldset class="mt-7">
@@ -103,7 +103,7 @@
                             </label>
                         @endforeach
                     </div>
-                    @error('measurement') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                    @error('measurement') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
 
                     <div data-measurement-info class="mt-3 hidden rounded-lg border border-brand-300 bg-brand-50 p-4 text-sm" aria-live="polite">
                         <h2 class="font-bold">Jak správně zaměřit</h2>
@@ -130,7 +130,7 @@
                         placeholder="Počet oken, místností, preferovaný styl, barvy…"
                         class="{{ $inputClasses }}"
                     >{{ old('message') }}</textarea>
-                    @error('message') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                    @error('message') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
                 </div>
 
                 <label class="mt-7 flex cursor-pointer items-start gap-3">
@@ -140,7 +140,7 @@
                         <a href="{{ route('web.privacy') }}" class="font-medium text-brand-600 underline underline-offset-2 hover:text-brand-700" target="_blank">Jak s údaji nakládáme</a> *
                     </span>
                 </label>
-                @error('gdpr') <p class="mt-1 text-sm text-red-700" role="alert">{{ $message }}</p> @enderror
+                @error('gdpr') <p class="mt-1 text-sm text-error" role="alert">{{ $message }}</p> @enderror
 
                 <button type="submit" class="btn-primary mt-8 w-full sm:w-auto">Odeslat poptávku</button>
             </form>
@@ -158,7 +158,7 @@
                         @endif
                         <p class="mt-3 text-xs text-muted">Přiložíme ji k poptávce, ať víme, s čím počítáte.</p>
                         <div class="mt-4 flex gap-4 text-sm font-semibold">
-                            <a href="{{ route('web.home') }}#kalkulacka" class="text-brand-600 hover:text-brand-700">Upravit</a>
+                            <a href="{{ route('web.kalkulacka') }}" class="text-brand-600 hover:text-brand-700">Upravit</a>
                             <a href="{{ route('web.inquiry.create', ['bez-konfigurace' => 1]) }}" class="text-muted hover:text-ink">Odebrat</a>
                         </div>
                     </div>
@@ -168,8 +168,8 @@
                     <h2 class="font-extrabold">Raději po telefonu?</h2>
                     <p class="mt-2 text-muted">Zavolejte nám v pracovní dny 8:00–17:00.</p>
                     <p class="mt-3">
-                        <a href="tel:+420516453000" class="text-lg font-bold text-brand-600 hover:text-brand-700">+420 516 453 000</a><br>
-                        <a href="mailto:info@textilnamiru.cz" class="font-medium text-brand-600 hover:text-brand-700">info@textilnamiru.cz</a>
+                        <a href="tel:{{ config('company.phone') }}" class="text-lg font-bold text-brand-600 hover:text-brand-700">{{ config('company.phone_display') }}</a><br>
+                        <a href="mailto:{{ config('company.email') }}" class="font-medium text-brand-600 hover:text-brand-700">{{ config('company.email') }}</a>
                     </p>
                 </div>
             </aside>

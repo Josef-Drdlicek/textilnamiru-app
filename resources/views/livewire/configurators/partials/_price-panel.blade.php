@@ -1,8 +1,8 @@
-<div class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+<div class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm" aria-live="polite">
     <h2 class="text-sm font-semibold uppercase tracking-wide text-stone-500">Cena</h2>
 
     @if ($unitPrice === null)
-        <p class="mt-3 text-sm text-stone-400">
+        <p class="mt-3 text-sm text-stone-500">
             Cena se zobrazí, jakmile doplníte všechny povinné údaje.
         </p>
     @else

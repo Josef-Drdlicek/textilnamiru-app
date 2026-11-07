@@ -45,10 +45,6 @@ class PageController extends Controller
         return view('web.kalkulacka-stropy');
     }
 
-    public function kalkulackaStinici(): View
-    {
-        return view('web.kalkulacka-stinici');
-    }
 
     public function realizace(): View
     {

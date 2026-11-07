@@ -10,7 +10,7 @@
             naše realizace nebo spočítat další orientační ceny.
         </p>
         <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <a href="{{ route('web.home') }}#realizace" class="btn-primary">Prohlédnout realizace</a>
+            <a href="{{ route('web.realizace') }}" class="btn-primary">Prohlédnout realizace</a>
             <a href="{{ route('web.home') }}" class="btn-secondary">Zpět na úvod</a>
         </div>
     </div>

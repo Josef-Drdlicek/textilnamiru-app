@@ -4,7 +4,7 @@
     <h2 class="text-sm font-semibold uppercase tracking-wide text-stone-500">Náhled</h2>
 
     @if ($svg === null)
-        <p class="mt-3 text-sm text-stone-400">Náhled se vykreslí po zadání rozměrů.</p>
+        <p class="mt-3 text-sm text-stone-500">Náhled se vykreslí po zadání rozměrů.</p>
     @else
         <div class="mt-3">
             {!! $svg !!}

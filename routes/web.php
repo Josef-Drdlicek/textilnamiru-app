@@ -19,7 +19,7 @@ Route::get('/sortiment', [Web\PageController::class, 'sortiment'])->name('web.so
 Route::get('/kalkulacka', [Web\PageController::class, 'kalkulacka'])->name('web.kalkulacka');
 Route::get('/kalkulacka/zakazkove-sivani', [Web\PageController::class, 'kalkulackaSivani'])->name('web.kalkulacka.sivani');
 Route::get('/kalkulacka/vypinane-stropy', [Web\PageController::class, 'kalkulackaStropy'])->name('web.kalkulacka.stropy');
-Route::get('/kalkulacka/stinici-technika', [Web\PageController::class, 'kalkulackaStinici'])->name('web.kalkulacka.stinici');
+Route::permanentRedirect('/kalkulacka/stinici-technika', '/poptavka?produkt=shades');
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');

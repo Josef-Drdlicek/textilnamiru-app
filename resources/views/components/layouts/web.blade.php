@@ -30,28 +30,24 @@
     @vite(['resources/css/app.css', 'resources/js/web.js'])
 
     <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "LocalBusiness",
-        "name": "Textil na míru",
-        "description": "Rodinná šicí dílna specializující se na zakázkovou výrobu bytového textilu od roku 1992.",
-        "url": "{{ route('web.home') }}",
-        "telephone": "+420 516 453 000",
-        "address": {
-            "@@type": "PostalAddress",
-            "streetAddress": "Masarykovo náměstí 49",
-            "addressLocality": "Boskovice",
-            "postalCode": "680 01",
-            "addressCountry": "CZ"
-        },
-        "geo": {
-            "@@type": "GeoCoordinates",
-            "latitude": 49.4875,
-            "longitude": 16.6603
-        },
-        "openingHours": "Mo-Fr 08:00-17:00",
-        "priceRange": "$$"
-    }
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'LocalBusiness',
+        'name' => config('company.name'),
+        'description' => 'Rodinná šicí dílna specializující se na zakázkovou výrobu bytového textilu od roku 1992.',
+        'url' => route('web.home'),
+        'telephone' => config('company.phone_display'),
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => config('company.street'),
+            'addressLocality' => config('company.city'),
+            'postalCode' => config('company.zip'),
+            'addressCountry' => 'CZ',
+        ],
+        'geo' => ['@type' => 'GeoCoordinates', 'latitude' => config('company.geo.lat'), 'longitude' => config('company.geo.lng')],
+        'openingHours' => config('company.opening_hours_schema'),
+        'priceRange' => '$$',
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
 </head>
 <body class="min-h-screen bg-paper font-sans text-ink antialiased">
@@ -60,48 +56,67 @@
     </a>
 
     <header class="sticky top-0 z-40 border-b border-line bg-white/95 shadow-sm backdrop-blur">
-        {{-- Původní vnitřek: max-w-7xl px-4 py-3 sm:px-6 (výška pruhu 65 px, svislý padding 12 px). Nový padding 13,8 px (= 12 × 1,15). --}}
-        {{-- Od lg: nav má flex-1 a odkazy justify-center — název i B2B zůstanou na krajích, menu ve středu mezery. Pod lg zůstává hamburger, ať se odkazy nepřekrývají s názvem. --}}
-        <div class="relative flex items-center gap-3 pr-4 pl-4 sm:pr-6 sm:pl-5 lg:pl-6" style="padding-top: 13.8px; padding-bottom: 13.8px;">
-            <a href="{{ route('web.home') }}" class="flex min-w-0 shrink items-center gap-3" aria-label="Textil na míru — domovská stránka">
-                {{-- Výška 36 px jako dříve, ať se hlavička nezvýší. --}}
-                <x-logo class="h-9 w-9" width="36" height="36" loading="eager" decoding="async" />
+        {{-- Od xl: menu uprostřed mezi logem a tlačítky. Pod xl hamburger, ať se sedm položek neláme. --}}
+        <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6">
+            <a href="{{ route('web.home') }}" class="flex min-w-0 shrink items-center gap-3" aria-label="{{ config('company.name') }} — domovská stránka">
+                <x-logo :size="36" class="h-9 w-9" />
                 <span class="min-w-0 leading-tight tracking-tight">
                     <span class="block text-lg">
                         <span class="font-extrabold">Textil</span>
                         <span class="font-normal text-muted">na míru</span>
                     </span>
-                    <span class="mt-0.5 block truncate text-[11px] font-normal text-muted sm:whitespace-normal sm:text-xs">Dáváme interiérům nový rozměr</span>
+                    <span class="mt-0.5 hidden text-xs font-normal text-muted sm:block">Dáváme interiérům nový rozměr</span>
                 </span>
             </a>
+
+            @php
+                $menu = [
+                    ['route' => 'web.vypinany-podhled', 'label' => 'Vypínaný podhled', 'active' => ['web.vypinany-podhled']],
+                    ['route' => 'web.stinici-technika', 'label' => 'Stínicí technika', 'active' => ['web.stinici-technika']],
+                    ['route' => 'web.sortiment', 'label' => 'Sortiment', 'active' => ['web.sortiment']],
+                    ['route' => 'web.kalkulacka', 'label' => 'Kalkulačka', 'active' => ['web.kalkulacka', 'web.kalkulacka.*']],
+                    ['route' => 'web.realizace', 'label' => 'Realizace', 'active' => ['web.realizace']],
+                ];
+            @endphp
 
             <nav
                 id="hlavni-navigace"
                 data-nav-menu
-                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 lg:static lg:block lg:flex-1 lg:border-0 lg:bg-transparent lg:p-0"
+                class="absolute inset-x-0 top-full hidden border-b border-line bg-white px-4 pb-4 shadow-md xl:static xl:block xl:flex-1 xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none"
                 aria-label="Hlavní navigace"
             >
-                <ul class="flex flex-col gap-1 pt-2 lg:flex-row lg:items-center lg:justify-center lg:gap-6 lg:pt-0">
-                    <li><a href="{{ route('web.vypinany-podhled') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.vypinany-podhled') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Vypínaný podhled</a></li>
-                    <li><a href="{{ route('web.stinici-technika') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.stinici-technika') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Stínicí technika</a></li>
-                    <li><a href="{{ route('web.sortiment') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.sortiment') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Sortiment</a></li>
-                    <li><a href="{{ route('web.kalkulacka') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.kalkulacka', 'web.kalkulacka.*') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Kalkulačka</a></li>
-                    <li><a href="{{ route('web.realizace') }}" class="block rounded-lg px-3 py-2 font-medium {{ request()->routeIs('web.realizace') ? 'text-ink' : 'text-muted' }} transition hover:text-ink md:p-0">Realizace</a></li>
-                    <li><a href="{{ route('web.home') }}#o-nas" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink md:p-0">O nás</a></li>
-                    <li class="pt-2 md:pt-0">
-                        <a href="{{ route('web.inquiry.create') }}" class="btn-primary !px-5 !py-2.5 text-sm">Nezávazná poptávka</a>
+                <ul class="flex flex-col gap-1 pt-2 xl:flex-row xl:items-center xl:justify-center xl:gap-5 xl:pt-0">
+                    @foreach ($menu as $item)
+                        @php $active = request()->routeIs(...$item['active']); @endphp
+                        <li>
+                            <a
+                                href="{{ route($item['route']) }}"
+                                class="block rounded-lg px-3 py-2 font-medium transition hover:text-ink xl:p-0 {{ $active ? 'text-ink' : 'text-muted' }}"
+                                @if ($active) aria-current="page" @endif
+                            >{{ $item['label'] }}</a>
+                        </li>
+                    @endforeach
+                    <li><a href="{{ route('web.home') }}#o-nas" class="block rounded-lg px-3 py-2 font-medium text-muted transition hover:text-ink xl:p-0">O nás</a></li>
+                    <li class="pt-2 sm:hidden">
+                        <a href="{{ route('web.inquiry.create') }}" class="btn-primary btn-sm w-full">Nezávazná poptávka</a>
+                    </li>
+                    <li class="xl:hidden">
+                        <a href="{{ route('login') }}" class="block rounded-lg px-3 py-2 font-semibold text-muted transition hover:text-ink">Přihlášení pro studia (B2B)</a>
                     </li>
                 </ul>
             </nav>
 
-            <div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
+            <div class="ml-auto flex shrink-0 items-center gap-2 xl:ml-0">
+                <a href="{{ route('web.inquiry.create') }}" class="btn-primary btn-sm hidden sm:inline-flex">Nezávazná poptávka</a>
                 <a
                     href="{{ route('login') }}"
-                    class="btn-secondary !px-4 !py-2 text-sm font-extrabold tracking-wide {{ request()->routeIs('login') ? '!bg-ink !text-white' : '' }}"
+                    class="btn-secondary btn-sm hidden font-extrabold tracking-wide xl:inline-flex"
+                    title="Přihlášení pro interiérová studia"
+                    @if (request()->routeIs('login')) aria-current="page" @endif
                 >B2B</a>
                 <button
                     type="button"
-                    class="rounded-lg p-2 text-ink hover:bg-surface-alt lg:hidden"
+                    class="rounded-lg p-2 text-ink hover:bg-surface-alt xl:hidden"
                     data-nav-toggle
                     aria-expanded="false"
                     aria-controls="hlavni-navigace"
@@ -123,30 +138,23 @@
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
             <div class="grid gap-10 md:grid-cols-4">
                 <div>
-                    <a href="{{ route('web.home') }}" class="flex items-center gap-2.5" aria-label="Textil na míru">
-                        {{-- LOGO PATIČKA: ořez do kruhu kvůli bílým rohům v souboru loga --}}
-                        <span class="inline-block shrink-0 overflow-hidden rounded-full bg-ink" style="width: 32px; height: 32px;">
-                            <x-logo
-                                width="32"
-                                height="32"
-                                style="width: 32px; height: 32px; object-fit: cover; transform: scale(1.06);"
-                            />
-                        </span>
+                    <a href="{{ route('web.home') }}" class="flex items-center gap-2.5" aria-label="{{ config('company.name') }}">
+                        <x-logo :size="32" class="h-8 w-8" />
                         <span class="text-lg leading-tight tracking-tight">
                             <span class="font-extrabold">Textil</span>
                             <span class="font-normal text-white/70">na míru</span>
                         </span>
                     </a>
-                    <p class="mt-3 text-white/70">Zaměříme, ušijeme, pověsíme.</p>
+                    <p class="mt-3 text-white/70">{{ config('company.claim') }}</p>
                 </div>
 
                 <div>
                     <h2 class="text-sm font-semibold uppercase tracking-[0.08em] text-white/60">Kontakt</h2>
                     <address class="mt-3 space-y-2 not-italic text-white/85">
-                        <p>Masarykovo náměstí 49<br>680 01 Boskovice</p>
+                        <p>{{ config('company.street') }}<br>{{ config('company.zip') }} {{ config('company.city') }}</p>
                         <p>
-                            <a href="tel:+420516453000" class="underline decoration-white/30 underline-offset-4 transition hover:decoration-brand-400">+420 516 453 000</a><br>
-                            <a href="mailto:info@textilnamiru.cz" class="underline decoration-white/30 underline-offset-4 transition hover:decoration-brand-400">info@textilnamiru.cz</a>
+                            <a href="tel:{{ config('company.phone') }}" class="underline decoration-white/30 underline-offset-4 transition hover:decoration-brand-400">{{ config('company.phone_display') }}</a><br>
+                            <a href="mailto:{{ config('company.email') }}" class="underline decoration-white/30 underline-offset-4 transition hover:decoration-brand-400">{{ config('company.email') }}</a>
                         </p>
                     </address>
                 </div>
@@ -154,25 +162,28 @@
                 <div>
                     <h2 class="text-sm font-semibold uppercase tracking-[0.08em] text-white/60">Otevírací doba</h2>
                     <dl class="mt-3 space-y-1 text-white/85">
-                        <div class="flex justify-between gap-4"><dt>Pondělí – Pátek</dt><dd>8:00 – 17:00</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Sobota</dt><dd>Po domluvě</dd></div>
-                        <div class="flex justify-between gap-4"><dt>Neděle</dt><dd>Zavřeno</dd></div>
+                        @foreach (config('company.hours') as [$days, $time])
+                            <div class="flex justify-between gap-4"><dt>{{ $days }}</dt><dd>{{ $time }}</dd></div>
+                        @endforeach
                     </dl>
                 </div>
 
                 <div>
                     <h2 class="text-sm font-semibold uppercase tracking-[0.08em] text-white/60">Rychlé odkazy</h2>
                     <ul class="mt-3 space-y-2 text-white/85">
+                        <li><a href="{{ route('web.vypinany-podhled') }}" class="transition hover:text-white">Vypínaný podhled</a></li>
+                        <li><a href="{{ route('web.stinici-technika') }}" class="transition hover:text-white">Stínicí technika</a></li>
                         <li><a href="{{ route('web.sortiment') }}" class="transition hover:text-white">Sortiment</a></li>
                         <li><a href="{{ route('web.kalkulacka') }}" class="transition hover:text-white">Kalkulačka</a></li>
                         <li><a href="{{ route('web.realizace') }}" class="transition hover:text-white">Realizace</a></li>
                         <li><a href="{{ route('web.inquiry.create') }}" class="font-semibold text-brand-400 transition hover:text-brand-300">Nezávazná poptávka</a></li>
+                        <li><a href="{{ route('login') }}" class="text-white/60 transition hover:text-white">Přihlášení pro studia (B2B)</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/15 pt-6 text-sm text-white/60 sm:flex-row">
-                <p>© {{ date('Y') }} Textil na míru. Všechna práva vyhrazena.</p>
+                <p>© {{ date('Y') }} {{ config('company.name') }}. Všechna práva vyhrazena.</p>
                 <a href="{{ route('web.privacy') }}" class="transition hover:text-white">Ochrana osobních údajů</a>
             </div>
         </div>

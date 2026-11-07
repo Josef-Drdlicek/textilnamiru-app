@@ -6,8 +6,8 @@ it('renders the public homepage for guests', function () {
     $this->get('/')
         ->assertOk()
         ->assertSee('Interiérový textil šitý')
-        ->assertSee('Náš sortiment')
-        ->assertSee('Kolik bude stát ušití?')
+        ->assertSee('Textil, stropy i stínění z jedné dílny')
+        ->assertSee('Kolik to bude stát?')
         ->assertSee('Rodinná tradice od roku 1992')
         ->assertSee('Vypínaný stropní podhled v interiéru')
         ->assertSee('Stínicí technika v interiéru')
@@ -20,7 +20,8 @@ it('links the header B2B button to the b2b page', function () {
     $this->get('/')
         ->assertOk()
         ->assertSee('href="'.route('login').'"', false)
-        ->assertSee('>B2B</a>', false);
+        ->assertSee('>B2B</a>', false)
+        ->assertSee('Přihlášení pro studia (B2B)');
 });
 
 it('shows catalog prices from the live price list', function () {
@@ -43,8 +44,8 @@ it('renders the catalog even when the price list is empty', function () {
 it('does not repeat full catalog, calculator or gallery on the homepage', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('Zobrazit více')
-        ->assertDontSee('Spočítat cenu')
+        ->assertSee('Otevřít kalkulačku')
+        ->assertDontSee('za ušití vč. DPH, bez látky')
         ->assertDontSee('Hotová šířka')
         ->assertDontSee('Hotel Voroněž, Brno');
 });
@@ -53,7 +54,7 @@ it('renders the homepage for authenticated users without redirecting', function 
     $this->actingAs(User::factory()->create())
         ->get('/')
         ->assertOk()
-        ->assertSee('Náš sortiment');
+        ->assertSee('Textil, stropy i stínění z jedné dílny');
 });
 
 it('renders the calculator hub with three tiles', function () {
@@ -103,8 +104,9 @@ it('renders the stretched-ceiling page', function () {
     $this->get('/vypinany-podhled')
         ->assertOk()
         ->assertSee('Napínané stropy – dokonalý vzhled vašeho interiéru')
-        ->assertSee('Napínaný strop v interiéru – fotka 1 z 5')
-        ->assertSee('images/vypinany-podhled/01.png', false)
+        ->assertSee('Podsvícený vypínaný strop se světelným obvodem')
+        ->assertSee('images/web/podhled-1.webp', false)
+        ->assertSee(route('web.kalkulacka.stropy'), false)
         ->assertSee('Předchozí obrázek')
         ->assertSee('Další obrázek')
         ->assertSee('Co jsou napínané stropy?')
@@ -113,11 +115,29 @@ it('renders the stretched-ceiling page', function () {
         ->assertSee('Kde lze napínané stropy využít?');
 });
 
-it('renders the shading-technology page', function () {
+it('renders the shading-technology page with products and a call to action', function () {
     $this->get('/stinici-technika')
         ->assertOk()
         ->assertSee('Stínicí technika')
-        ->assertSee('noindex', false);
+        ->assertSee('Japonské stěny')
+        ->assertSee(route('web.inquiry.create', ['produkt' => 'shades']), false)
+        ->assertDontSee('DOPLNIT')
+        ->assertDontSee('noindex', false);
+});
+
+it('redirects the retired shading calculator url to the inquiry form', function () {
+    $this->get('/kalkulacka/stinici-technika')
+        ->assertRedirect('/poptavka?produkt=shades')
+        ->assertStatus(301);
+});
+
+it('serves responsive hero images with srcset and a transparent logo', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('images/web/hero-960.webp 960w', false)
+        ->assertSee('images/web/hero-2400.webp 2400w', false)
+        ->assertSee('images/logo-144.png 2x', false)
+        ->assertDontSee('logo.jpg', false);
 });
 
 it('renders the b2b login page with noindex', function () {
@@ -166,8 +186,8 @@ it('serves the sitemap as xml', function () {
         ->assertSee(route('web.kalkulacka'), false)
         ->assertSee(route('web.kalkulacka.sivani'), false)
         ->assertSee(route('web.kalkulacka.stropy'), false)
-        ->assertDontSee(route('web.kalkulacka.stinici'), false)
-        ->assertDontSee(route('web.stinici-technika'), false);
+        ->assertSee(route('web.stinici-technika'), false)
+        ->assertDontSee('/kalkulacka/stinici-technika', false);
 });
 
 it('redirects guests from the internal dashboard to login', function () {

@@ -10,7 +10,7 @@
     <span>
         <span class="block text-sm font-medium text-stone-700">{{ $label }}</span>
         @if ($hint)
-            <span class="block text-xs text-stone-400">{{ $hint }}</span>
+            <span class="block text-xs text-stone-500">{{ $hint }}</span>
         @endif
     </span>
 </label>

@@ -8,7 +8,7 @@
     </div>
 
     @if ($hint)
-        <p class="mt-1 text-xs text-stone-400">{{ $hint }}</p>
+        <p class="mt-1 text-xs text-stone-500">{{ $hint }}</p>
     @endif
 
     @error($name)
