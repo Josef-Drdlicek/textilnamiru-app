@@ -1,0 +1,57 @@
+---
+description: Základní pravidla projektu Textil na míru. Platí vždy a mají přednost před čímkoli, co agent „obvykle dělá“.
+alwaysApply: true
+---
+
+# Textil na míru: jak se tu pracuje
+
+Jedna aplikace, jeden zdroj pravdy: **Laravel 13 + Livewire 4 + Tailwind 4**, data v databázi.
+Veřejný web, kalkulačky, B2B zakázky studií i administrace dílny jsou části téhle jedné aplikace.
+Architektura je popsaná v `README.md`, uživatelské chování v `docs/uzivatelska-prirucka.md`,
+vzhled v `docs/BRANDBOOK.md`. Než něco změníš, přečti si příslušnou část.
+
+## Nikdy
+
+- **Nezakládej vedlejší aplikaci** (samostatné HTML/JS, „ukázka“, „nová aplikace“, jiný framework).
+  Všechno nové je route + controller/Livewire + Blade v této aplikaci.
+- **Neukládej data do prohlížeče** (`localStorage`, `sessionStorage`, cookies s obsahem).
+  Zakázky, nabídky, ceník, uživatelé žijí jen v databázi přes Eloquent modely.
+- **Nepočítej ceny v JavaScriptu.** Cena vzniká výhradně na serveru v `app/Domain/Pricing`.
+- **Nepiš ceny, hesla, kontakty ani jiné hodnoty natvrdo do kódu.** Ceny jsou v tabulce
+  `pricing_variables`, kontakty v `config/company.php`, přístupy v `.env`.
+- **Nevytvářej vlastní přihlašování ani vlastní uživatele.** Používá se Laravel auth, model `User`,
+  middleware `auth`, `active`, `admin` a policies.
+- **Nenechávej v kódu zástupné texty** jako `DOPLNIT`, `TODO text`, `Lorem ipsum`. Když obsah chybí,
+  napiš rozumný výchozí text a označ ho v commit message, ať ho majitel doladí.
+- **Nemaž ani neoslabuj testy, aby prošly.** Když test padá, je špatně kód, nebo se vědomě mění
+  chování a pak se upraví i test (s vysvětlením v commitu).
+- **Nepushuj do `main`.** Push do `main` = automatické nasazení na produkci. Pracuje se ve větvi
+  a změny jdou přes pull request.
+- **Nepřidávej závislosti** (composer/npm) bez jasného důvodu uvedeného v commitu.
+- **Nepoužívej inline `style=""`, inline `<script>` ani `<style>` v Blade šablonách** a žádné
+  `!important` (`!px-4`). Styl patří do Tailwind tříd nebo `resources/css/app.css`, chování do `resources/js`.
+
+## Vždy
+
+- Pracuj v malých krocích: jedna věc, jeden commit, česká commit message ve stylu existující historie
+  (`git log --oneline -20`).
+- Před commitem spusť testy: `vendor\bin\pest` (Windows) nebo `vendor/bin/pest`. Všechny musí projít.
+- Nová funkce = nový nebo upravený test v `tests/`. Vzory jsou v `tests/Feature` a `tests/Unit/Pricing`.
+- Drž se existujících vzorů: podívej se, jak je udělaná podobná věc, a udělej to stejně.
+  Konkrétní návody jsou v ostatních pravidlech (`backend-laravel`, `pricing`, `frontend-web`, `obsah-a-fotky`).
+- Komentáře v kódu česky, stručně, jen tam, kde vysvětlují *proč* nebo upozorňují na záludnost.
+- Když si nejsi jistý obchodním pravidlem (vzorec, workflow, terminologie), **zeptej se**, místo abys
+  vymýšlel. Otevřené otázky jsou v `docs/design-audit-2026-11.md` a v `README.md`.
+
+## Lokální běh
+
+```
+composer install && npm install
+cp .env.example .env && php artisan key:generate
+php artisan migrate --force
+php artisan db:seed --class=DemoSeeder     # demo účty dilna / lucie (jen lokálně)
+npm run build                              # po každé změně CSS/JS, jinak nové třídy nefungují
+php artisan serve                          # nebo: php -S 127.0.0.1:8000 -t public server.php
+```
+
+Po úpravě Blade/CSS/JS vždy `npm run build` (nebo nech běžet `npm run dev`), jinak se změny neprojeví.

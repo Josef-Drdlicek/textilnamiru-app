@@ -1,0 +1,52 @@
+---
+description: Kde se mění texty, fotky a ceník, když majitel chce „jen upravit obsah“. Použij, když zadání zní „změň text“, „vyměň fotku“, „přidej realizaci“, „uprav cenu“.
+alwaysApply: false
+---
+
+# Obsah webu: kde co je
+
+Většina textů je v PHP polích na začátku Blade šablony. Měň hodnoty v poli, markup nech být.
+
+| Co | Soubor | Pole / místo |
+|---|---|---|
+| Úvodní slider (3 snímky: text, tlačítka, fotka) | `resources/views/web/sections/_hero.blade.php` | `$slides` |
+| Tři obory na úvodu | `resources/views/web/sections/_services.blade.php` | `$services` |
+| Proč my (4 body) | `resources/views/web/sections/_usp.blade.php` | `$usps` |
+| Pro koho šijeme | `resources/views/web/sections/_segments.blade.php` | `$segments` |
+| Postup spolupráce | `resources/views/web/sections/_process.blade.php` | pole kroků |
+| O nás | `resources/views/web/sections/_about.blade.php` | text v šabloně |
+| Katalog (názvy, fotky dlaždic) | `resources/views/web/sections/_catalog.blade.php` | `$calculable`, `$onRequest` |
+| Realizace (fotky, popisky, čísla) | `resources/views/web/sections/_gallery.blade.php` | `$items`, `$stats` |
+| Vypínaný podhled | `resources/views/web/vypinany-podhled.blade.php` | `$gallery`, `$benefits`, `$variants`, `$rooms` + odstavce |
+| Stínicí technika | `resources/views/web/stinici-technika.blade.php` | `$products`, `$steps` + úvod |
+| Rozcestník kalkulaček | `resources/views/web/kalkulacka.blade.php` | `$calculators` |
+| Texty kalkulačky podle oboru | `app/Enums/ProductCategory.php` | `estimatorTitle()`, `estimatorIntro()`, … |
+| Názvy výrobků | `app/Enums/ItemType.php`, `app/Enums/InquiryProduct.php` | `label()` |
+| Kontakty, adresa, otevírací doba | `config/company.php` (nebo `.env`) | |
+| Meta description stránky | atribut `description` na `<x-layouts.web>` v dané šabloně | |
+| Hlavní menu | `resources/views/components/layouts/web.blade.php` | `$menu` |
+
+Terminologie: dnes se vedle sebe používá „vypínaný podhled“, „napínané stropy“ a „vypínaný strop“.
+Až majitel zvolí jeden hlavní termín, sjednoť menu, hero, h1, title i kalkulačku v jednom commitu.
+
+# Fotky
+
+1. Originál (co největší, JPG/PNG) ulož do `resources/images/` pod názvem, který určuje použití:
+   - `hero.jpg`, `hero-2.jpg`, `hero-3.jpg` (slider, 16:9, aspoň 2400 px na šířku)
+   - `tile-curtain.jpg`, `tile-drape.jpg`, `tile-pillow.jpg`, `tile-cushion.jpg`, `tile-blind.jpg`,
+     `tile-rails.jpg`, `tile-shades.jpg`, `tile-panels.jpg` (katalog, 4:3, aspoň 1200 px)
+   - `gallery-hotel.jpg`, `gallery-castle.jpg`, `gallery-bedroom.jpg`, `gallery-living.jpg`,
+     `gallery-office.jpg`, `gallery-restaurant.jpg` (realizace, 4:3)
+   - `podhled-1.jpg` … `podhled-5.jpg` (galerie podhledu, 4:3, bez vypáleného textu)
+   - `logo.png` (čtverec, průhledné pozadí)
+2. Spusť `npm run images`. Skript `scripts/build-images.mjs` vyrobí WebP + JPG ve správných šířkách
+   do `public/images/web/` (a logo do `public/images/`). Nic jiného ručně nekopíruj.
+3. Šablona si fotku najde podle názvu (`<x-web.img name="tile-curtain">`); dokud soubor chybí,
+   zobrazí se placeholder s popiskem.
+4. Commitni originál i vygenerované soubory.
+
+# Ceník
+
+Ceny se **nemění v kódu**. Dílna je upravuje v administraci (Ceník), změny platí pro nové kalkulace.
+Výchozí hodnoty pro novou instalaci jsou v `database/seeders/PricingVariableSeeder.php`
+a `RibbonSeeder.php`. Nová položka ceníku, kterou má používat vzorec, je změna vzorce (pravidlo `pricing`).

@@ -87,6 +87,11 @@ Veřejná kalkulačka je rozdělená podle kategorie: `/kalkulacka/zakazkove-siv
 (šití) a `/kalkulacka/vypinane-stropy` (stropy). Stránky stínicí techniky zatím
 nemají obsah, proto mají `noindex` a nejsou v sitemapě.
 
+## Práce s AI agentem (Cursor)
+
+Pravidla pro agenty jsou v `AGENTS.md` a `.cursor/rules/`, návod pro majitele v `docs/CURSOR-START.md`.
+Fotky se připravují skriptem `npm run images` z originálů v `resources/images/`.
+
 ## Lokální vývoj
 
 ```bash

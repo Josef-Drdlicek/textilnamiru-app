@@ -1,0 +1,65 @@
+---
+description: Vzory pro PHP část (modely, akce, controllery, Livewire, migrace, testy). Použij při jakékoli změně v app/, database/, routes/ nebo tests/.
+globs: ["app/**", "database/**", "routes/**", "tests/**", "config/**"]
+alwaysApply: false
+---
+
+# Backend: jak se tu píše PHP
+
+## Vrstvy a kam co patří
+
+| Co | Kam | Vzor |
+|---|---|---|
+| Změna stavu dat (založení, odeslání, převod) | `app/Actions/*` (jedna třída, metoda `handle`) | `SubmitOrder`, `DeferOrder`, `ConvertInquiryToOrder` |
+| Validace vstupu z formuláře | `app/Http/Requests/*` (FormRequest s českými `attributes()`) | `SubmitOrderRequest`, `StorePricingVariableRequest` |
+| HTTP vstup, volá Action, přesměruje | `app/Http/Controllers/*` (tenké, bez logiky) | `OrderDeferralController` |
+| Živý přepočet, interaktivní formulář | `app/Livewire/*` | `Configurators/AbstractConfigurator`, `Web/PriceEstimator` |
+| Oprávnění | `app/Policies/*` + `$this->authorize(...)` | `OrderPolicy` |
+| Výčty se štítky | `app/Enums/*` s metodou `label()` | `OrderStatus`, `ItemType`, `ProductCategory` |
+| Výpočet ceny | `app/Domain/Pricing/*` (viz pravidlo `pricing`) | `Calculators/*` |
+| Nákresy | `app/Domain/Schema/Renderers/*` | `BlindSchemaRenderer` |
+| Formátování pro výpis | `app/Support/*` | `ItemParameterPresenter` |
+
+- Controller nikdy nepočítá cenu, neukládá položky napřímo a neobsahuje podmínky obchodní logiky.
+  Deleguje do Action nebo doménové třídy.
+- Model má `#[Fillable([...])]`, `casts()`, vztahy a jednoduché dotazovací metody (`isDraft()`, scope).
+  Žádná HTTP ani view logika v modelu.
+- Nové chování zakázky = nový přechod v `OrderStatus::allowedTransitions()` a Action, ne `if` v controlleru.
+
+## Databáze
+
+- Každá změna schématu = migrace v `database/migrations` s datem `YYYY_MM_DD_` a popisným názvem,
+  s funkčním `down()`. Nikdy neupravuj už nasazenou migraci.
+- Výchozí data (ceník, stuhy) jdou přes seeder, který **nepřepisuje hodnoty upravené dílnou**
+  (vzor: `PricingVariableSeeder` používá `firstOrNew` a mění jen metadata). Nový seeder se spouští
+  z migrace, protože deploy na Laravel Cloud `db:seed` nespouští.
+- Mazání záznamů, které mají historii (zakázky), je soft delete.
+
+## Routy a přístup
+
+- Veřejné routy jsou pojmenované `web.*`, interní bez prefixu, admin `admin.*` (viz `routes/web.php`).
+  Použij `route('name')`, nikdy ručně psanou URL.
+- Přihlášená část je uvnitř `Route::middleware(['auth', 'active'])`, dílna uvnitř `middleware('admin')`.
+  Vlastnictví zakázky hlídá `OrderPolicy`, ne podmínka v controlleru.
+- Stará adresa, kterou někdo může mít uloženou, dostane `Route::permanentRedirect`.
+
+## Testy (Pest)
+
+- Feature test pro každou routu a každý tok (`tests/Feature/...`), unit test pro každý cenový vzorec
+  (`tests/Unit/Pricing/...`, počítá proti `tests/Support/PriceLists::standard()` bez databáze).
+- Test popisuje chování česky nebo anglicky ve stylu okolních testů: `it('defers an order ...')`.
+- Při změně vzorce nejdřív uprav test na novou očekávanou hodnotu (s výpočtem v komentáři), pak kód.
+- Spouštění: `vendor\bin\pest` nebo `vendor\bin\pest --filter=NazevTestu`. Na Windows s diakritikou
+  v cestě nefunguje `php artisan test`.
+
+## Checklist: nový typ výrobku
+
+1. `ItemType` case + `label()`, `category()`, a mapování na kalkulátor, parametry, konfigurátor, renderer.
+2. `app/Domain/Pricing/Parameters/XParameters.php` (`fromArray`, `toArray`).
+3. `app/Domain/Pricing/Calculators/XPriceCalculator.php` + unit test.
+4. `app/Livewire/Configurators/XConfigurator.php` + `resources/views/livewire/configurators/x.blade.php`
+   (kopíruj strukturu `stretch-ceiling.blade.php`, včetně `_price-bar`).
+5. `app/Domain/Schema/Renderers/XSchemaRenderer.php`.
+6. `InquiryProduct` case, ikona v `components/item-type-icon.blade.php`, popisky v `lang/cs/parameters.php`.
+7. `PublicPresets` (referenční rozměry a maxima pro veřejnou kalkulačku).
+8. Feature test konfigurátoru + test veřejné kalkulačky.

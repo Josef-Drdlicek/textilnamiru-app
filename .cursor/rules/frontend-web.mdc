@@ -1,0 +1,53 @@
+---
+description: Vzhled a frontend veřejného webu i interní aplikace (Blade, Tailwind, JS, obrázky). Použij při změně čehokoli v resources/ nebo public/images/.
+globs: ["resources/**", "public/images/**", "vite.config.js"]
+alwaysApply: false
+---
+
+# Frontend: Blade + Tailwind 4 + malý JS
+
+Závazný vzhled je v `docs/BRANDBOOK.md`. Barvy a písmo jsou tokeny v `resources/css/app.css` (`@theme`):
+`brand-*` (terakota, jen akcent), `ink` (primární tlačítka a text), `paper`, `surface-alt`, `line`,
+`muted`, `error`. **Žádné hexy ani `red-600` v šablonách**, vždy token.
+
+## Stavební kameny (použij, nevymýšlej nové)
+
+| Potřebuji | Použij |
+|---|---|
+| Tlačítko | `.btn-primary` (hlavní akce, max. 1 na obrazovku), `.btn-secondary`, menší `.btn-sm` |
+| Nadpis sekce | `<p class="eyebrow">…</p>` + `<h2 class="text-section-title">` (na podstránce h1) |
+| Sekce | `<section class="bg-paper|bg-white"><div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">` |
+| Obrázek | `<x-web.img name="…" alt="…" width height :widths="[960,1600]" sizes="…">` (WebP + JPG, lazy, placeholder) |
+| Produktová dlaždice | `<x-web.product-tile>` |
+| Odkaz zpět pod hlavičkou | `<x-web.back-link :href label>` |
+| Slider / galerie | markup `data-slider` + `data-slider-slide` a `createSlider()` z `resources/js/slider.js` |
+| Formulářové pole (interní app) | `<x-form.field>`, `<x-form.input>`, `<x-form.select>`, `<x-form.checkbox>` |
+| Chybová hláška | `<p class="text-sm text-error" role="alert">` |
+| Kontakt firmy | `config('company.phone_display')`, `config('company.email')`, … |
+| Logo | `<x-logo :size="36">` |
+
+## Pravidla
+
+- **Jedna h1 na stránku**, pak h2/h3 bez přeskakování úrovní. Sdílené sekce dostanou `$asPage`
+  a přepnou h2 → h1 (vzor `_catalog.blade.php`).
+- **Mobil nejdřív**: základní třídy pro telefon, `sm:`/`lg:`/`xl:` nahoru. Ověř 390 px šířku,
+  žádný vodorovný scroll, dotykové cíle alespoň 44 px (odkazy v textu stačí 24 px).
+- Každá stránka má **CTA** (poptávka nebo kalkulačka) a prochází z menu i patičky.
+  Nové stránce přidej položku do `$menu` v `layouts/web.blade.php`, do patičky a do `web/sitemap.blade.php`.
+- **Obrázky**: originály do `resources/images/`, pak `npm run images` (viz `scripts/build-images.mjs`),
+  který vyrobí WebP/JPG do `public/images/web/`. Do `public/` se nikdy nedávají fotky nad ~200 KB
+  ani PNG fotografie. `alt` popisuje, co je na fotce; dekorativní obrázek má `alt=""`.
+- **Přístupnost**: `aria-label` na ikonových tlačítkách, `aria-current="page"` na aktivní položce,
+  `prefers-reduced-motion` respektují všechny animace (slider i `.reveal`), `inert` na skrytých snímcích.
+- Texty, které majitel ladí (hero, obory, stínění, podhled), jsou v PHP polích na začátku šablony
+  (`$slides`, `$services`, `$products`, `$benefits`). Měň data, ne markup.
+- JS je v `resources/js/web.js` (veřejný web) a `resources/js/slider.js`. Nový skript = nový modul
+  importovaný z `web.js`, ne `<script>` v Blade. Po změně `npm run build`.
+- Interní aplikace (`orders/`, `admin/`, `livewire/`) používá neutrální `stone`/`teal` paletu;
+  pomocný text `text-stone-500` (ne 400, kontrast). Na mobilu musí být cena vidět během
+  vyplňování (`_price-bar`).
+
+## Zakázáno
+
+Inline `style=""`, `<style>` a `<script>` v Blade; `!important`; natvrdo psané kontakty a ceny;
+`localStorage`; texty `DOPLNIT`; kopírování celé sekce místo parametrizace existující.

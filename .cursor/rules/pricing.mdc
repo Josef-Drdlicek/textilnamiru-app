@@ -1,0 +1,45 @@
+---
+description: Pravidla pro ceny a kalkulace. Použij při každé změně vzorce, ceníku, stuh nebo kalkulačky.
+globs: ["app/Domain/Pricing/**", "app/Livewire/Web/**", "app/Livewire/Configurators/**", "database/seeders/PricingVariableSeeder.php", "database/seeders/RibbonSeeder.php", "tests/Unit/Pricing/**", "tests/Support/**"]
+alwaysApply: false
+---
+
+# Ceny a kalkulace
+
+## Jediný zdroj pravdy
+
+- Cena se počítá **jen na serveru** v `app/Domain/Pricing/Calculators/*` přes `ItemPricer`.
+  Veřejná kalkulačka (`Livewire\Web\PriceEstimator`), konfigurátory studií i uložení položky
+  (`SaveOrderItem`) volají stejný kalkulátor. Nikde jinde se cena nepočítá, nikdy v JS.
+- Každá sazba je položka ceníku v tabulce `pricing_variables` (kód velkými písmeny, např. `PRIPRAVA`,
+  `LED_PASEK`). Kalkulátor ji čte přes `$prices->var('KOD')`. Neznámý kód vyhodí výjimku, to je správně.
+- Nové sazbě přidej řádek do `PricingVariableSeeder::VARIABLES` (kód, název, výchozí hodnota, jednotka)
+  a do `tests/Support/PriceLists::standard()`. Seeder se spouští migrací.
+- Konstanty vzorce, které nejsou cenou (např. tloušťka vrstvy molitanu 2 cm), jsou pojmenované
+  `private const` v kalkulátoru s komentářem, ne „magická čísla“ ve výpočtu.
+
+## Jak napsat vzorec
+
+- Každá složka ceny je `new PriceLine('Český popisek', částka)`; výsledek `PriceResult::fromLines($lines)`.
+  Rozpis se ukazuje zákazníkovi, studiu i dílně, takže popisky musí dávat smysl laikovi.
+- Vstupy jsou typované parametry (`XParameters`), nikdy surové pole z requestu.
+- Parametr, který do ceny nevstupuje, má komentář `// do ceny nevstupuje`.
+- Odpověď na otázku „kolik to stojí“ je vždy v unit testu s ručně spočítanou hodnotou v komentáři:
+  `// 300 kompletace + 1,2 × 200 tunýlky + ... = 754,40`.
+
+## Změna existujícího vzorce
+
+1. Ověř u majitele, že je změna chtěná, a zapiš ji do commit message.
+2. Uprav unit test (nová očekávaná hodnota s výpočtem v komentáři).
+3. Uprav kalkulátor.
+4. Zkontroluj `PublicPresets::referenceParameters` (katalogová „cena od“) a feature testy,
+   které očekávané ceny používají (`PillowConfiguratorTest`, `SubmitOrderTest`, `PricingManagementTest`).
+5. Odeslané zakázky mají cenu zamrazenou (`order_items.unit_price`), změna je neovlivní. To je záměr.
+
+## Veřejná kalkulačka
+
+- Laik zadává jen rozměry, počet, nařasení a výplň. Odborné parametry doplňuje `PublicPresets`,
+  takže „cena od“ v katalogu a cena v kalkulačce vždy sedí.
+- Výrobky jsou rozdělené podle `ProductCategory` (šití, stropy). Nový obor = nový case
+  v `ProductCategory` s texty kalkulačky, ne další kopie Livewire komponenty.
+- Do poptávky se posílá serverový snapshot ze session (`sendToInquiry`), nikdy hodnota z formuláře.
