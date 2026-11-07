@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ConfiguratorController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDeferralController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\OrderItemSchemaController;
 use App\Http\Controllers\OrderSubmissionController;
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     // Finalizace objednávky
     Route::get('/orders/{order}/materials', [OrderSubmissionController::class, 'create'])->name('orders.materials');
     Route::post('/orders/{order}/submit', [OrderSubmissionController::class, 'store'])->name('orders.submit');
+    Route::post('/orders/{order}/defer', [OrderDeferralController::class, 'store'])->name('orders.defer');
 
     // Administrace (dílna)
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {

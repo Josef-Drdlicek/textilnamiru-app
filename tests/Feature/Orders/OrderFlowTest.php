@@ -2,6 +2,7 @@
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
 
 it('creates a draft order and redirects to it', function () {
@@ -30,17 +31,49 @@ it('requires a name to create an order', function () {
     expect(Order::count())->toBe(0);
 });
 
-it('lists drafts and submitted orders on the welcome page', function () {
+it('lists quotes with net and VAT prices and submitted orders on the welcome page', function () {
     $user = User::factory()->create();
-    $draft = Order::factory()->for($user)->create(['name' => 'Rozpracovaná zakázka']);
+    $quote = Order::factory()->for($user)->create(['name' => 'Rozpracovaná zakázka']);
+    OrderItem::factory()->for($quote)->create(['total_price' => 100.0]);
     $submitted = Order::factory()->for($user)->submitted()->create(['name' => 'Odeslaná zakázka']);
 
     $this->actingAs($user)
         ->get(route('orders.welcome'))
         ->assertOk()
-        ->assertSee('Rozpracovaná zakázka')
-        ->assertSee('Odeslaná zakázka')
+        ->assertSeeInOrder(['Cenové nabídky', 'Rozpracovaná zakázka', '100,00 Kč', '121,00 Kč', 'Zakázky', 'Odeslaná zakázka'])
         ->assertSee($submitted->status->label());
+});
+
+it('defers an order with materials and an optional deadline', function () {
+    $order = Order::factory()->create();
+
+    $this->actingAs($order->user)
+        ->post(route('orders.defer', $order), ['materials_note' => 'voal bílý – 9 m'])
+        ->assertRedirect(route('orders.welcome'));
+
+    expect($order->refresh())
+        ->status->toBe(OrderStatus::Draft)
+        ->deferred_at->not->toBeNull()
+        ->materials_note->toBe('voal bílý – 9 m')
+        ->deadline->toBeNull();
+});
+
+it('refuses to defer a submitted order', function () {
+    $order = Order::factory()->submitted()->create();
+
+    $this->actingAs($order->user)
+        ->post(route('orders.defer', $order))
+        ->assertForbidden();
+});
+
+it('lets the owner delete a done order', function () {
+    $order = Order::factory()->submitted()->status(OrderStatus::Done)->create();
+
+    $this->actingAs($order->user)
+        ->delete(route('orders.destroy', $order))
+        ->assertRedirect(route('orders.welcome'));
+
+    $this->assertSoftDeleted($order);
 });
 
 it('shows an order to its owner', function () {

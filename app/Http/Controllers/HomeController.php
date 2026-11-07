@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 /**
  * Rozcestník po přihlášení — admin míří na přehled zakázek,
- * designér na založení/pokračování zakázky.
+ * studio na své cenové nabídky a zakázky.
  */
 class HomeController extends Controller
 {

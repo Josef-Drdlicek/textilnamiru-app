@@ -52,7 +52,6 @@
             method="POST"
             action="{{ route('orders.submit', $order) }}"
             class="space-y-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"
-            onsubmit="return confirm('Závazně objednat zakázku „{{ $order->name }}“? Po objednání ji už nepůjde upravit.');"
         >
             @csrf
 
@@ -91,9 +90,18 @@
                 <a href="{{ route('orders.show', $order) }}" class="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100">
                     ← Zpět na zakázku
                 </a>
-                <button type="submit" class="rounded-lg bg-teal-700 px-6 py-2.5 font-semibold text-white transition hover:bg-teal-800">
-                    Závazně objednat
-                </button>
+                <div class="flex flex-wrap gap-3">
+                    {{-- Odložení nevyžaduje termín, proto formnovalidate. --}}
+                    <button type="submit" formaction="{{ route('orders.defer', $order) }}" formnovalidate
+                        class="rounded-lg border border-teal-700 px-5 py-2.5 font-semibold text-teal-800 transition hover:bg-teal-50">
+                        Odložit objednávku
+                    </button>
+                    <button type="submit"
+                        onclick="return confirm('Závazně objednat tuto zakázku? Po objednání ji už nepůjde upravit.');"
+                        class="rounded-lg bg-teal-700 px-6 py-2.5 font-semibold text-white transition hover:bg-teal-800">
+                        Závazně objednat
+                    </button>
+                </div>
             </div>
         </form>
     </div>

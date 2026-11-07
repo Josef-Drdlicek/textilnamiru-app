@@ -142,13 +142,13 @@
                     </p>
                 @elseif ($designers->isEmpty())
                     <p class="mt-4 rounded-lg border border-dashed border-stone-200 px-4 py-4 text-sm text-stone-400">
-                        Nejdřív založte aktivní účet designérky v sekci Uživatelé.
+                        Nejdřív založte aktivní účet studia v sekci Uživatelé.
                     </p>
                 @else
                     <form method="POST" action="{{ route('admin.inquiries.convert', $inquiry) }}" class="mt-4 space-y-4">
                         @csrf
                         <div>
-                            <label for="user_id" class="block text-sm font-medium text-stone-700">Designérka</label>
+                            <label for="user_id" class="block text-sm font-medium text-stone-700">Studio</label>
                             <select id="user_id" name="user_id" class="mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                                 @foreach ($designers as $designer)
                                     <option value="{{ $designer->id }}" @selected((int) old('user_id') === $designer->id)>{{ $designer->name }}</option>
@@ -166,7 +166,7 @@
                             Založit rozpracovanou zakázku
                         </button>
                         <p class="text-xs text-stone-400">
-                            Vznikne draft pro vybranou designérku — kontakt a případná konfigurace
+                            Vznikne cenová nabídka pro vybrané studio — kontakt a případná konfigurace
                             z kalkulačky se přenesou, ceny se spočítají znovu při odeslání.
                         </p>
                     </form>

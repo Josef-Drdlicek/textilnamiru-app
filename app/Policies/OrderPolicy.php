@@ -27,7 +27,9 @@ class OrderPolicy
     }
 
     /**
-     * Zrušení: vlastník smí zahodit svůj draft, admin smí smazat zakázku v libovolné fázi.
+     * Smazání: studio smí zahodit svou cenovou nabídku (draft) a uklidit
+     * svou hotovou zakázku, admin smí smazat zakázku v libovolné fázi.
+     * Mazání je soft delete, takže hotová zakázka zůstává dohledatelná.
      */
     public function delete(User $user, Order $order): bool
     {
@@ -35,7 +37,7 @@ class OrderPolicy
             return true;
         }
 
-        return $this->owns($user, $order) && $order->isDraft();
+        return $this->owns($user, $order) && ($order->isDraft() || $order->isDone());
     }
 
     public function transition(User $user, Order $order): bool

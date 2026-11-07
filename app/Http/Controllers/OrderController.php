@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreateDraftOrder;
+use App\Domain\Pricing\ItemPricer;
 use App\Enums\OrderStatus;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
@@ -13,15 +14,20 @@ use Illuminate\View\View;
 class OrderController extends Controller
 {
     /**
-     * Rozcestník designéra: založení nové zakázky + rozpracované a odeslané zakázky.
+     * Rozcestník studia: založení nové zakázky, cenové nabídky (rozpracované)
+     * a odeslané zakázky.
      */
-    public function welcome(Request $request): View
+    public function welcome(Request $request, ItemPricer $pricer): View
     {
-        $orders = $request->user()->orders()->latest()->get();
+        $orders = $request->user()->orders()
+            ->withSum('items as items_total', 'total_price')
+            ->latest()
+            ->get();
 
         return view('orders.welcome', [
-            'drafts' => $orders->where('status', OrderStatus::Draft),
+            'quotes' => $orders->where('status', OrderStatus::Draft),
             'submitted' => $orders->where('status', '!=', OrderStatus::Draft),
+            'vatRate' => $pricer->vatRate(),
         ]);
     }
 
@@ -42,7 +48,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Zrušení rozpracované zakázky designérem.
+     * Smazání cenové nabídky nebo hotové zakázky studiem.
      */
     public function destroy(Request $request, Order $order): RedirectResponse
     {
@@ -52,6 +58,6 @@ class OrderController extends Controller
 
         return redirect()
             ->route('orders.welcome')
-            ->with('status', "Zakázka „{$order->name}“ byla zrušena.");
+            ->with('status', "Zakázka „{$order->name}“ byla smazána.");
     }
 }

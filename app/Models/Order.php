@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'name', 'status', 'deadline', 'materials_note', 'submitted_at', 'total_price', 'vat_rate'])]
+#[Fillable(['user_id', 'name', 'status', 'deadline', 'materials_note', 'submitted_at', 'deferred_at', 'total_price', 'vat_rate'])]
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
@@ -26,6 +26,7 @@ class Order extends Model
             'status' => OrderStatus::class,
             'deadline' => 'date',
             'submitted_at' => 'datetime',
+            'deferred_at' => 'datetime',
             'total_price' => 'float',
             'vat_rate' => 'float',
         ];
@@ -58,6 +59,11 @@ class Order extends Model
     public function isDraft(): bool
     {
         return $this->status === OrderStatus::Draft;
+    }
+
+    public function isDone(): bool
+    {
+        return $this->status === OrderStatus::Done;
     }
 
     /**

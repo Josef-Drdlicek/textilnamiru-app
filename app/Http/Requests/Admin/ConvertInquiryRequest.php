@@ -34,7 +34,7 @@ class ConvertInquiryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'user_id' => 'designérka',
+            'user_id' => 'studio',
             'name' => 'název zakázky',
         ];
     }

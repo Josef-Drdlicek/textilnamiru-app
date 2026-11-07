@@ -31,7 +31,7 @@
                                 @if ($user->is_admin)
                                     <span class="rounded-full bg-teal-100 px-2.5 py-0.5 text-xs font-semibold text-teal-800">dílna</span>
                                 @else
-                                    <span class="text-stone-500">designér</span>
+                                    <span class="text-stone-500">studio</span>
                                 @endif
                             </td>
                             <td class="px-5 py-3">

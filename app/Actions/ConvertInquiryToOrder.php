@@ -12,7 +12,7 @@ use LogicException;
 use Throwable;
 
 /**
- * Převezme poptávku z webu do rozpracované zakázky přiřazené designérce.
+ * Převezme poptávku z webu do rozpracované zakázky přiřazené studiu.
  * Draft pak projde standardním flow (konfigurace, odeslání, zamrazení cen) —
  * orientační cena z poptávky se nikdy nepřebírá jako závazná.
  */

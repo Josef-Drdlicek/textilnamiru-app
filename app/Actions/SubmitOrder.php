@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Závazné objednání: zamrazí celkovou cenu i sazbu DPH a převede zakázku
- * do stavu Nová. Od této chvíle je zakázka pro designéra jen ke čtení
+ * do stavu Nová. Od této chvíle je zakázka pro studio jen ke čtení
  * a pozdější změny ceníku ji nijak neovlivní.
  */
 class SubmitOrder
