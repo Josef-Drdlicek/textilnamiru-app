@@ -12,6 +12,11 @@
             <div class="flex items-center gap-3">
                 <x-order-status-badge :status="$order->status" />
 
+                <a href="{{ route('admin.orders.sheet', $order) }}" target="_blank"
+                   class="rounded-lg border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-100">
+                    Výrobní list
+                </a>
+
                 @foreach ($order->status->allowedTransitions() as $target)
                     @if ($target->transitionActionLabel() !== null)
                         <form method="POST" action="{{ route('admin.orders.status', $order) }}">

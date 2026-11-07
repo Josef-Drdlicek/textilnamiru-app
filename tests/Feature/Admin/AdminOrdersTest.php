@@ -167,3 +167,27 @@ it('lets an admin delete an order in any phase', function () {
 
     $this->assertSoftDeleted($order);
 });
+
+it('renders a printable production sheet with parameters and the schema', function () {
+    $order = Order::factory()->submitted()->create(['name' => 'Novákovi – obývák', 'materials_note' => 'voal bílý – 9 m']);
+    OrderItem::factory()->for($order)->create(['notes' => 'Pozor na vzor']);
+
+    $this->actingAs(admin())
+        ->get(route('admin.orders.sheet', $order))
+        ->assertOk()
+        ->assertSee('Výrobní list')
+        ->assertSee('Novákovi – obývák')
+        ->assertSee('voal bílý – 9 m')
+        ->assertSee('Šířka')
+        ->assertSee('50 cm')
+        ->assertSee('Pozor na vzor')
+        ->assertSee('<svg', false);
+});
+
+it('blocks non-admins from the production sheet', function () {
+    $order = Order::factory()->submitted()->create();
+
+    $this->actingAs($order->user)
+        ->get(route('admin.orders.sheet', $order))
+        ->assertForbidden();
+});

@@ -75,6 +75,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
+        Route::get('/orders/{order}/sheet', Admin\OrderSheetController::class)->name('orders.sheet');
         Route::post('/orders/{order}/status', [Admin\OrderStatusController::class, 'store'])->name('orders.status');
         Route::delete('/orders/{order}', [Admin\OrderController::class, 'destroy'])->name('orders.destroy');
 
