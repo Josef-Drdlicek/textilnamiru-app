@@ -4,6 +4,11 @@ namespace App\Livewire\Web;
 
 use App\Domain\Pricing\ItemPricer;
 use App\Domain\Pricing\PublicPresets;
+use App\Enums\CeilingColor;
+use App\Enums\CeilingFinish;
+use App\Enums\CeilingLighting;
+use App\Enums\CeilingSurface;
+use App\Enums\CeilingVariant;
 use App\Enums\ItemType;
 use App\Enums\ProductCategory;
 use DomainException;
@@ -25,6 +30,16 @@ class PriceEstimator extends Component
     public string $category = ProductCategory::Sewing->value;
 
     public string $type = '';
+
+    /** Provedení z ProductCategory::estimatorVariants(); prázdné u oborů bez provedení. */
+    public string $variant = '';
+
+    // Specifikace stropu: druh a barva u jednobarevných provedení, světlo u translucentního.
+    public string $finish = CeilingFinish::Matte->value;
+
+    public string $color = CeilingColor::White->value;
+
+    public string $lighting = CeilingLighting::Perimeter->value;
 
     public ?float $width = null;
 
@@ -57,6 +72,13 @@ class PriceEstimator extends Component
         $types = $this->productCategory()->itemTypes();
 
         $this->type = ($requested !== null && in_array($requested, $types, true) ? $requested : $types[0])->value;
+
+        $variants = $this->productCategory()->estimatorVariants();
+        $requestedVariant = CeilingVariant::tryFrom((string) request()->query('provedeni'));
+
+        if ($variants !== []) {
+            $this->variant = ($requestedVariant !== null && in_array($requestedVariant, $variants, true) ? $requestedVariant : $variants[0])->value;
+        }
 
         $this->prefillDimensions();
         $this->recalculate();
@@ -126,6 +148,26 @@ class PriceEstimator extends Component
         return $this->redirectRoute('web.inquiry.create');
     }
 
+    public function selectedVariant(): ?CeilingVariant
+    {
+        return CeilingVariant::tryFrom($this->variant);
+    }
+
+    public function selectedFinish(): ?CeilingFinish
+    {
+        return CeilingFinish::tryFrom($this->finish);
+    }
+
+    public function selectedColor(): ?CeilingColor
+    {
+        return CeilingColor::tryFrom($this->color);
+    }
+
+    public function selectedLighting(): ?CeilingLighting
+    {
+        return CeilingLighting::tryFrom($this->lighting);
+    }
+
     public function isFabricType(): bool
     {
         return in_array($this->itemType(), [ItemType::Curtain, ItemType::Drape], true);
@@ -142,9 +184,15 @@ class PriceEstimator extends Component
     protected function rules(): array
     {
         $max = PublicPresets::maxDimensions($this->itemType());
+        $variants = array_map(fn (CeilingVariant $variant) => $variant->value, $this->productCategory()->estimatorVariants());
+        $variant = $this->selectedVariant();
 
         return [
             'type' => ['required', Rule::in(array_map(fn (ItemType $type) => $type->value, $this->productCategory()->itemTypes()))],
+            'variant' => $variants === [] ? ['nullable'] : ['required', Rule::in($variants)],
+            'finish' => $variant?->hasFinishAndColor() ? ['required', Rule::enum(CeilingFinish::class)] : ['nullable'],
+            'color' => $variant?->hasFinishAndColor() ? ['required', Rule::enum(CeilingColor::class)] : ['nullable'],
+            'lighting' => $variant?->hasLighting() ? ['required', Rule::enum(CeilingLighting::class)] : ['nullable'],
             'width' => ['required', 'numeric', 'min:10', "max:{$max['width']}"],
             'height' => ['required', 'numeric', 'min:10', "max:{$max['height']}"],
             'count' => ['required', 'integer', 'min:1', 'max:999'],
@@ -163,6 +211,9 @@ class PriceEstimator extends Component
             'height' => mb_strtolower($this->itemType()->heightLabel()),
             'count' => 'počet kusů',
             'ruffle' => 'nařasení',
+            'finish' => 'druh',
+            'color' => 'barva',
+            'lighting' => 'světlo',
         ];
     }
 
@@ -171,11 +222,13 @@ class PriceEstimator extends Component
      */
     public function summary(): string
     {
-        $parts = [
+        $parts = array_filter([
             $this->itemType()->label(),
+            $this->selectedVariant()?->label(),
+            ...$this->specificationLabels(),
             sprintf('%s × %s cm', $this->formatNumber((float) $this->width), $this->formatNumber((float) $this->height)),
             $this->count.' ks',
-        ];
+        ]);
 
         if ($this->isFabricType()) {
             $parts[] = mb_strtolower(PublicPresets::RUFFLE_OPTIONS[$this->ruffle]['label']).' nařasení';
@@ -189,16 +242,45 @@ class PriceEstimator extends Component
     }
 
     /**
-     * @return array{width: float, height: float, ratio: float, stuffing: bool}
+     * Zvolená specifikace stropu jako text („mat, bílá" / „světlo po obvodu").
+     *
+     * @return list<string>
+     */
+    protected function specificationLabels(): array
+    {
+        $variant = $this->selectedVariant();
+
+        if ($variant?->hasFinishAndColor()) {
+            return [mb_strtolower($this->selectedFinish()?->label() ?? '').', '.mb_strtolower($this->selectedColor()?->label() ?? '')];
+        }
+
+        if ($variant?->hasLighting()) {
+            return [mb_strtolower($this->selectedLighting()?->label() ?? '')];
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array{width: float, height: float, ratio: float, stuffing: bool, surface?: CeilingSurface, light_strip?: bool}
      */
     protected function estimatorInput(): array
     {
-        return [
+        $input = [
             'width' => (float) $this->width,
             'height' => (float) $this->height,
             'ratio' => PublicPresets::RUFFLE_OPTIONS[$this->ruffle]['ratio'],
             'stuffing' => $this->stuffing,
         ];
+
+        if ($variant = $this->selectedVariant()) {
+            $input['surface'] = $variant->hasLighting()
+                ? CeilingSurface::Backlit
+                : ($this->selectedFinish() ?? CeilingFinish::Matte)->surface();
+            $input['light_strip'] = $variant === CeilingVariant::LightStrip;
+        }
+
+        return $input;
     }
 
     protected function prefillDimensions(): void

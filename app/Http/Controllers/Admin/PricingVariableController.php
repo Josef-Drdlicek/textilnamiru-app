@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\AddCustomPricingVariable;
+use App\Enums\PricingCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePricingVariableRequest;
 use App\Models\PricingVariable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PricingVariableController extends Controller
 {
@@ -19,7 +21,10 @@ class PricingVariableController extends Controller
         $validated = $request->validate([
             'values' => ['required', 'array'],
             'values.*' => ['required', 'numeric', 'min:0', 'max:1000000'],
+            'category' => ['nullable', Rule::enum(PricingCategory::class)],
         ]);
+
+        $category = $request->enum('category', PricingCategory::class) ?? PricingCategory::Sewing;
 
         $variables = PricingVariable::query()
             ->whereIn('code', array_keys($validated['values']))
@@ -30,7 +35,7 @@ class PricingVariableController extends Controller
         }
 
         return redirect()
-            ->route('admin.pricing.index')
+            ->route($category->adminRoute())
             ->with('status', 'Ceník byl uložen. Změny platí pro nové kalkulace, odeslané zakázky zůstávají beze změny.');
     }
 
@@ -40,10 +45,11 @@ class PricingVariableController extends Controller
             name: $request->string('name')->trim()->toString(),
             unit: $request->filled('unit') ? $request->string('unit')->trim()->toString() : null,
             value: (float) $request->input('value'),
+            category: $request->category(),
         );
 
         return redirect()
-            ->route('admin.pricing.index')
+            ->route($variable->category->adminRoute())
             ->with('status', "Položka „{$variable->name}“ byla přidána do ceníku.");
     }
 
@@ -57,7 +63,7 @@ class PricingVariableController extends Controller
         $variable->delete();
 
         return redirect()
-            ->route('admin.pricing.index')
+            ->route($variable->category->adminRoute())
             ->with('status', "Položka „{$variable->name}“ byla smazána.");
     }
 }

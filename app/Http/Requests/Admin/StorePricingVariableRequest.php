@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\PricingCategory;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePricingVariableRequest extends FormRequest
 {
@@ -12,7 +14,7 @@ class StorePricingVariableRequest extends FormRequest
     }
 
     /**
-     * @return array<string, list<string>>
+     * @return array<string, list<mixed>>
      */
     public function rules(): array
     {
@@ -20,7 +22,16 @@ class StorePricingVariableRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'unit' => ['nullable', 'string', 'max:20'],
             'value' => ['required', 'numeric', 'min:0', 'max:1000000'],
+            'category' => ['nullable', Rule::enum(PricingCategory::class)],
         ];
+    }
+
+    /**
+     * Ceník, do kterého řádek přidáváme (bez volby ceník šití).
+     */
+    public function category(): PricingCategory
+    {
+        return $this->enum('category', PricingCategory::class) ?? PricingCategory::Sewing;
     }
 
     /**

@@ -115,6 +115,22 @@
         opacity: 1;
     }
 
+    /* Úvodní hero: fotky se plynule prolínají, texty odcházejí rychleji a nový
+       text naběhne se zpožděním, aby se dva texty nepřekrývaly. */
+    [data-hero].slider-fade .slider-item {
+        transition-duration: 0.9s;
+        transition-timing-function: ease-in-out;
+    }
+
+    [data-hero].slider-fade [data-hero-copy] {
+        transition-duration: 0.35s;
+    }
+
+    [data-hero].slider-fade [data-hero-copy].is-active {
+        transition-duration: 0.55s;
+        transition-delay: 0.35s;
+    }
+
     .slider-dot {
         @apply flex h-6 w-6 items-center justify-center rounded-full transition;
     }
@@ -137,7 +153,11 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .slider-item {
+        .slider-item,
+        .slider-fade .slider-item,
+        [data-hero].slider-fade .slider-item,
+        [data-hero].slider-fade [data-hero-copy],
+        [data-hero].slider-fade [data-hero-copy].is-active {
             transition: none;
         }
     }

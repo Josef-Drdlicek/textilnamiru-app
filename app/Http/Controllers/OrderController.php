@@ -17,16 +17,30 @@ class OrderController extends Controller
      * Rozcestník studia: založení nové zakázky, cenové nabídky (rozpracované)
      * a odeslané zakázky.
      */
-    public function welcome(Request $request, ItemPricer $pricer): View
+    /**
+     * Moje zakázky: založení nové zakázky a přehled odeslaných zakázek.
+     */
+    public function welcome(Request $request): View
     {
-        $orders = $request->user()->orders()
-            ->withSum('items as items_total', 'total_price')
-            ->latest()
-            ->get();
-
         return view('orders.welcome', [
-            'quotes' => $orders->where('status', OrderStatus::Draft),
-            'submitted' => $orders->where('status', '!=', OrderStatus::Draft),
+            'submitted' => $request->user()->orders()
+                ->where('status', '!=', OrderStatus::Draft)
+                ->latest()
+                ->get(),
+        ]);
+    }
+
+    /**
+     * Cenové nabídky: rozpracované a odložené zakázky s orientační cenou.
+     */
+    public function quotes(Request $request, ItemPricer $pricer): View
+    {
+        return view('orders.quotes', [
+            'quotes' => $request->user()->orders()
+                ->where('status', OrderStatus::Draft)
+                ->withSum('items as items_total', 'total_price')
+                ->latest()
+                ->get(),
             'vatRate' => $pricer->vatRate(),
         ]);
     }
@@ -54,10 +68,13 @@ class OrderController extends Controller
     {
         $this->authorize('delete', $order);
 
+        // Smazaná nabídka vrací na seznam nabídek, hotová zakázka na Moje zakázky.
+        $backTo = $order->isDraft() ? 'orders.quotes' : 'orders.welcome';
+
         $order->delete();
 
         return redirect()
-            ->route('orders.welcome')
+            ->route($backTo)
             ->with('status', "Zakázka „{$order->name}“ byla smazána.");
     }
 }

@@ -50,6 +50,11 @@ final class PriceLists
                 'VYPINANY_PODHLED' => 1500,
                 'LED_PASEK' => 400,
                 'DOPRAVA' => 12,
+                // Ceník stropů — testovací hodnoty (v databázi je doplňuje dílna).
+                'STROP_LISTA_SVETELNA' => 300,
+                'STROP_LED_COB_15W' => 250,
+                'STROP_ZDROJ_SLIM_400W' => 1800,
+                'STROP_PRIJIMAC' => 900,
             ],
             ribbonPrices: [
                 'custom' => 0,

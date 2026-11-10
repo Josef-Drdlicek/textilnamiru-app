@@ -72,41 +72,72 @@
                         <table class="min-w-full divide-y divide-stone-200 text-sm">
                             <thead class="bg-stone-50 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">
                                 <tr>
-                                    <th class="px-5 py-3">Zakázka</th>
-                                    <th class="px-5 py-3">Zákazník</th>
-                                    <th class="px-5 py-3">Objednáno</th>
-                                    <th class="px-5 py-3">Termín</th>
-                                    <th class="px-5 py-3 text-right">Cena bez DPH</th>
-                                    <th class="px-5 py-3 text-right"><span class="sr-only">Akce</span></th>
+                                    {{-- Datové sloupce se zúží na obsah a prázdné sloupce mezi nimi si rovným dílem
+                                         rozdělí volné místo, takže mezery mezi sloupci i k tlačítkům stavu jsou stejné. --}}
+                                    <th class="w-px whitespace-nowrap px-5 py-3">Zákazník</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3">Zakázka</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3">Objednáno</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3">Termín</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3 text-right">Cena bez DPH</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3 text-right">Cena s DPH</th>
+                                    <th class="p-0" aria-hidden="true"></th>
+                                    <th class="w-px whitespace-nowrap px-5 py-3 text-right"><span class="sr-only">Akce</span></th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-stone-100">
                                 @foreach ($sectionOrders as $order)
                                     <tr>
-                                        <td class="px-5 py-3">
+                                        <td class="w-px whitespace-nowrap px-5 py-3">{{ $order->user->name }}</td>
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3">
                                             <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-teal-800 hover:underline">
                                                 {{ $order->name }}
                                             </a>
                                         </td>
-                                        <td class="px-5 py-3">{{ $order->user->name }}</td>
-                                        <td class="px-5 py-3">{{ $order->submitted_at?->format('j. n. Y') }}</td>
-                                        <td class="px-5 py-3">{{ $order->deadline?->format('j. n. Y') ?? '—' }}</td>
-                                        <td class="px-5 py-3 text-right tabular-nums">
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3">{{ $order->submitted_at?->format('j. n. Y') }}</td>
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3">{{ $order->deadline?->format('j. n. Y') ?? '—' }}</td>
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3 text-right tabular-nums">
                                             {{ $order->total_price !== null ? number_format($order->total_price, 2, ',', ' ').' Kč' : '—' }}
                                         </td>
-                                        <td class="px-5 py-3">
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3 text-right tabular-nums">
+                                            @php $withVat = $order->totalPriceWithVat(); @endphp
+                                            {{ $withVat !== null ? number_format($withVat, 2, ',', ' ').' Kč' : '—' }}
+                                        </td>
+                                        <td class="p-0" aria-hidden="true"></td>
+                                        <td class="w-px whitespace-nowrap px-5 py-3">
+                                            @php
+                                                $transitions = collect($order->status->allowedTransitions())
+                                                    ->filter(fn ($target) => $target->transitionActionLabel() !== null);
+                                            @endphp
                                             <div class="flex items-center justify-end gap-2">
-                                                @foreach ($order->status->allowedTransitions() as $target)
-                                                    @if ($target->transitionActionLabel() !== null)
-                                                        <form method="POST" action="{{ route('admin.orders.status', $order) }}">
-                                                            @csrf
-                                                            <input type="hidden" name="status" value="{{ $target->value }}">
-                                                            <button type="submit" class="rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-teal-800">
-                                                                {{ $target->transitionActionLabel() }}
-                                                            </button>
-                                                        </form>
-                                                    @endif
+                                                @foreach ($transitions as $target)
+                                                    <form method="POST" action="{{ route('admin.orders.status', $order) }}">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="{{ $target->value }}">
+                                                        <button type="submit" class="rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-teal-800">
+                                                            {{ $target->transitionActionLabel() }}
+                                                        </button>
+                                                    </form>
                                                 @endforeach
+
+                                                {{-- Neviditelná rezerva stejně široká jako tlačítka stavu: posune je o jejich
+                                                     vlastní šířku doleva, dál od tlačítka Smazat. --}}
+                                                @if ($transitions->isNotEmpty())
+                                                    <div class="invisible flex gap-2" aria-hidden="true">
+                                                        @foreach ($transitions as $target)
+                                                            <span class="rounded-lg px-3 py-1.5 text-xs font-semibold">{{ $target->transitionActionLabel() }}</span>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
 
                                                 <form method="POST" action="{{ route('admin.orders.destroy', $order) }}"
                                                       onsubmit="return confirm('Opravdu smazat zakázku „{{ $order->name }}“?');">

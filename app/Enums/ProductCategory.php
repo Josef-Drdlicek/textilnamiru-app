@@ -30,6 +30,20 @@ enum ProductCategory: string
         ));
     }
 
+    /**
+     * Provedení, která kalkulačka oboru nabízí jako dlaždice s fotkou
+     * místo výběru výrobku; prázdné = dlaždice podle výrobků.
+     *
+     * @return list<CeilingVariant>
+     */
+    public function estimatorVariants(): array
+    {
+        return match ($this) {
+            self::Sewing => [],
+            self::Ceiling => CeilingVariant::cases(),
+        };
+    }
+
     public function estimatorTitle(): string
     {
         return match ($this) {
