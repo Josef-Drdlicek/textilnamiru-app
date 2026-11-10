@@ -7,8 +7,9 @@
  * snímky (např. texty hera), se předají v `options.linked`.
  *
  * Přístupnost: neaktivní snímky dostanou `inert` + `aria-hidden`; autoplay se
- * nespustí při prefers-reduced-motion, pauzuje při hoveru/fokusu a po ruční
- * interakci se trvale vypne (WCAG 2.2.2). Šipky vlevo/vpravo přepínají snímky.
+ * nespustí při prefers-reduced-motion, pauzuje při hoveru a klávesnicovém fokusu
+ * a jde vypnout tlačítkem pauzy (WCAG 2.2.2). Po ruční změně snímku se odpočet
+ * intervalu spustí znovu. Šipky vlevo/vpravo přepínají snímky.
  */
 export function createSlider(root, options = {}) {
     const {
@@ -117,12 +118,10 @@ export function createSlider(root, options = {}) {
         });
     };
 
-    // Ruční interakce autoplay natrvalo vypne — čtenář si vybral snímek sám.
+    // Ruční změna snímku: odpočet začíná znovu, aby snímek nezmizel hned po kliknutí.
     const userGoTo = (next, direction) => {
-        playing = false;
-        stop();
-        renderPauseButton();
         goTo(next, direction);
+        start();
     };
 
     prevBtn?.addEventListener('click', () => userGoTo(index - 1, -1));
@@ -156,7 +155,12 @@ export function createSlider(root, options = {}) {
 
     root.addEventListener('mouseenter', pause);
     root.addEventListener('mouseleave', resume);
-    root.addEventListener('focusin', pause);
+    root.addEventListener('focusin', (event) => {
+        // Klik myší nechá fokus na tlačítku, pauzu proto vyvolá jen klávesnicový fokus.
+        if (event.target.matches(':focus-visible')) {
+            pause();
+        }
+    });
     root.addEventListener('focusout', (event) => {
         if (!root.contains(event.relatedTarget)) {
             resume();

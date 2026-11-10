@@ -65,7 +65,8 @@ const hero = document.querySelector('[data-hero]');
 if (hero) {
     createSlider(hero, {
         autoplay: true,
-        effect: 'slide',
+        interval: 6000,
+        effect: 'fade',
         linked: [[...hero.querySelectorAll('[data-hero-copy]')]],
     });
 }

@@ -4,6 +4,7 @@ use App\Domain\Pricing\ItemPricer;
 use App\Domain\Pricing\PublicPresets;
 use App\Enums\ItemType;
 use App\Livewire\Web\PriceEstimator;
+use App\Models\PricingVariable;
 use Livewire\Livewire;
 
 it('prefills reference dimensions and shows a price immediately', function () {
@@ -90,6 +91,98 @@ it('prices a stretch ceiling by area in the ceiling category', function () {
         ->assertSet('totalPriceVat', 21780.0)
         ->assertSee('Délka')
         ->assertDontSee('Nařasení');
+});
+
+it('offers ceiling variants as tiles and keeps the area price', function () {
+    // Provedení do ceny zatím nevstupuje: 12 m² × 1 500 Kč = 18 000 Kč bez DPH
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->assertSet('variant', 'monochrome')
+        ->assertSee('Jednobarevný')
+        ->assertSee('Jednobarevný se světelnou lištou')
+        ->assertSee('Translucentní')
+        ->set('variant', 'translucent')
+        ->assertHasNoErrors()
+        ->assertSet('totalPrice', 18000.0);
+});
+
+it('writes the chosen ceiling variant into the inquiry snapshot', function () {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('variant', 'translucent')
+        ->call('sendToInquiry');
+
+    $snapshot = session('inquiry.configuration');
+
+    expect($snapshot['summary'])->toContain('Translucentní')
+        ->and($snapshot['parameters']['surface'])->toBe('backlit');
+});
+
+it('rejects an unknown ceiling variant', function () {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('variant', 'neon')
+        ->assertSet('totalPriceVat', null);
+});
+
+it('numbers the ceiling steps with specification before dimensions', function () {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->assertSeeInOrder(['1. Typ stropu', '2. Specifikace', '3. Rozměry', '4. Orientační cena']);
+
+    Livewire::test(PriceEstimator::class)
+        ->assertSeeInOrder(['1. Co potřebujete ušít?', '2. Rozměry', '3. Orientační cena'])
+        ->assertDontSee('Specifikace');
+});
+
+it('asks monochrome ceilings for finish and colour', function (string $variant) {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('variant', $variant)
+        ->assertSee('Druh')
+        ->assertSee('Struktura')
+        ->assertSee('Barva')
+        ->assertSee('Černá')
+        ->assertDontSee('Světlo po obvodu')
+        ->set('finish', 'glossy')
+        ->set('color', 'black')
+        ->call('sendToInquiry');
+
+    expect(session('inquiry.configuration.summary'))->toContain('lesk, černá')
+        ->and(session('inquiry.configuration.parameters.surface'))->toBe('glossy');
+})->with(['monochrome', 'light_strip']);
+
+it('asks translucent ceilings only for the lighting', function () {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('variant', 'translucent')
+        ->assertSee('Světlo po obvodu')
+        ->assertSee('Světlo přes celý strop')
+        ->assertDontSee('Struktura')
+        ->set('lighting', 'full')
+        ->call('sendToInquiry');
+
+    expect(session('inquiry.configuration.summary'))->toContain('světlo přes celý strop')
+        ->and(session('inquiry.configuration.parameters.surface'))->toBe('backlit');
+});
+
+it('rejects an unknown finish', function () {
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('finish', 'neon')
+        ->assertSet('totalPriceVat', null);
+});
+
+it('prices the light strip ceiling with strip, LED, power supply and receiver per piece', function () {
+    foreach (['STROP_LISTA_SVETELNA' => 300, 'STROP_LED_COB_15W' => 250, 'STROP_ZDROJ_SLIM_400W' => 1800, 'STROP_PRIJIMAC' => 900] as $code => $value) {
+        PricingVariable::query()->where('code', $code)->update(['value' => $value]);
+    }
+
+    // Referenční 3 × 4 m: 18 000 + obvod 14 bm × (300 + 250) + 1 800 + 900 = 28 400 Kč za kus
+    Livewire::test(PriceEstimator::class, ['category' => 'ceiling'])
+        ->set('variant', 'light_strip')
+        ->set('count', 2)
+        ->assertSet('totalPrice', 56800.0)
+        ->assertSee('Lišta světelná (14 bm)')
+        ->assertSee('LED COB 15 W (14 bm)')
+        ->assertSee('Napájecí zdroj 400 W')
+        ->assertSee('Přijímač')
+        ->set('variant', 'monochrome')
+        ->assertSet('totalPrice', 36000.0)
+        ->assertDontSee('Lišta světelná');
 });
 
 it('offers only the products of its own category', function () {

@@ -45,6 +45,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Zakázky designéra
     Route::get('/orders', [OrderController::class, 'welcome'])->name('orders.welcome');
+    Route::get('/quotes', [OrderController::class, 'quotes'])->name('orders.quotes');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
@@ -85,6 +86,11 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/pricing/variables', [Admin\PricingVariableController::class, 'store'])->name('pricing.variables.store');
         Route::delete('/pricing/variables/{variable}', [Admin\PricingVariableController::class, 'destroy'])->name('pricing.variables.destroy');
         Route::put('/pricing/ribbons/{ribbon}', [Admin\RibbonController::class, 'update'])->name('pricing.ribbons.update');
+
+        Route::get('/ceiling-pricing', [Admin\CeilingPricingController::class, 'index'])->name('ceiling-pricing.index');
+
+        // Ceník rolet – zatím jen připravená stránka, obsah doplníme později.
+        Route::view('/blind-pricing', 'admin.pricing.coming-soon', ['title' => 'Ceník rolet'])->name('blind-pricing.index');
 
         // Uživatelé
         Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');

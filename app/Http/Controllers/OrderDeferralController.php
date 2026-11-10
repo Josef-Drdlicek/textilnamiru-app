@@ -21,7 +21,7 @@ class OrderDeferralController extends Controller
         );
 
         return redirect()
-            ->route('orders.welcome')
+            ->route('orders.quotes')
             ->with('status', "Zakázka „{$order->name}“ je uložená mezi cenovými nabídkami.");
     }
 }

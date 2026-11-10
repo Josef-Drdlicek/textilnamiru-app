@@ -27,6 +27,22 @@ it('shows submitted orders grouped into four sections and hides drafts', functio
         ->assertDontSee('Rozpracovaný draft');
 });
 
+it('lists customer before order and shows prices without and with VAT', function () {
+    $customer = User::factory()->create(['name' => 'Studio Lucie']);
+    Order::factory()->submitted()->for($customer)->create([
+        'name' => 'Závěsy obývák',
+        'total_price' => 1000,
+        'vat_rate' => 21,
+    ]);
+
+    $this->actingAs(admin())
+        ->get(route('admin.orders.index'))
+        ->assertOk()
+        // Celé tagy, aby nesplývaly se stejným textem ve filtru nad tabulkou.
+        ->assertSeeInOrder(['<th class="w-px whitespace-nowrap px-5 py-3">Zákazník</th>', '<th class="w-px whitespace-nowrap px-5 py-3">Zakázka</th>', 'Cena bez DPH</th>', 'Cena s DPH</th>'], false)
+        ->assertSeeInOrder(['<td class="w-px whitespace-nowrap px-5 py-3">Studio Lucie</td>', 'Závěsy obývák', '1 000,00 Kč', '1 210,00 Kč'], false);
+});
+
 it('filters orders by submission date', function () {
     Order::factory()->submitted()->create(['name' => 'Stará zakázka', 'submitted_at' => now()->subMonths(2)]);
     Order::factory()->submitted()->create(['name' => 'Čerstvá zakázka', 'submitted_at' => now()]);

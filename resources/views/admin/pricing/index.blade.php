@@ -1,7 +1,7 @@
-<x-layouts.app title="Ceník">
+<x-layouts.app title="Ceník šití">
     <div class="space-y-10">
         <div>
-            <h1 class="text-2xl font-bold text-stone-900">Ceník</h1>
+            <h1 class="text-2xl font-bold text-stone-900">Ceník šití</h1>
             <p class="mt-1 text-sm text-stone-500">
                 Změny cen platí pro nové kalkulace. Už objednané zakázky mají ceny zamrazené a nezmění se.
             </p>
@@ -9,100 +9,7 @@
 
         <section>
             <h2 class="text-lg font-semibold text-stone-900">Úkony a položky</h2>
-            <form method="POST" action="{{ route('admin.pricing.variables.update') }}" class="mt-3">
-                @csrf
-                @method('PUT')
-
-                <div class="overflow-x-auto rounded-2xl border border-stone-200 bg-white shadow-sm">
-                    <table class="min-w-full divide-y divide-stone-200 text-sm">
-                        <thead class="bg-stone-50 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">
-                            <tr>
-                                <th class="px-5 py-3">Položka</th>
-                                <th class="px-5 py-3">Kód</th>
-                                <th class="px-5 py-3">Jednotka</th>
-                                <th class="px-5 py-3 text-right">Hodnota</th>
-                                <th class="px-5 py-3"><span class="sr-only">Akce</span></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            @foreach ($variables as $variable)
-                                <tr>
-                                    <td class="px-5 py-2.5 font-medium text-stone-800">{{ $variable->name }}</td>
-                                    <td class="px-5 py-2.5 font-mono text-xs text-stone-500">{{ $variable->code }}</td>
-                                    <td class="px-5 py-2.5 text-stone-500">{{ $variable->unit ?? '—' }}</td>
-                                    <td class="px-5 py-2.5 text-right">
-                                        <input
-                                            type="number"
-                                            name="values[{{ $variable->code }}]"
-                                            value="{{ old('values.'.$variable->code, rtrim(rtrim(number_format($variable->value, 2, '.', ''), '0'), '.')) }}"
-                                            step="0.01"
-                                            min="0"
-                                            required
-                                            class="w-28 rounded-lg border border-stone-300 px-2 py-1 text-right tabular-nums shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                        >
-                                        <span class="ml-1 text-xs text-stone-500">{{ $variable->valueSuffix() }}</span>
-                                    </td>
-                                    <td class="px-5 py-2.5 text-right">
-                                        @unless ($variable->is_system)
-                                            <button type="submit" form="delete-variable-{{ $variable->id }}"
-                                                class="text-sm font-medium text-red-700 hover:underline"
-                                                onclick="return confirm('Opravdu smazat tuto položku ceníku?')">
-                                                Smazat
-                                            </button>
-                                        @endunless
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                @error('values.*')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-
-                <button type="submit" class="mt-3 rounded-lg bg-teal-700 px-5 py-2 font-semibold text-white transition hover:bg-teal-800">
-                    Uložit ceník
-                </button>
-            </form>
-
-            {{-- Mazací formuláře stojí mimo formulář ceníku (vnořené formuláře HTML nedovoluje). --}}
-            @foreach ($variables->reject->is_system as $variable)
-                <form id="delete-variable-{{ $variable->id }}" method="POST" action="{{ route('admin.pricing.variables.destroy', $variable) }}" class="hidden">
-                    @csrf
-                    @method('DELETE')
-                </form>
-            @endforeach
-
-            <form method="POST" action="{{ route('admin.pricing.variables.store') }}"
-                  class="mt-6 grid items-end gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_120px_140px_auto]">
-                @csrf
-
-                <div>
-                    <label for="new-variable-name" class="block text-xs font-medium text-stone-500">Nová položka</label>
-                    <input id="new-variable-name" name="name" type="text" value="{{ old('name') }}" required placeholder="Např. Montáž"
-                        class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500">
-                    @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                </div>
-
-                <div>
-                    <label for="new-variable-unit" class="block text-xs font-medium text-stone-500">Jednotka</label>
-                    <input id="new-variable-unit" name="unit" type="text" value="{{ old('unit') }}" placeholder="m², m, km, ks"
-                        class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1.5 shadow-sm focus:border-teal-500 focus:ring-teal-500">
-                    @error('unit') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                </div>
-
-                <div>
-                    <label for="new-variable-value" class="block text-xs font-medium text-stone-500">Cena [Kč]</label>
-                    <input id="new-variable-value" name="value" type="number" step="0.01" min="0" value="{{ old('value') }}" required
-                        class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-1.5 text-right tabular-nums shadow-sm focus:border-teal-500 focus:ring-teal-500">
-                    @error('value') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                </div>
-
-                <button type="submit" class="rounded-lg border border-teal-700 px-4 py-1.5 text-sm font-semibold text-teal-800 transition hover:bg-teal-50">
-                    Přidat
-                </button>
-            </form>
+            @include('admin.pricing._variables', ['variables' => $variables, 'category' => \App\Enums\PricingCategory::Sewing])
         </section>
 
         <section>
