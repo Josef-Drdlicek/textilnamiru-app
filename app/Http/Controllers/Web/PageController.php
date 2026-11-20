@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Domain\Pricing\ItemPricer;
-use App\Domain\Pricing\PublicPresets;
-use App\Enums\ItemType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class PageController extends Controller
@@ -16,13 +12,6 @@ class PageController extends Controller
     public function home(): View
     {
         return view('web.home');
-    }
-
-    public function sortiment(): View
-    {
-        return view('web.sortiment', [
-            'pricesFrom' => $this->pricesFrom(),
-        ]);
     }
 
     public function kalkulacka(Request $request): View|RedirectResponse
@@ -45,10 +34,29 @@ class PageController extends Controller
         return view('web.kalkulacka-stropy');
     }
 
-
     public function realizace(): View
     {
         return view('web.realizace');
+    }
+
+    public function zaclonyAZavesy(): View
+    {
+        return view('web.zaclony-a-zavesy');
+    }
+
+    public function zaclony(): View
+    {
+        return view('web.zaclony');
+    }
+
+    public function zavesy(): View
+    {
+        return view('web.zavesy');
+    }
+
+    public function zaveseniTextilu(): View
+    {
+        return view('web.zaveseni-textilu');
     }
 
     public function vypinanyPodhled(): View
@@ -64,41 +72,5 @@ class PageController extends Controller
     public function privacy(): View
     {
         return view('web.gdpr');
-    }
-
-    /**
-     * Katalogová „cena od" pro každý typ — s DPH, zaokrouhlená na desítky
-     * korun nahoru. Ceník se mění zřídka, hodinová cache bohatě stačí.
-     *
-     * @return array<string, int>
-     */
-    private function pricesFrom(): array
-    {
-        return Cache::remember('web.prices-from', now()->addHour(), function (): array {
-            $pricer = app(ItemPricer::class);
-
-            try {
-                $vatRate = $pricer->vatRate();
-            } catch (\DomainException $e) {
-                report($e);
-
-                return [];
-            }
-
-            $prices = [];
-
-            foreach (ItemType::cases() as $type) {
-                // Díra v ceníku nesmí shodit celý web — dlaždice bez ceny
-                // spadne na chip „Na poptávku".
-                try {
-                    $price = $pricer->price($type, PublicPresets::referenceParameters($type));
-                    $prices[$type->value] = (int) (ceil($price->unitPriceWithVat($vatRate) / 10) * 10);
-                } catch (\DomainException $e) {
-                    report($e);
-                }
-            }
-
-            return $prices;
-        });
     }
 }

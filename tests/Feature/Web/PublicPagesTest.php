@@ -24,23 +24,6 @@ it('links the header B2B button to the b2b page', function () {
         ->assertSee('Přihlášení pro studia (B2B)');
 });
 
-it('shows catalog prices from the live price list', function () {
-    $this->get('/sortiment')
-        ->assertOk()
-        ->assertSee('za ušití vč. DPH, bez látky')
-        ->assertSee('Na poptávku');
-});
-
-it('renders the catalog even when the price list is empty', function () {
-    \DB::table('pricing_variables')->delete();
-    \DB::table('ribbons')->delete();
-    \Cache::flush();
-
-    $this->get('/sortiment')
-        ->assertOk()
-        ->assertSee('Na poptávku');
-});
-
 it('does not repeat full catalog, calculator or gallery on the homepage', function () {
     $this->get('/')
         ->assertOk()
@@ -151,12 +134,49 @@ it('renders the b2b login page with noindex', function () {
         ->assertSee('action="'.route('login.store').'"', false);
 });
 
-it('renders the catalog page', function () {
-    $this->get('/sortiment')
+it('no longer serves the catalog page', function () {
+    $this->get('/sortiment')->assertNotFound();
+
+    $this->get('/')
         ->assertOk()
-        ->assertSee('Náš sortiment')
-        ->assertSee('Záclony')
-        ->assertSee('Římské rolety');
+        ->assertDontSee('/sortiment', false)
+        ->assertSee('href="'.route('web.kalkulacka.sivani').'"', false);
+});
+
+it('renders the new placeholder pages', function (string $url, string $title) {
+    $this->get($url)
+        ->assertOk()
+        ->assertSee($title)
+        ->assertSee('Nezávazná poptávka');
+})->with([
+    ['/zaclony-a-zavesy', 'Záclony a závěsy'],
+    ['/zaveseni-textilu', 'Zavěšení textilu'],
+]);
+
+it('shows two big tiles leading to curtains and drapes', function () {
+    $this->get('/zaclony-a-zavesy')
+        ->assertOk()
+        ->assertSeeInOrder([
+            'href="'.route('web.zaclony').'"', 'Záclony',
+            'href="'.route('web.zavesy').'"', 'Závěsy',
+        ], false);
+});
+
+it('renders the curtain and drape pages with a link back', function (string $url, string $title) {
+    $this->get($url)
+        ->assertOk()
+        ->assertSee($title)
+        ->assertSee('Zpět na záclony a závěsy')
+        ->assertSee('Nezávazná poptávka');
+})->with([
+    ['/zaclony-a-zavesy/zaclony', 'Záclony'],
+    ['/zaclony-a-zavesy/zavesy', 'Závěsy'],
+]);
+
+it('puts the new pages first in the main menu, before the stretch ceiling', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSeeInOrder(['>Záclony a závěsy</a>', '>Zavěšení textilu</a>', '>Vypínaný podhled</a>', '>Stínicí technika</a>'], false);
 });
 
 it('renders the privacy page', function () {

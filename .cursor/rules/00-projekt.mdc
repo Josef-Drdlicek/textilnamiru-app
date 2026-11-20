@@ -55,6 +55,9 @@ ani textů pro zákazníky oslovení nikdy nepatří.
 
 ## Lokální běh
 
+Běžné spuštění (Windows): `powershell -ExecutionPolicy Bypass -File scripts\spustit.ps1`
+— viz `spusteni-aplikace.mdc`. Níže je ruční postup pro první instalaci.
+
 ```
 composer install && npm install
 cp .env.example .env && php artisan key:generate

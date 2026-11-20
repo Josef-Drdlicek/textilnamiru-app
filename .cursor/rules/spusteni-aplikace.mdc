@@ -1,0 +1,30 @@
+---
+description: Co udělat, když majitel napíše „run“, „spusť to“, „zapni to“ a podobně.
+alwaysApply: true
+---
+
+# Spuštění aplikace
+
+Když majitel napíše **„run“, „spusť“, „spusť to“, „zapni to“, „zapni aplikaci“, „pusť to“, „start“,
+„rozjeď to“** nebo cokoli podobného, myslí tím vždy totéž: **spustit celou aplikaci lokálně tak,
+aby fungovala se vším JavaScriptem a styly** (slider, kalkulačky, Livewire, menu).
+
+Postup — nic se ho neptej, rovnou to udělej:
+
+1. Spusť v terminálu (jako proces na pozadí, ať terminál nečeká na konec):
+   ```
+   powershell -ExecutionPolicy Bypass -File scripts\spustit.ps1
+   ```
+   Skript zastaví starý server, smaže zbytek `public/hot`, udělá `npm run build`,
+   `php artisan migrate --force` a pustí server na `http://127.0.0.1:8000`.
+2. Počkej, až se v jeho výstupu objeví „Aplikace běží na http://127.0.0.1:8000“.
+3. Ověř, že stránka odpovídá (`http://127.0.0.1:8000` vrací 200 a skripty z `/build/` se načtou).
+4. Napiš majiteli adresu `http://127.0.0.1:8000` a že přihlášení do zakázek je na `/b2b`.
+   Když něco selže, napiš přesně který krok a chybovou hlášku, a oprav to.
+
+Nepoužívej `php artisan serve` (na Windows padá kvůli diakritice v cestě k projektu)
+ani samotné `npm run dev` bez běžícího Vite (zůstane po něm `public/hot` a stránka pak nemá JavaScript).
+Soubor `server.php` v kořeni projektu je potřeba — nemaž ho.
+
+Po každé úpravě Blade/CSS/JS, kterou majitel chce vidět, spusť znovu `npm run build`
+(nebo celý skript), jinak se změna v prohlížeči neprojeví.

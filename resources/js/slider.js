@@ -7,9 +7,11 @@
  * snímky (např. texty hera), se předají v `options.linked`.
  *
  * Přístupnost: neaktivní snímky dostanou `inert` + `aria-hidden`; autoplay se
- * nespustí při prefers-reduced-motion, pauzuje při hoveru a klávesnicovém fokusu
- * a jde vypnout tlačítkem pauzy (WCAG 2.2.2). Po ruční změně snímku se odpočet
- * intervalu spustí znovu. Šipky vlevo/vpravo přepínají snímky.
+ * nespustí při prefers-reduced-motion, pauzuje při najetí myší na ovládací prvky
+ * (šipky, tečky, pauza) a při klávesnicovém fokusu a jde vypnout tlačítkem pauzy
+ * (WCAG 2.2.2). Najetí na samotnou fotku autoplay nezastaví — hero zabírá horní
+ * část stránky a kurzor tam po otevření často zůstane. Po ruční změně snímku se
+ * odpočet intervalu spustí znovu. Šipky vlevo/vpravo přepínají snímky.
  */
 export function createSlider(root, options = {}) {
     const {
@@ -153,8 +155,20 @@ export function createSlider(root, options = {}) {
         start();
     };
 
-    root.addEventListener('mouseenter', pause);
-    root.addEventListener('mouseleave', resume);
+    // Pauza jen nad ovládáním: kurzor nad fotkou (např. hned po otevření stránky) přepínání nezastaví.
+    const controls = '[data-slider-prev], [data-slider-next], [data-slider-dot], [data-slider-pause]';
+    const isControl = (element) => element instanceof Element && element.closest(controls) !== null;
+
+    root.addEventListener('pointerover', (event) => {
+        if (event.pointerType === 'mouse' && isControl(event.target)) {
+            pause();
+        }
+    });
+    root.addEventListener('pointerout', (event) => {
+        if (isControl(event.target) && !isControl(event.relatedTarget)) {
+            resume();
+        }
+    });
     root.addEventListener('focusin', (event) => {
         // Klik myší nechá fokus na tlačítku, pauzu proto vyvolá jen klávesnicový fokus.
         if (event.target.matches(':focus-visible')) {

@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\Route;
 
 // Veřejný web — marketing, kalkulačka a poptávky (bez přihlášení)
 Route::get('/', [Web\PageController::class, 'home'])->name('web.home');
-Route::get('/sortiment', [Web\PageController::class, 'sortiment'])->name('web.sortiment');
 Route::get('/kalkulacka', [Web\PageController::class, 'kalkulacka'])->name('web.kalkulacka');
 Route::get('/kalkulacka/zakazkove-sivani', [Web\PageController::class, 'kalkulackaSivani'])->name('web.kalkulacka.sivani');
 Route::get('/kalkulacka/vypinane-stropy', [Web\PageController::class, 'kalkulackaStropy'])->name('web.kalkulacka.stropy');
 Route::permanentRedirect('/kalkulacka/stinici-technika', '/poptavka?produkt=shades');
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
+Route::get('/zaclony-a-zavesy', [Web\PageController::class, 'zaclonyAZavesy'])->name('web.zaclony-a-zavesy');
+Route::get('/zaclony-a-zavesy/zaclony', [Web\PageController::class, 'zaclony'])->name('web.zaclony');
+Route::get('/zaclony-a-zavesy/zavesy', [Web\PageController::class, 'zavesy'])->name('web.zavesy');
+Route::get('/zaveseni-textilu', [Web\PageController::class, 'zaveseniTextilu'])->name('web.zaveseni-textilu');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
 Route::get('/ochrana-osobnich-udaju', [Web\PageController::class, 'privacy'])->name('web.privacy');

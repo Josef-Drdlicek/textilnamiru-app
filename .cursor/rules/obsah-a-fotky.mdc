@@ -15,7 +15,6 @@ Většina textů je v PHP polích na začátku Blade šablony. Měň hodnoty v p
 | Pro koho šijeme | `resources/views/web/sections/_segments.blade.php` | `$segments` |
 | Postup spolupráce | `resources/views/web/sections/_process.blade.php` | pole kroků |
 | O nás | `resources/views/web/sections/_about.blade.php` | text v šabloně |
-| Katalog (názvy, fotky dlaždic) | `resources/views/web/sections/_catalog.blade.php` | `$calculable`, `$onRequest` |
 | Realizace (fotky, popisky, čísla) | `resources/views/web/sections/_gallery.blade.php` | `$items`, `$stats` |
 | Vypínaný podhled | `resources/views/web/vypinany-podhled.blade.php` | `$gallery`, `$benefits`, `$variants`, `$rooms` + odstavce |
 | Stínicí technika | `resources/views/web/stinici-technika.blade.php` | `$products`, `$steps` + úvod |

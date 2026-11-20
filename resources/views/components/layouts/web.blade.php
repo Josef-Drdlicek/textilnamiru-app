@@ -71,9 +71,10 @@
 
             @php
                 $menu = [
+                    ['route' => 'web.zaclony-a-zavesy', 'label' => 'Záclony a závěsy', 'active' => ['web.zaclony-a-zavesy', 'web.zaclony', 'web.zavesy']],
+                    ['route' => 'web.zaveseni-textilu', 'label' => 'Zavěšení textilu', 'active' => ['web.zaveseni-textilu']],
                     ['route' => 'web.vypinany-podhled', 'label' => 'Vypínaný podhled', 'active' => ['web.vypinany-podhled']],
                     ['route' => 'web.stinici-technika', 'label' => 'Stínicí technika', 'active' => ['web.stinici-technika']],
-                    ['route' => 'web.sortiment', 'label' => 'Sortiment', 'active' => ['web.sortiment']],
                     ['route' => 'web.kalkulacka', 'label' => 'Kalkulačka', 'active' => ['web.kalkulacka', 'web.kalkulacka.*']],
                     ['route' => 'web.realizace', 'label' => 'Realizace', 'active' => ['web.realizace']],
                 ];
@@ -171,9 +172,10 @@
                 <div>
                     <h2 class="text-sm font-semibold uppercase tracking-[0.08em] text-white/60">Rychlé odkazy</h2>
                     <ul class="mt-3 space-y-2 text-white/85">
+                        <li><a href="{{ route('web.zaclony-a-zavesy') }}" class="transition hover:text-white">Záclony a závěsy</a></li>
+                        <li><a href="{{ route('web.zaveseni-textilu') }}" class="transition hover:text-white">Zavěšení textilu</a></li>
                         <li><a href="{{ route('web.vypinany-podhled') }}" class="transition hover:text-white">Vypínaný podhled</a></li>
                         <li><a href="{{ route('web.stinici-technika') }}" class="transition hover:text-white">Stínicí technika</a></li>
-                        <li><a href="{{ route('web.sortiment') }}" class="transition hover:text-white">Sortiment</a></li>
                         <li><a href="{{ route('web.kalkulacka') }}" class="transition hover:text-white">Kalkulačka</a></li>
                         <li><a href="{{ route('web.realizace') }}" class="transition hover:text-white">Realizace</a></li>
                         <li><a href="{{ route('web.inquiry.create') }}" class="font-semibold text-brand-400 transition hover:text-brand-300">Nezávazná poptávka</a></li>
