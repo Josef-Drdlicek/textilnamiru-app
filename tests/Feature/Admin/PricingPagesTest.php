@@ -11,12 +11,10 @@ it('shows the sewing price list under its new name with links to the other price
         ->assertSeeInOrder(['Ceník šití', 'Ceník textilu', 'Ceník stropů', 'Ceník rolet']);
 });
 
-it('shows the placeholder page for the blind price list to the admin', function () {
+it('sends the old blind price list address to the new blinds price list', function () {
     $this->actingAs(User::factory()->admin()->create())
         ->get(route('admin.blind-pricing.index'))
-        ->assertOk()
-        ->assertSee('Ceník rolet')
-        ->assertSee('Tento ceník připravujeme');
+        ->assertRedirect('/admin/shade-pricing');
 });
 
 it('lists ceiling items on the ceiling price list and keeps them off the sewing one', function () {
@@ -66,4 +64,20 @@ it('hides the placeholder price lists from studios', function (string $route) {
     $this->actingAs(User::factory()->create())
         ->get(route($route))
         ->assertForbidden();
-})->with(['admin.textile-pricing.index', 'admin.ceiling-pricing.index', 'admin.blind-pricing.index']);
+})->with(['admin.textile-pricing.index', 'admin.ceiling-pricing.index', 'admin.shade-pricing.index', 'admin.shade-fabrics.index', 'admin.rail-pricing.index']);
+
+it('shows the rail price list page in the admin menu under the textile price list', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('admin.rail-pricing.index'))
+        ->assertOk()
+        ->assertSeeInOrder(['Ceník textilu', 'Ceník kolejnic', 'Ceník stropů'])
+        ->assertSee('rails:import-detede');
+});
+
+it('shows the blinds fabric page in the admin menu under the blinds price list', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('admin.shade-fabrics.index'))
+        ->assertOk()
+        ->assertSeeInOrder(['Ceník rolet', 'Textil pro rolety', 'Uživatelé'])
+        ->assertSee('shades:import-pavon-fabrics');
+});

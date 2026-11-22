@@ -72,9 +72,9 @@
             @php
                 $menu = [
                     ['route' => 'web.zaclony-a-zavesy', 'label' => 'Záclony a závěsy', 'active' => ['web.zaclony-a-zavesy', 'web.zaclony', 'web.zaclony.*', 'web.zavesy', 'web.zavesy.*']],
-                    ['route' => 'web.zaveseni-textilu', 'label' => 'Zavěšení textilu', 'active' => ['web.zaveseni-textilu']],
+                    ['route' => 'web.zaveseni-textilu', 'label' => 'Zavěšení textilu', 'active' => ['web.zaveseni-textilu', 'web.zaveseni.*']],
                     ['route' => 'web.vypinany-podhled', 'label' => 'Vypínaný podhled', 'active' => ['web.vypinany-podhled']],
-                    ['route' => 'web.stinici-technika', 'label' => 'Stínicí technika', 'active' => ['web.stinici-technika']],
+                    ['route' => 'web.stinici-technika', 'label' => 'Stínicí technika', 'active' => ['web.stinici-technika', 'web.rolety', 'web.rolety.*']],
                     ['route' => 'web.kalkulacka', 'label' => 'Kalkulačka', 'active' => ['web.kalkulacka', 'web.kalkulacka.*']],
                     ['route' => 'web.realizace', 'label' => 'Realizace', 'active' => ['web.realizace']],
                 ];

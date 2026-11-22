@@ -32,9 +32,11 @@ class InquiryController extends Controller
 
         $preselected = array_values(array_filter([
             InquiryProduct::tryFrom((string) $request->query('produkt'))?->value,
-            $configuration !== null
-                ? InquiryProduct::fromItemType(ItemType::from($configuration['type']))->value
-                : null,
+            match (true) {
+                $configuration === null => null,
+                isset($configuration['product']) => InquiryProduct::tryFrom($configuration['product'])?->value,
+                default => InquiryProduct::fromItemType(ItemType::from($configuration['type']))->value,
+            },
         ]));
 
         return view('web.inquiry', [

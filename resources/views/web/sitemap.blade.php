@@ -57,6 +57,11 @@
         <priority>0.7</priority>
     </url>
     <url>
+        <loc>{{ route('web.rolety') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
         <loc>{{ route('web.inquiry.create') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>

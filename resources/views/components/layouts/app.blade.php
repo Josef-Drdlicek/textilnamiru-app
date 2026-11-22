@@ -25,8 +25,10 @@
                 ['label' => 'Poptávky', 'route' => 'admin.inquiries.index', 'active' => request()->routeIs('admin.inquiries.*'), 'badge' => $newInquiriesCount ?? 0],
                 ['label' => 'Ceník šití', 'route' => 'admin.pricing.index', 'active' => request()->routeIs('admin.pricing.*')],
                 ['label' => 'Ceník textilu', 'route' => 'admin.textile-pricing.index', 'active' => request()->routeIs('admin.textile-pricing.*')],
+                ['label' => 'Ceník kolejnic', 'route' => 'admin.rail-pricing.index', 'active' => request()->routeIs('admin.rail-pricing.*')],
                 ['label' => 'Ceník stropů', 'route' => 'admin.ceiling-pricing.index', 'active' => request()->routeIs('admin.ceiling-pricing.*')],
-                ['label' => 'Ceník rolet', 'route' => 'admin.blind-pricing.index', 'active' => request()->routeIs('admin.blind-pricing.*')],
+                ['label' => 'Ceník rolet', 'route' => 'admin.shade-pricing.index', 'active' => request()->routeIs('admin.shade-pricing.*')],
+                ['label' => 'Textil pro rolety', 'route' => 'admin.shade-fabrics.index', 'active' => request()->routeIs('admin.shade-fabrics.*')],
                 ['label' => 'Uživatelé', 'route' => 'admin.users.index', 'active' => request()->routeIs('admin.users.*')],
             ]
             : [

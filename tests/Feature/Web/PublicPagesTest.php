@@ -179,6 +179,19 @@ it('puts the new pages first in the main menu, before the stretch ceiling', func
         ->assertSeeInOrder(['>Záclony a závěsy</a>', '>Zavěšení textilu</a>', '>Vypínaný podhled</a>', '>Stínicí technika</a>'], false);
 });
 
+it('leads from the blinds tile on the shading page to the new blinds page', function () {
+    $this->get(route('web.stinici-technika'))
+        ->assertOk()
+        ->assertSee('href="'.route('web.rolety').'"', false)
+        ->assertSee('Více o roletách');
+
+    $this->get('/stinici-technika/rolety')
+        ->assertOk()
+        ->assertSee('Rolety')
+        ->assertSee('Zpět na stínicí techniku')
+        ->assertSee('Nezávazná poptávka');
+});
+
 it('renders the privacy page', function () {
     $this->get('/ochrana-osobnich-udaju')
         ->assertOk()

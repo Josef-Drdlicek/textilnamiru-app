@@ -45,3 +45,41 @@ Každý katalog trvá několik minut (stahuje fotky všech barev). Na zkoušku `
 Nové produkty jsou skryté a bez ceny; opakovaný import nemění ceny, názvy ani viditelnost.
 Když import spadne uprostřed, stačí ho spustit znovu – hotové produkty přeskočí, chybějící doplní.
 Na konci napiš majiteli souhrn z výstupu příkazu (počty a případná varování).
+
+## Import rolet od dodavatele (Pavon)
+
+Když majitel napíše „importuj rolety“, „načti Pavon“ a podobně, nejdřív spusť migrace
+(`php artisan migrate --force`) a pak:
+
+```
+php artisan shades:import-pavon              # texty, rozměry a fotky všech 12 provedení
+php artisan shades:import-pavon --no-images  # jen texty
+```
+
+Rolety jsou skryté a ceník je prázdný. Ceny se vyplňují v Admin → Ceník rolet (tabulka šířka × výška
+zvlášť pro každou cenovou skupinu látky A–D).
+
+Látky na rolety („importuj látky na rolety“, „načti textil pro rolety“): po migracích spusť
+
+```
+php artisan shades:import-pavon-fabrics              # látky Standard, Screen, Magico, Roma s fotkami
+php artisan shades:import-pavon-fabrics --no-images  # jen údaje
+```
+
+Látky ve výprodeji se nezakládají (a dříve načtené se skryjí). Výsledek je v Admin → Textil pro rolety.
+Opakovaný import přepíše jen texty a doplní chybějící fotky. Ceny, rozsahy tabulky ani viditelnost nemění.
+Na konci napiš majiteli souhrn z výstupu příkazu.
+
+## Import kolejnic a garnýží (DeTeDe)
+
+Když majitel napíše „importuj kolejnice“, „importuj garnýže“, „načti DeTeDe“ a podobně, spusť migrace a pak:
+
+```
+php artisan rails:import-detede              # kolejnice N/T/B/S/E/H-Line a dekorační garnýže s fotkami
+php artisan rails:import-detede --no-images  # jen texty
+```
+
+Texty a odkazy na fotky jsou v `database/data/detede-catalog.json` (web dodavatele nejde číst automaticky).
+Každý typ kolejnice je samostatný produkt, jeho varianty jsou sestavy (u garnýží barvy). Produkty jsou skryté a bez cen;
+ceny (sestava × stropní/stěnový držák × pásma po 50 cm do 6 m) a zobrazení jsou v Admin → Ceník kolejnic.
+Dřívější produkty „N-Line“ atd. import sám odstraní (pokud nemají ceny).

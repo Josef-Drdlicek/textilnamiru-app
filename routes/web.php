@@ -28,8 +28,14 @@ Route::get('/zaclony-a-zavesy/zaclony/{product:slug}', [Web\PageController::clas
 Route::get('/zaclony-a-zavesy/zavesy', [Web\PageController::class, 'zavesy'])->name('web.zavesy');
 Route::get('/zaclony-a-zavesy/zavesy/{product:slug}', [Web\PageController::class, 'zaves'])->name('web.zavesy.show');
 Route::get('/zaveseni-textilu', [Web\PageController::class, 'zaveseniTextilu'])->name('web.zaveseni-textilu');
+Route::get('/zaveseni-textilu/{product}', [Web\PageController::class, 'zaveseniProdukt'])->name('web.zaveseni.show');
+Route::get('/zaveseni-foto/{image}', Web\RailImageController::class)->name('web.rail-image');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
+Route::get('/stinici-technika/rolety', [Web\PageController::class, 'rolety'])->name('web.rolety');
+Route::get('/stinici-technika/rolety/{product:slug}', [Web\PageController::class, 'roleta'])->name('web.rolety.show');
+Route::get('/roleta-foto/{image}', Web\ShadeImageController::class)->name('web.shade-image');
+Route::get('/roleta-latka/{fabric}', Web\ShadeFabricImageController::class)->name('web.shade-fabric-image');
 Route::get('/ochrana-osobnich-udaju', [Web\PageController::class, 'privacy'])->name('web.privacy');
 Route::get('/poptavka', [Web\InquiryController::class, 'create'])->name('web.inquiry.create');
 Route::post('/poptavka', [Web\InquiryController::class, 'store'])
@@ -101,10 +107,24 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/textile-pricing/{product}/edit', [Admin\TextilePricingController::class, 'edit'])->name('textile-pricing.edit');
         Route::put('/textile-pricing/{product}', [Admin\TextilePricingController::class, 'update'])->name('textile-pricing.update');
 
+        // Ceník kolejnic: kolejnice a dekorační garnýže, cena podle délky (pásma po 50 cm do 6 m)
+        Route::get('/rail-pricing', [Admin\RailPricingController::class, 'index'])->name('rail-pricing.index');
+        Route::put('/rail-pricing/{product}', [Admin\RailPricingController::class, 'update'])->name('rail-pricing.update');
+        Route::patch('/rail-pricing/{product}/toggle', [Admin\RailPricingController::class, 'toggle'])->name('rail-pricing.toggle');
+
         Route::get('/ceiling-pricing', [Admin\CeilingPricingController::class, 'index'])->name('ceiling-pricing.index');
 
-        // Ceník rolet – zatím jen připravená stránka, obsah doplníme později.
-        Route::view('/blind-pricing', 'admin.pricing.coming-soon', ['title' => 'Ceník rolet'])->name('blind-pricing.index');
+        // Ceník rolet: cena podle rozměru (tabulka šířka × výška u každé varianty)
+        Route::get('/shade-pricing', [Admin\ShadePricingController::class, 'index'])->name('shade-pricing.index');
+        Route::get('/shade-pricing/{variant}', [Admin\ShadePricingController::class, 'edit'])->name('shade-pricing.edit');
+        Route::put('/shade-pricing/{variant}/prices', [Admin\ShadePricingController::class, 'updatePrices'])->name('shade-pricing.prices');
+        Route::put('/shade-pricing/{variant}/settings', [Admin\ShadePricingController::class, 'updateSettings'])->name('shade-pricing.settings');
+        Route::patch('/shade-pricing/products/{product}/toggle', [Admin\ShadePricingController::class, 'toggle'])->name('shade-pricing.toggle');
+        Route::redirect('/blind-pricing', '/admin/shade-pricing')->name('blind-pricing.index');
+
+        // Textil pro rolety: látky s cenovou skupinou A–D
+        Route::get('/shade-fabrics', [Admin\ShadeFabricController::class, 'index'])->name('shade-fabrics.index');
+        Route::patch('/shade-fabrics/{fabric}/toggle', [Admin\ShadeFabricController::class, 'toggle'])->name('shade-fabrics.toggle');
 
         // Uživatelé
         Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
