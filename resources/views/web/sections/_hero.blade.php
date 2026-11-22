@@ -68,17 +68,15 @@
             @endforeach
         </div>
 
-        {{-- Ovládání: šipky vedle sebe vpravo dole, tečky uprostřed, pauza vpravo nahoře. --}}
-        <div class="absolute right-4 bottom-4 z-10 flex gap-2 lg:right-8 lg:bottom-8">
-            <button type="button" data-slider-prev class="slider-arrow" aria-label="Předchozí snímek">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6 9 12l6 6"/></svg>
-            </button>
-            <button type="button" data-slider-next class="slider-arrow" aria-label="Další snímek">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-        </div>
+        {{-- Ovládání: šipky na krajích fotky uprostřed výšky, tečky a pauza vpravo dole. --}}
+        <button type="button" data-slider-prev class="slider-arrow absolute top-1/2 left-3 z-10 -translate-y-1/2 lg:left-6" aria-label="Předchozí snímek">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6 9 12l6 6"/></svg>
+        </button>
+        <button type="button" data-slider-next class="slider-arrow absolute top-1/2 right-3 z-10 -translate-y-1/2 lg:right-6" aria-label="Další snímek">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
 
-        <div class="absolute bottom-4 left-4 z-10 flex items-center gap-1 lg:left-auto lg:right-32 lg:bottom-8">
+        <div class="absolute bottom-4 left-4 z-10 flex items-center gap-1 lg:left-auto lg:right-8 lg:bottom-8">
             @foreach ($slides as $slide)
                 <button type="button" data-slider-dot class="slider-dot {{ $loop->first ? 'is-active' : '' }}" aria-label="Snímek {{ $loop->iteration }}: {{ $slide['title'] }}" @if ($loop->first) aria-current="true" @endif></button>
             @endforeach
@@ -89,7 +87,8 @@
         </div>
     </div>
 
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:py-24">
+    {{-- lg:px-20: textová karta nesmí zakrýt levou šipku. --}}
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-20 lg:py-24">
         {{-- Hlavní nadpis stránky stojí mimo přepínané texty, ať zůstane čtečkám dostupný u každého snímku. --}}
         <h1 id="hero-nadpis" class="sr-only">{{ $slides[0]['title'] }}</h1>
         <div class="bg-white p-6 shadow-md sm:p-10 lg:max-w-xl">
@@ -115,5 +114,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    {{-- Časová linka: běží, jak dlouho ještě je snímek vidět. Bez autoplay (reduced-motion) se skryje. --}}
+    <div data-slider-progress class="slider-progress" aria-hidden="true" hidden>
+        <div class="slider-progress-bar"></div>
     </div>
 </section>

@@ -102,12 +102,12 @@ php artisan key:generate
 php artisan migrate --seed    # ceník (36 systémových položek, 8 stuh)
 php artisan db:seed --class=DemoSeeder   # demo účty + ukázková zakázka (jen local)
 npm run dev                   # nebo: npm run build
-php -S 127.0.0.1:8000 -t public server.php
+php -S 127.0.0.1:8000 -t public local-router.php
 ```
 
 > Pozn. pro Windows: pokud cesta k projektu obsahuje diakritiku, `php artisan
 > serve` selže (PHP mrší UTF-8 cesty v argumentech podprocesů) — proto lokální
-> router `server.php` výše. Na cestě bez diakritiky funguje i `php artisan serve`.
+> router `local-router.php` výše (původní název `server.php` blokuje antivirus AVG jako planý poplach IDP.Generic). Na cestě bez diakritiky funguje i `php artisan serve`.
 
 Demo účty (jen po `DemoSeeder`, pouze local): `dilna` / `demo-heslo-dilna`
 (admin), `lucie` / `demo-heslo-lucie` (interiérové studio). Přihlášení je na

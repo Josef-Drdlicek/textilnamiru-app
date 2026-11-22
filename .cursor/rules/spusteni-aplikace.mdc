@@ -24,7 +24,24 @@ Postup — nic se ho neptej, rovnou to udělej:
 
 Nepoužívej `php artisan serve` (na Windows padá kvůli diakritice v cestě k projektu)
 ani samotné `npm run dev` bez běžícího Vite (zůstane po něm `public/hot` a stránka pak nemá JavaScript).
-Soubor `server.php` v kořeni projektu je potřeba — nemaž ho.
+Soubor `local-router.php` v kořeni projektu je potřeba — nemaž ho a nepřejmenovávej ho na
+`server.php` (ten antivirus AVG mylně blokuje jako IDP.Generic).
 
 Po každé úpravě Blade/CSS/JS, kterou majitel chce vidět, spusť znovu `npm run build`
 (nebo celý skript), jinak se změna v prohlížeči neprojeví.
+
+## Import látek od dodavatele (Laguna Textil)
+
+Když majitel napíše „importuj záclony“, „importuj závěsy“ / „dekorační látky“, „načti Lagunu“,
+„aktualizuj katalog dodavatele“ a podobně, nejdřív spusť migrace (`php artisan migrate --force`) a pak:
+
+```
+php artisan textile:import-laguna zaclony    # záclony
+php artisan textile:import-laguna zavesy     # dekorační látky = závěsy
+php artisan textile:import-laguna vse        # obojí
+```
+
+Každý katalog trvá několik minut (stahuje fotky všech barev). Na zkoušku `--pages=2`, bez fotek `--no-images`.
+Nové produkty jsou skryté a bez ceny; opakovaný import nemění ceny, názvy ani viditelnost.
+Když import spadne uprostřed, stačí ho spustit znovu – hotové produkty přeskočí, chybějící doplní.
+Na konci napiš majiteli souhrn z výstupu příkazu (počty a případná varování).

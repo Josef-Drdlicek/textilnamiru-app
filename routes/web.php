@@ -22,7 +22,11 @@ Route::permanentRedirect('/kalkulacka/stinici-technika', '/poptavka?produkt=shad
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
 Route::get('/zaclony-a-zavesy', [Web\PageController::class, 'zaclonyAZavesy'])->name('web.zaclony-a-zavesy');
 Route::get('/zaclony-a-zavesy/zaclony', [Web\PageController::class, 'zaclony'])->name('web.zaclony');
+Route::get('/textil-foto/{product}', Web\TextileImageController::class)->name('web.textile-image');
+Route::get('/textil-foto/barva/{color}', [Web\TextileImageController::class, 'color'])->name('web.textile-color-image');
+Route::get('/zaclony-a-zavesy/zaclony/{product:slug}', [Web\PageController::class, 'zaclona'])->name('web.zaclony.show');
 Route::get('/zaclony-a-zavesy/zavesy', [Web\PageController::class, 'zavesy'])->name('web.zavesy');
+Route::get('/zaclony-a-zavesy/zavesy/{product:slug}', [Web\PageController::class, 'zaves'])->name('web.zavesy.show');
 Route::get('/zaveseni-textilu', [Web\PageController::class, 'zaveseniTextilu'])->name('web.zaveseni-textilu');
 Route::get('/vypinany-podhled', [Web\PageController::class, 'vypinanyPodhled'])->name('web.vypinany-podhled');
 Route::get('/stinici-technika', [Web\PageController::class, 'stiniciTechnika'])->name('web.stinici-technika');
@@ -89,6 +93,13 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/pricing/variables', [Admin\PricingVariableController::class, 'store'])->name('pricing.variables.store');
         Route::delete('/pricing/variables/{variable}', [Admin\PricingVariableController::class, 'destroy'])->name('pricing.variables.destroy');
         Route::put('/pricing/ribbons/{ribbon}', [Admin\RibbonController::class, 'update'])->name('pricing.ribbons.update');
+
+        // Ceník textilu: látky s cenou za metr
+        Route::get('/textile-pricing', [Admin\TextilePricingController::class, 'index'])->name('textile-pricing.index');
+        Route::get('/textile-pricing/create', [Admin\TextilePricingController::class, 'create'])->name('textile-pricing.create');
+        Route::post('/textile-pricing', [Admin\TextilePricingController::class, 'store'])->name('textile-pricing.store');
+        Route::get('/textile-pricing/{product}/edit', [Admin\TextilePricingController::class, 'edit'])->name('textile-pricing.edit');
+        Route::put('/textile-pricing/{product}', [Admin\TextilePricingController::class, 'update'])->name('textile-pricing.update');
 
         Route::get('/ceiling-pricing', [Admin\CeilingPricingController::class, 'index'])->name('ceiling-pricing.index');
 

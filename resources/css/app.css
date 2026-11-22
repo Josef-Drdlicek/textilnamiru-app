@@ -148,6 +148,28 @@
         @apply scale-125 bg-ink;
     }
 
+    /* Časová linka pod sliderem: plní se zleva doprava po dobu jednoho snímku. */
+    .slider-progress {
+        @apply relative h-1 w-full overflow-hidden bg-line;
+    }
+
+    .slider-progress-bar {
+        @apply h-full w-full origin-left scale-x-0 bg-brand-600;
+    }
+
+    .slider-progress-bar.is-running {
+        animation: slider-progress var(--slider-interval, 6000ms) linear forwards;
+    }
+
+    /* Náhled barvy látky pod hlavní fotkou produktu. */
+    .textile-swatch {
+        @apply block w-full overflow-hidden border-2 border-line bg-white transition hover:border-ink/40 focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    .textile-swatch.is-active {
+        @apply border-brand-600;
+    }
+
     .slider-arrow {
         @apply flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-ink shadow-md transition hover:bg-white focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:outline-none;
     }
@@ -177,5 +199,15 @@
     .reveal.is-visible {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes slider-progress {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
     }
 }

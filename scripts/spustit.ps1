@@ -30,8 +30,9 @@ Write-Host 'Aktualizuji databázi (php artisan migrate)...'
 php artisan migrate --force
 if ($LASTEXITCODE -ne 0) { throw 'php artisan migrate selhal.' }
 
-# 5) Server. `php artisan serve` na Windows padá na diakritice v cestě, proto router server.php.
+# 5) Server. `php artisan serve` na Windows padá na diakritice v cestě, proto router local-router.php
+# (server.php se jmenovat nemůže, antivirus AVG ho mylně blokuje jako IDP.Generic).
 Write-Host ''
 Write-Host 'Aplikace běží na http://127.0.0.1:8000  (přihlášení do zakázek: /b2b)'
 Write-Host 'Zastavíš ji klávesami Ctrl+C.'
-php -S 127.0.0.1:8000 -t public server.php
+php -S 127.0.0.1:8000 -t public local-router.php

@@ -81,9 +81,13 @@
                         <div>
                             <p class="font-semibold">{{ $configuration['summary'] ?? $configType?->label() ?? 'Konfigurace' }}</p>
                             <p class="text-sm text-stone-500">
-                                Orientačně
-                                <span class="font-semibold tabular-nums">{{ number_format($configuration['total_price_vat'] ?? 0, 0, ',', ' ') }} Kč</span>
-                                vč. DPH ({{ number_format($configuration['vat_rate'] ?? 0, 0) }} %)
+                                @if (isset($configuration['total_price_vat']))
+                                    Orientačně
+                                    <span class="font-semibold tabular-nums">{{ number_format($configuration['total_price_vat'], 0, ',', ' ') }} Kč</span>
+                                    vč. DPH ({{ number_format($configuration['vat_rate'] ?? 0, 0) }} %)
+                                @else
+                                    Bez ceny – nacenit ručně
+                                @endif
                                 · spočteno {{ isset($configuration['calculated_at']) ? \Illuminate\Support\Carbon::parse($configuration['calculated_at'])->format('j. n. Y') : '—' }}
                             </p>
                         </div>

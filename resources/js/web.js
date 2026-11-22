@@ -1,5 +1,6 @@
 // Chování veřejného webu: mobilní navigace, odhalování sekcí, návod k zaměření, slidery.
 import { createSlider } from './slider.js';
+import { initTextileGallery } from './textile-gallery.js';
 
 // Mobilní menu
 const navToggle = document.querySelector('[data-nav-toggle]');
@@ -78,3 +79,6 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) =>
         counter: gallery.closest('figure')?.querySelector('[data-slider-counter]') ?? undefined,
     }),
 );
+
+// Produktová stránka látky: fotka podle vybrané barvy.
+initTextileGallery();

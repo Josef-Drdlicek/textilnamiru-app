@@ -8,7 +8,7 @@ it('shows the sewing price list under its new name with links to the other price
     $this->actingAs(User::factory()->admin()->create())
         ->get(route('admin.pricing.index'))
         ->assertOk()
-        ->assertSeeInOrder(['Ceník šití', 'Ceník stropů', 'Ceník rolet']);
+        ->assertSeeInOrder(['Ceník šití', 'Ceník textilu', 'Ceník stropů', 'Ceník rolet']);
 });
 
 it('shows the placeholder page for the blind price list to the admin', function () {
@@ -66,4 +66,4 @@ it('hides the placeholder price lists from studios', function (string $route) {
     $this->actingAs(User::factory()->create())
         ->get(route($route))
         ->assertForbidden();
-})->with(['admin.ceiling-pricing.index', 'admin.blind-pricing.index']);
+})->with(['admin.textile-pricing.index', 'admin.ceiling-pricing.index', 'admin.blind-pricing.index']);
