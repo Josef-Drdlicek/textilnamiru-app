@@ -11,6 +11,7 @@ use App\Models\TextileProduct;
 use App\Models\TextileProductColor;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -232,13 +233,14 @@ class TextileProductConfigurator extends Component
                 'parameters' => [],
                 'count' => 1,
                 'summary' => $this->product->name.' · '.$this->selectedMakeType()->label($this->product->category).' · na poptávku',
+                'edit_url' => $this->editUrl(),
                 'calculated_at' => now()->toIso8601String(),
             ]);
 
             return $this->redirectRoute('web.inquiry.create');
         }
 
-        $this->validate();
+        $this->validateOpeningFailedStep();
 
         $pricer = app(TextileProductPricer::class);
         $spec = $this->spec();
@@ -249,7 +251,9 @@ class TextileProductConfigurator extends Component
                 'type' => $this->product->category->itemType()->value,
                 'parameters' => $pricer->pieceParameters($this->product, $spec)->toArray(),
                 'count' => (int) $this->count,
+                'pieces' => $spec->pieces(),
                 'summary' => $this->summary(),
+                'edit_url' => $this->editUrl(),
                 'calculated_at' => now()->toIso8601String(),
             ]);
 
@@ -264,16 +268,46 @@ class TextileProductConfigurator extends Component
             'type' => $this->product->category->itemType()->value,
             'parameters' => $pricer->pieceParameters($this->product, $spec)->toArray(),
             'count' => $count,
+            'pieces' => $spec->pieces(),
             'unit_price' => $result->unitPrice,
             'unit_price_vat' => $result->unitPriceWithVat($vatRate),
             'total_price_vat' => $result->totalPriceWithVat($vatRate, $count),
             'vat_rate' => $vatRate,
             'price_lines' => $result->linesToArray(),
             'summary' => $this->summary(),
+            'edit_url' => $this->editUrl(),
             'calculated_at' => now()->toIso8601String(),
         ]);
 
         return $this->redirectRoute('web.inquiry.create');
+    }
+
+    /**
+     * Kroky jdou otevírat přeskakem, takže chyba může být v kroku, který není vidět:
+     * otevřít první krok s chybou, ať zákazník ví, co doplnit.
+     */
+    protected function validateOpeningFailedStep(): void
+    {
+        try {
+            $this->validate();
+        } catch (ValidationException $exception) {
+            foreach (self::STEPS as $step) {
+                if (array_intersect_key($this->stepRules($step), $exception->errors()) !== []) {
+                    $this->step = $step;
+                    break;
+                }
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Kam vede „Upravit“ u konfigurace na stránce poptávky: zpět na tuto látku.
+     */
+    protected function editUrl(): string
+    {
+        return route($this->product->category->showRoute(), $this->product).'#objednavka-siti';
     }
 
     /**

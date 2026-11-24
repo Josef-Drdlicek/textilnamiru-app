@@ -126,7 +126,7 @@
                 </form>
 
                 <form method="POST" action="{{ route('admin.inquiries.destroy', $inquiry) }}" class="mt-6 border-t border-stone-100 pt-4"
-                      onsubmit="return confirm('Opravdu smazat poptávku od „{{ $inquiry->name }}“? Údaje budou nenávratně odstraněny.');">
+                      data-confirm="Opravdu smazat poptávku od „{{ $inquiry->name }}“? Údaje budou nenávratně odstraněny.">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50">

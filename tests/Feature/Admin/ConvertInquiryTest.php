@@ -92,3 +92,29 @@ it('rejects admins and inactive users as target designers', function () {
 
     expect($inquiry->refresh()->order_id)->toBeNull();
 });
+
+it('orders both panels of a two-panel curtain from the product page', function () {
+    $inquiry = Inquiry::factory()->create([
+        'configuration' => [
+            'type' => 'curtain',
+            'parameters' => [
+                'width' => 100, 'height' => 250, 'material_width' => 300,
+                'ribbon_code' => 'siroky70', 'ratio' => 2,
+                'kanyr' => false, 'right_left' => 'right',
+                'corners' => false, 'bottom' => true, 'narasit' => false, 'snails' => false,
+            ],
+            'count' => 3,
+            'pieces' => 2,
+            'summary' => 'Záclona test 001 · opona – dva díly · 3 ks',
+        ],
+    ]);
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->post(route('admin.inquiries.convert', $inquiry), [
+            'user_id' => User::factory()->create()->id,
+            'name' => 'Opona',
+        ]);
+
+    // Parametry v poptávce popisují jeden díl: 3 opony × 2 díly = 6 kusů.
+    expect($inquiry->refresh()->order->items->sole()->count)->toBe(6);
+});

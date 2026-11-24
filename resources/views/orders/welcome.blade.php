@@ -64,7 +64,7 @@
                                         <a href="{{ route('orders.show', $order) }}" class="font-medium text-teal-800 hover:underline">Detail</a>
                                         @can('delete', $order)
                                             <form method="POST" action="{{ route('orders.destroy', $order) }}" class="ml-3 inline"
-                                                  onsubmit="return confirm('Opravdu smazat hotovou zakázku ze svého přehledu?');">
+                                                  data-confirm="Opravdu smazat hotovou zakázku ze svého přehledu?">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="font-medium text-red-700 hover:underline">Smazat</button>

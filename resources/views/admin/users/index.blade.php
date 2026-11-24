@@ -43,7 +43,7 @@
 
                                     @if ($user->id !== auth()->id())
                                         <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}"
-                                              @if ($user->is_active) onsubmit="return confirm('Deaktivovat účet „{{ $user->username }}“? Uživatel se nebude moci přihlásit.');" @endif>
+                                              @if ($user->is_active) data-confirm="Deaktivovat účet „{{ $user->username }}“? Uživatel se nebude moci přihlásit." @endif>
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="font-medium {{ $user->is_active ? 'text-red-600' : 'text-emerald-600' }} hover:underline">

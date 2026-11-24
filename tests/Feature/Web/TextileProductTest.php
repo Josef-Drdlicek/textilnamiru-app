@@ -224,3 +224,22 @@ it('shows the photo field on the edit form', function () {
         ->assertSee('enctype="multipart/form-data"', false)
         ->assertSee('name="image"', false);
 });
+
+it('stores both panels and a link back to the fabric in the inquiry snapshot', function () {
+    configuredCurtain()
+        ->set('split', 'two')
+        ->call('sendToInquiry')
+        ->assertRedirect(route('web.inquiry.create'));
+
+    expect(session('inquiry.configuration.pieces'))->toBe(2)
+        ->and(session('inquiry.configuration.edit_url'))->toBe(route('web.zaclony.show', testCurtain()).'#objednavka-siti');
+});
+
+it('opens the step with the missing value when the inquiry is sent too early', function () {
+    configuredCurtain()
+        ->set('width', null)
+        ->call('openStep', 'tape')
+        ->call('sendToInquiry')
+        ->assertHasErrors('width')
+        ->assertSet('step', 'dimensions');
+});

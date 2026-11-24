@@ -69,21 +69,28 @@ class TextilePricingController extends Controller
 
     /**
      * Barvy podle seznamu názvů: existující (i s fotkou) zůstanou, nové přibudou,
-     * vynechané se smažou i s fotkou. Pořadí odpovídá seznamu.
+     * vynechané se smažou i s fotkou. Pořadí odpovídá seznamu. Smazanou barvu
+     * od dodavatele si produkt pamatuje, aby ji další import nevrátil.
      *
      * @param  list<string>  $names
      */
     private function syncColors(TextileProduct $product, array $names): void
     {
         $existing = $product->colors()->get()->keyBy('name');
+        $excluded = array_diff($product->excluded_colors ?? [], $names);
 
         // Pozor: except() u kolekce modelů vyřazuje podle ID, proto reject() podle názvu.
         foreach ($existing->reject(fn ($color) => in_array($color->name, $names, true)) as $removed) {
+            if ($removed->source_image_url !== null) {
+                $excluded[] = $removed->name;
+            }
             if ($removed->image_path) {
                 Storage::disk()->delete($removed->image_path);
             }
             $removed->delete();
         }
+
+        $product->update(['excluded_colors' => array_values(array_unique($excluded)) ?: null]);
 
         foreach ($names as $index => $name) {
             $existing->get($name)?->update(['sort_order' => $index])

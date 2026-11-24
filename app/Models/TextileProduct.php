@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * zvlášť kalkulátorem záclony (app/Domain/Pricing). Cena může chybět
  * (importovaná látka) — pak se ušití nepočítá a produkt jde jen poptat.
  */
-#[Fillable(['name', 'slug', 'supplier', 'supplier_code', 'category', 'description', 'specs', 'material', 'roll_height', 'shrinkage', 'delivery_days', 'price_per_meter', 'image_path', 'is_active'])]
+#[Fillable(['name', 'slug', 'supplier', 'supplier_code', 'category', 'description', 'specs', 'excluded_colors', 'material', 'roll_height', 'shrinkage', 'delivery_days', 'price_per_meter', 'image_path', 'is_active'])]
 class TextileProduct extends Model
 {
     /** Rezerva na lem a úchyt: hotová výška musí být o tolik menší než výška role [cm]. */
@@ -30,6 +30,7 @@ class TextileProduct extends Model
             'delivery_days' => 'integer',
             'price_per_meter' => 'float',
             'specs' => 'array',
+            'excluded_colors' => 'array',
             'is_active' => 'boolean',
         ];
     }

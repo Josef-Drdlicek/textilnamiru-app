@@ -119,6 +119,11 @@ final readonly class TextileProductPricer
         return $this->prices->vatRate();
     }
 
+    public function withVat(float $price): float
+    {
+        return $this->prices->withVat($price);
+    }
+
     /**
      * @return array{0: float, 1: string} spotřeba látky [m] a popisek řádku
      */

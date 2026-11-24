@@ -2,6 +2,7 @@
 
 namespace App\Domain\Suppliers\Detede;
 
+use App\Domain\Suppliers\SupplierImage;
 use App\Enums\RailKind;
 use App\Models\RailImage;
 use App\Models\RailPrice;
@@ -11,7 +12,6 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -31,8 +31,6 @@ class DetedeImporter
 
     /** Fotky stahujeme zmenšené na nejvýš 1600 px (originály mívají 3840 px). */
     private const string IMAGE_TRANSFORM = '/v1/fit/w_1600,h_1600,q_90/';
-
-    private const int MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 
     /** @var list<string> */
     public array $warnings = [];
@@ -98,8 +96,13 @@ class DetedeImporter
                     return;
                 }
 
+                $paths = $product->images()->whereNotNull('image_path')->pluck('image_path');
                 $product->delete();
                 $this->removed++;
+
+                // Fotky smazat, jen když je nepoužívá jiný produkt (sdílené díly).
+                $stillUsed = RailImage::query()->whereIn('image_path', $paths)->pluck('image_path');
+                Storage::disk()->delete($paths->diff($stillUsed)->all());
             });
     }
 
@@ -213,22 +216,19 @@ class DetedeImporter
             return $this->downloaded[$source];
         }
 
-        $extension = strtolower(pathinfo($id, PATHINFO_EXTENSION)) ?: 'jpg';
-        $file = sprintf('rails/%s/%s.%s', self::SUPPLIER, substr(sha1($id), 0, 16), $extension);
+        // Stejný díl (jezdec, držák) sdílí víc produktů – soubor podle id fotky, stáhne se jednou.
+        $existing = RailImage::query()->where('source_url', $source)->whereNotNull('image_path')->value('image_path');
 
-        if (! Storage::disk()->exists($file)) {
-            $body = $this->request()->get($source.self::IMAGE_TRANSFORM.basename($id))->throw()->body();
+        if ($existing !== null && Storage::disk()->exists($existing)) {
+            return $this->downloaded[$source] = $existing;
+        }
 
-            if ($body === '' || strlen($body) > self::MAX_IMAGE_BYTES) {
-                throw new RuntimeException('soubor je prázdný nebo větší než 12 MB');
-            }
+        $body = $this->request()->get($source.self::IMAGE_TRANSFORM.basename($id))->throw()->body();
+        $file = SupplierImage::store(sprintf('rails/%s/%s', self::SUPPLIER, substr(sha1($id), 0, 16)), $body);
+        $this->images++;
 
-            Storage::disk()->put($file, $body);
-            $this->images++;
-
-            if (! app()->runningUnitTests()) {
-                usleep(150 * 1000);
-            }
+        if (! app()->runningUnitTests()) {
+            usleep(150 * 1000);
         }
 
         return $this->downloaded[$source] = $file;

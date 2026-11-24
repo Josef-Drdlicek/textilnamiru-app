@@ -21,6 +21,8 @@ Route::get('/kalkulacka/vypinane-stropy', [Web\PageController::class, 'kalkulack
 Route::permanentRedirect('/kalkulacka/stinici-technika', '/poptavka?produkt=shades');
 Route::get('/realizace', [Web\PageController::class, 'realizace'])->name('web.realizace');
 Route::get('/zaclony-a-zavesy', [Web\PageController::class, 'zaclonyAZavesy'])->name('web.zaclony-a-zavesy');
+// Dřívější katalog sortimentu: staré odkazy a vyhledávače přesměrovat, ne 404.
+Route::permanentRedirect('/sortiment', '/zaclony-a-zavesy');
 Route::get('/zaclony-a-zavesy/zaclony', [Web\PageController::class, 'zaclony'])->name('web.zaclony');
 Route::get('/textil-foto/{product}', Web\TextileImageController::class)->name('web.textile-image');
 Route::get('/textil-foto/barva/{color}', [Web\TextileImageController::class, 'color'])->name('web.textile-color-image');

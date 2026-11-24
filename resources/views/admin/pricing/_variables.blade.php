@@ -38,7 +38,7 @@
                             @unless ($variable->is_system)
                                 <button type="submit" form="delete-variable-{{ $variable->id }}"
                                     class="text-sm font-medium text-red-700 hover:underline"
-                                    onclick="return confirm('Opravdu smazat tuto položku ceníku?')">
+                                    data-confirm="Opravdu smazat tuto položku ceníku?">
                                     Smazat
                                 </button>
                             @endunless

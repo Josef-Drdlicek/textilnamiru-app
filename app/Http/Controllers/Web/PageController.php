@@ -95,13 +95,12 @@ class PageController extends Controller
         abort_unless($product->is_active || auth()->user()?->isAdmin(), 404);
 
         $product->load('colors');
-        $vatRate = $pricer->vatRate();
 
         return view('web.textile-product', [
             'product' => $product,
             'colorsWithImage' => $product->colors->filter(fn ($color) => $color->image_path !== null)->values(),
             'specs' => $this->textileSpecs($product),
-            'pricePerMeterVat' => $product->hasPrice() ? round($product->price_per_meter * (100 + $vatRate)) / 100 : null,
+            'pricePerMeterVat' => $product->hasPrice() ? $pricer->withVat((float) $product->price_per_meter) : null,
         ]);
     }
 
@@ -138,7 +137,7 @@ class PageController extends Controller
     public function zaveseniTextilu(): View
     {
         return view('web.zaveseni-textilu', [
-            'groups' => RailProduct::query()->active()->with(['variants', 'images'])->orderBy('sort_order')->get()
+            'groups' => RailProduct::query()->active()->has('variants')->with(['variants', 'images'])->orderBy('sort_order')->get()
                 ->groupBy(fn (RailProduct $product) => $product->kind->value),
         ]);
     }
@@ -203,6 +202,7 @@ class PageController extends Controller
         return view('web.rolety', [
             'products' => ShadeProduct::query()
                 ->active()
+                ->has('variants') // detail bez provedení vrací 404, dlaždice by vedla nikam
                 ->with(['variants.images'])
                 ->orderBy('sort_order')
                 ->get(),

@@ -18,7 +18,6 @@ class CeilingPricingController extends Controller
         return view('admin.pricing.ceiling', [
             'variables' => PricingVariable::query()
                 ->where('category', PricingCategory::Ceiling)
-                ->orderByDesc('is_system')
                 ->orderBy('id')
                 ->get(),
         ]);

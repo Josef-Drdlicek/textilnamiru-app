@@ -74,7 +74,7 @@ function fakePavonFabrics(array $pages): void
         $pages = app('pavon.fabric-pages');
 
         if (str_starts_with($path, '/upload/')) {
-            return Http::response('IMG:'.$path);
+            return Http::response(fakeJpeg($path));
         }
 
         return Http::response('<html><body><h1>Textilie</h1>'.($pages[$path] ?? '').'</body></html>');
@@ -127,7 +127,7 @@ it('imports Pavon blind fabrics with photo, specs and price category, skipping c
         ->and($col->spec('Gramáž'))->toBe('175 g/m2')
         ->and($col->spec('Údržba'))->toBe('čištění vlhkou houbou, čištění luxováním')
         ->and(collect($col->specs)->pluck('label')->all())->not->toContain('Cenová skupina', 'Objednací číslo', 'Dostupnost', 'Použití')
-        ->and(Storage::get($col->image_path))->toBe('IMG:/upload/2068-1410028313.jpg');
+        ->and(Storage::get($col->image_path))->toBe(fakeJpeg('/upload/2068-1410028313.jpg'));
 
     expect(ShadeFabric::query()->where('code', 'Juno 2276')->sole()->roll_width)->toBe(240)
         ->and(ShadeFabric::query()->where('code', 'Caria 0300')->sole()->collection)->toBe(ShadeFabricCollection::Magico);
@@ -136,24 +136,44 @@ it('imports Pavon blind fabrics with photo, specs and price category, skipping c
 it('hides fabrics that went on clearance and keeps manual hiding on re-import', function () {
     $pages = [
         '/textilie-standard' => standardCatalog(),
-        '/textilie-screen' => pavonFabric(400, 'Screen Pro 1101', 'upload/3500-1206108732.jpg', pavonFabricSpecs('C')),
-        '/textilie-magico' => '',
-        '/textilie-roma' => '',
+        '/textilie-screen' => pavonFabric(400, 'Screen Pro 1101', 'upload/3500-1206108732.jpg', pavonFabricSpecs('C'))
+            .pavonFabric(401, 'Screen Pro 1102', 'upload/3501-1206108733.jpg', pavonFabricSpecs('C')),
+        '/textilie-magico' => pavonFabric(500, 'Caria 0300', 'upload/3014-1206031792.jpg', pavonFabricSpecs('C', '280 cm')),
+        '/textilie-roma' => pavonFabric(600, 'Neapel', 'upload/1940-1410269014.jpg', pavonFabricSpecs('B', '300 cm')),
     ];
     fakePavonFabrics($pages);
     $this->artisan('shades:import-pavon-fabrics --no-images')->assertSuccessful();
-    expect(ShadeFabric::query()->whereNull('image_path')->count())->toBe(5);
+    expect(ShadeFabric::query()->whereNull('image_path')->count())->toBe(8);
 
     ShadeFabric::query()->where('code', 'Juno 2276')->update(['is_active' => false]);
 
-    // Col 100 přešla do výprodeje, Screen Pro z katalogu zmizela.
+    // Col 100 přešla do výprodeje, Screen Pro 1101 z katalogu zmizela.
     $pages['/textilie-standard'] = str_replace('<td>A (nejlevnější) </td>', '<td>Výprodej (cenová sk. A) </td>', standardCatalog());
+    $pages['/textilie-screen'] = pavonFabric(401, 'Screen Pro 1102', 'upload/3501-1206108733.jpg', pavonFabricSpecs('C'));
+    fakePavonFabrics($pages);
+    $this->artisan('shades:import-pavon-fabrics --no-images')->assertSuccessful();
+
+    expect(ShadeFabric::query()->where('is_active', true)->pluck('code')->sort()->values()->all())
+        ->toBe(['Caria 0300', 'Col 4983', 'Neapel', 'Screen Pro 1102', 'Termo 0123'])
+        ->and(ShadeFabric::query()->count())->toBe(8);
+});
+
+it('hides nothing when a whole collection comes back empty', function () {
+    $pages = [
+        '/textilie-standard' => standardCatalog(),
+        '/textilie-screen' => pavonFabric(400, 'Screen Pro 1101', 'upload/3500-1206108732.jpg', pavonFabricSpecs('C')),
+        '/textilie-magico' => pavonFabric(500, 'Caria 0300', 'upload/3014-1206031792.jpg', pavonFabricSpecs('C', '280 cm')),
+        '/textilie-roma' => pavonFabric(600, 'Neapel', 'upload/1940-1410269014.jpg', pavonFabricSpecs('B', '300 cm')),
+    ];
+    fakePavonFabrics($pages);
+    $this->artisan('shades:import-pavon-fabrics --no-images')->assertSuccessful();
+
+    // Dodavatel změnil web: stránka kolekce se načte, ale bez jediné látky.
     $pages['/textilie-screen'] = '';
     fakePavonFabrics($pages);
     $this->artisan('shades:import-pavon-fabrics --no-images')->assertSuccessful();
 
-    expect(ShadeFabric::query()->where('is_active', true)->pluck('code')->sort()->values()->all())->toBe(['Col 4983', 'Termo 0123'])
-        ->and(ShadeFabric::query()->count())->toBe(5);
+    expect(ShadeFabric::query()->where('code', 'Screen Pro 1101')->sole()->is_active)->toBeTrue();
 });
 
 it('sets the default fabric collections on blinds that have none', function () {

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -36,25 +37,30 @@ return new class extends Migration
             $table->json('fabric_collections')->nullable()->after('step'); // z jakých kolekcí látek se provedení šije
         });
 
-        Schema::table('shade_prices', function (Blueprint $table) {
-            $table->dropUnique(['shade_variant_id', 'width', 'height']);
-        });
-
+        // Nový unikátní index musí vzniknout dřív, než zmizí starý: MySQL o starý index
+        // opírá cizí klíč shade_variant_id a bez náhrady by ho odmítl smazat (chyba 1553).
         Schema::table('shade_prices', function (Blueprint $table) {
             $table->char('price_category', 1)->default('A')->after('shade_variant_id');
             $table->unique(['shade_variant_id', 'price_category', 'width', 'height']);
+        });
+
+        Schema::table('shade_prices', function (Blueprint $table) {
+            $table->dropUnique(['shade_variant_id', 'width', 'height']);
         });
     }
 
     public function down(): void
     {
+        // Bez cenové skupiny se dají uložit jen ceny skupiny A, ostatní by porušily starý index.
+        DB::table('shade_prices')->where('price_category', '!=', 'A')->delete();
+
         Schema::table('shade_prices', function (Blueprint $table) {
-            $table->dropUnique(['shade_variant_id', 'price_category', 'width', 'height']);
+            $table->unique(['shade_variant_id', 'width', 'height']);
         });
 
         Schema::table('shade_prices', function (Blueprint $table) {
+            $table->dropUnique(['shade_variant_id', 'price_category', 'width', 'height']);
             $table->dropColumn('price_category');
-            $table->unique(['shade_variant_id', 'width', 'height']);
         });
 
         Schema::table('shade_variants', function (Blueprint $table) {

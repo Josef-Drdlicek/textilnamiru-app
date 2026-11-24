@@ -11,7 +11,8 @@ use Illuminate\Database\Seeder;
  * proto startují na 0 Kč a dílna je doplní v administraci.
  *
  * Idempotentní: chybějící položky založí, existující (a jejich ceny) nechá být.
- * Nejsou systémové — žádný vzorec je zatím nepoužívá, dílna je může smazat.
+ * Systémové jsou jen ty, které čte StretchCeilingPriceCalculator (světelná lišta):
+ * po smazání by kalkulačka stropu spadla. Ostatní dílna smazat může.
  */
 class CeilingPricingVariableSeeder extends Seeder
 {
@@ -31,6 +32,14 @@ class CeilingPricingVariableSeeder extends Seeder
         ['code' => 'STROP_DALKOVY_OVLADAC', 'name' => 'Dálkový ovladač', 'unit' => 'ks'],
     ];
 
+    /** Položky, které používá vzorec světelné lišty. */
+    public const array SYSTEM_CODES = [
+        'STROP_LISTA_SVETELNA',
+        'STROP_LED_COB_15W',
+        'STROP_ZDROJ_SLIM_400W',
+        'STROP_PRIJIMAC',
+    ];
+
     public function run(): void
     {
         foreach (self::VARIABLES as $default) {
@@ -38,7 +47,7 @@ class CeilingPricingVariableSeeder extends Seeder
                 'name' => $default['name'],
                 'unit' => $default['unit'],
                 'value' => 0,
-                'is_system' => false,
+                'is_system' => in_array($default['code'], self::SYSTEM_CODES, true),
                 'category' => PricingCategory::Ceiling,
             ]);
         }

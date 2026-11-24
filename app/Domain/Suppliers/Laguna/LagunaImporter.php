@@ -2,6 +2,7 @@
 
 namespace App\Domain\Suppliers\Laguna;
 
+use App\Domain\Suppliers\SupplierImage;
 use App\Models\TextileProduct;
 use App\Models\TextileProductColor;
 use Illuminate\Support\Facades\Storage;
@@ -15,8 +16,9 @@ use Throwable;
  * barvy pod ním s vlastní fotkou. Položky bez barvy („5857/45“) jsou samostatné produkty.
  *
  * Nové produkty jsou skryté a bez ceny (dílna je doplní a zveřejní).
- * Opakovaný import: aktualizuje parametry a barvy od dodavatele, ale nesahá na
- * název, cenu, popis, viditelnost ani na barvy přidané ručně.
+ * Opakovaný import: aktualizuje specifikace a barvy od dodavatele, ale nesahá na
+ * název, cenu, popis, viditelnost, výšku role a materiál (dílna je mohla opravit),
+ * na barvy přidané ručně ani na barvy, které dílna smazala (excluded_colors).
  */
 class LagunaImporter
 {
@@ -56,7 +58,16 @@ class LagunaImporter
         $done = 0;
 
         foreach ($groups as $key => $groupItems) {
-            $detail = $this->parser->parse($this->client->detailHtml($groupItems[0]->link));
+            // Jedna nedostupná stránka nesmí po minutách stahování shodit celý import.
+            try {
+                $detail = $this->parser->parse($this->client->detailHtml($groupItems[0]->link));
+            } catch (Throwable $e) {
+                $this->warnings[] = "{$key}: detail se nepodařilo načíst, produkt jsem přeskočil ({$e->getMessage()}).";
+                $progress && $progress(++$done, count($groups));
+
+                continue;
+            }
+
             $segments = $groupItems[0]->segments();
             $secondLast = $segments[count($segments) - 2] ?? null;
 
@@ -111,16 +122,20 @@ class LagunaImporter
             ]);
         }
 
-        $product->fill([
-            'roll_height' => $data->height,
-            'material' => $data->material,
-            'specs' => $data->specs,
-        ])->save();
+        $product->roll_height ??= $data->height;
+        $product->material ??= $data->material;
+        $product->specs = $data->specs;
+        $product->save();
 
         $existing = $product->colors()->get()->keyBy('name');
+        $excluded = $product->excluded_colors ?? [];
         $order = 0;
 
         foreach ($data->colors as $name => $imageUrl) {
+            if (in_array((string) $name, $excluded, true)) {
+                continue;
+            }
+
             /** @var TextileProductColor $color */
             $color = $existing->get($name) ?? $product->colors()->make(['name' => $name]);
             $color->sort_order = $order++;
@@ -149,10 +164,10 @@ class LagunaImporter
     private function downloadImage(TextileProduct $product, TextileProductColor $color, string $url): void
     {
         try {
-            $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION)) ?: 'jpg';
-            $path = sprintf('textile/%s/%s/%s.%s', self::SUPPLIER, $product->slug, Str::slug($color->name) ?: 'barva', $extension);
-
-            Storage::disk()->put($path, $this->client->download($url));
+            $path = SupplierImage::store(
+                sprintf('textile/%s/%s/%s', self::SUPPLIER, $product->slug, Str::slug($color->name) ?: 'barva'),
+                $this->client->download($url),
+            );
 
             if ($color->image_path && $color->image_path !== $path) {
                 Storage::disk()->delete($color->image_path);

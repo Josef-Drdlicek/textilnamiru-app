@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -20,25 +21,30 @@ return new class extends Migration
             $table->json('mountings')->nullable()->after('components'); // RailMounting: ceiling, wall
         });
 
-        Schema::table('rail_prices', function (Blueprint $table) {
-            $table->dropUnique(['rail_variant_id', 'length_to']);
-        });
-
+        // Nový unikátní index musí vzniknout dřív, než zmizí starý: MySQL o starý index
+        // opírá cizí klíč rail_variant_id a bez náhrady by ho odmítl smazat (chyba 1553).
         Schema::table('rail_prices', function (Blueprint $table) {
             $table->string('mounting', 10)->default('ceiling')->after('rail_variant_id');
             $table->unique(['rail_variant_id', 'mounting', 'length_to']);
+        });
+
+        Schema::table('rail_prices', function (Blueprint $table) {
+            $table->dropUnique(['rail_variant_id', 'length_to']);
         });
     }
 
     public function down(): void
     {
+        // Bez způsobu zavěšení zůstanou jen stropní ceny, stěnové by porušily starý index.
+        DB::table('rail_prices')->where('mounting', '!=', 'ceiling')->delete();
+
         Schema::table('rail_prices', function (Blueprint $table) {
-            $table->dropUnique(['rail_variant_id', 'mounting', 'length_to']);
+            $table->unique(['rail_variant_id', 'length_to']);
         });
 
         Schema::table('rail_prices', function (Blueprint $table) {
+            $table->dropUnique(['rail_variant_id', 'mounting', 'length_to']);
             $table->dropColumn('mounting');
-            $table->unique(['rail_variant_id', 'length_to']);
         });
 
         Schema::table('rail_products', function (Blueprint $table) {

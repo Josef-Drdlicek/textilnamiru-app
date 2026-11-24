@@ -165,3 +165,25 @@ it('shows the price calculator on the blind page for the chosen variant', functi
         ->assertOk()
         ->assertSee('Ceník tohoto provedení doplňujeme');
 });
+
+it('quotes an empty price cell on request instead of using a bigger one', function () {
+    $variant = pricedShade();
+    $col = shadeFabric('Col 100', 'A');
+
+    // 95 × 145 cm patří do políčka 100 × 150 (vyplněné), 105 × 145 do 110 × 150 (vyplněné),
+    // 85 × 145 do 90 × 150, které je prázdné: cena na poptávku, ne cena větší rolety.
+    $pricer = app(\App\Domain\Pricing\ShadePricer::class);
+    expect($pricer->price($variant, $col, 95, 145)?->unitPrice)->toBe(1000.0)
+        ->and($pricer->price($variant, $col, 105, 145)?->unitPrice)->toBe(1100.0)
+        ->and($pricer->price($variant, $col, 85, 145))->toBeNull();
+});
+
+it('ignores prices left outside the grid after the step changes', function () {
+    $variant = pricedShade();
+    $col = shadeFabric('Col 100', 'A');
+    $variant->prices()->create(['price_category' => 'A', 'width' => 45, 'height' => 150, 'price' => 1]);
+
+    $pricer = app(\App\Domain\Pricing\ShadePricer::class);
+    expect($pricer->lowestPrice($variant))->toBe(1000.0)
+        ->and($pricer->price($variant, $col, 42, 145))->toBeNull();
+});

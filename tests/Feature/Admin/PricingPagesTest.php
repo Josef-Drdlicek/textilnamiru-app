@@ -81,3 +81,19 @@ it('shows the blinds fabric page in the admin menu under the blinds price list',
         ->assertSeeInOrder(['Ceník rolet', 'Textil pro rolety', 'Uživatelé'])
         ->assertSee('shades:import-pavon-fabrics');
 });
+
+it('keeps the ceiling lighting prices the calculator needs from being deleted', function () {
+    $admin = User::factory()->admin()->create();
+
+    foreach (\Database\Seeders\CeilingPricingVariableSeeder::SYSTEM_CODES as $code) {
+        $variable = \App\Models\PricingVariable::query()->where('code', $code)->sole();
+
+        $this->actingAs($admin)
+            ->delete(route('admin.pricing.variables.destroy', $variable))
+            ->assertForbidden();
+    }
+
+    $remote = \App\Models\PricingVariable::query()->where('code', 'STROP_DALKOVY_OVLADAC')->sole();
+    $this->actingAs($admin)->delete(route('admin.pricing.variables.destroy', $remote));
+    expect(\App\Models\PricingVariable::query()->whereKey($remote->id)->exists())->toBeFalse();
+});

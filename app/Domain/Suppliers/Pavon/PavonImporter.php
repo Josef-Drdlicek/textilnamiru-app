@@ -2,8 +2,10 @@
 
 namespace App\Domain\Suppliers\Pavon;
 
+use App\Domain\Suppliers\SupplierImage;
 use App\Models\ShadeProduct;
 use App\Models\ShadeVariant;
+use App\Models\ShadeVariantImage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
@@ -90,16 +92,25 @@ class PavonImporter
             'sort_order' => $order,
         ])->save();
 
+        $sourceUrls = array_column($page->images, 'url');
+
+        // Fotky, které dodavatel z galerie odebral, i se soubory.
+        $variant->images()->whereNotIn('source_url', $sourceUrls)->get()->each(function (ShadeVariantImage $gone) {
+            $gone->image_path && Storage::disk()->delete($gone->image_path);
+            $gone->delete();
+        });
+
         foreach ($page->images as $index => $image) {
             $record = $variant->images()->firstOrNew(['source_url' => $image['url']]);
             $record->fill(['alt' => $image['alt'] ?: $name, 'sort_order' => $index]);
 
             if ($withImages && (! $record->image_path || ! Storage::disk()->exists($record->image_path))) {
                 try {
-                    $extension = strtolower(pathinfo(parse_url($image['url'], PHP_URL_PATH) ?? '', PATHINFO_EXTENSION)) ?: 'jpg';
-                    $file = sprintf('shades/%s/%s/%02d.%s', self::SUPPLIER, Str::slug($name), $index + 1, $extension);
-                    Storage::disk()->put($file, $this->client->download($image['url']));
-                    $record->image_path = $file;
+                    // Soubor podle URL, ne podle pořadí: nová fotka na začátku galerie by jinak přepsala ostatní.
+                    $record->image_path = SupplierImage::store(
+                        sprintf('shades/%s/%s/%s', self::SUPPLIER, Str::slug($name), substr(sha1($image['url']), 0, 16)),
+                        $this->client->download($image['url']),
+                    );
                 } catch (Throwable $e) {
                     $this->warnings[] = "{$name}: fotku {$image['url']} se nepodařilo stáhnout ({$e->getMessage()}).";
                 }

@@ -9,6 +9,7 @@ use App\Models\RailVariant;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
@@ -22,6 +23,7 @@ class RailConfigurator extends Component
     public RailVariant $variant;
 
     /** Pořadí varianty v produktu – pro odkaz „Upravit“ z poptávky. */
+    #[Locked] // návštěvník ho nesmí měnit, jde do odkazu v poptávce
     public int $variantIndex = 0;
 
     public string $mounting = '';

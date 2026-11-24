@@ -41,6 +41,14 @@ final readonly class PriceList
         return $this->var('VAT');
     }
 
+    /**
+     * Cena s DPH zaokrouhlená na haléře (stejně jako PriceResult).
+     */
+    public function withVat(float $price): float
+    {
+        return round($price * (100 + $this->vatRate())) / 100;
+    }
+
     public function ribbonPricePerMeter(string $code): float
     {
         return $this->ribbonPrices[$code] ?? throw UnknownRibbon::forCode($code);

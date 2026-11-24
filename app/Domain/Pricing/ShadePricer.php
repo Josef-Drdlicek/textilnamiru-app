@@ -11,8 +11,9 @@ use App\Models\ShadeVariant;
  * Cena rolety z cenové tabulky provedení: šířka × výška pro cenovou skupinu
  * látky A–D (Kč bez DPH).
  *
- * Cena platí „do“ rozměru: zadaný rozměr se zaokrouhlí nahoru na nejbližší
- * vyplněné políčko tabulky dané skupiny. Doplňkový sortiment přibude jako další řádky.
+ * Cena platí „do“ rozměru: šířka i výška se zaokrouhlí nahoru na nejbližší řádek
+ * a sloupec tabulky provedení. Prázdné políčko = cena na poptávku (null), jak slibuje
+ * administrace. Ceny mimo aktuální mřížku (po změně kroku či rozsahu) se ignorují.
  */
 final readonly class ShadePricer
 {
@@ -51,7 +52,10 @@ final readonly class ShadePricer
      */
     public function lowestPrice(ShadeVariant $variant): ?float
     {
-        $price = $variant->prices()->min('price');
+        $price = $variant->prices()
+            ->whereIn('width', $variant->widths())
+            ->whereIn('height', $variant->heights())
+            ->min('price');
 
         return $price !== null ? (float) $price : null;
     }
@@ -63,7 +67,7 @@ final readonly class ShadePricer
 
     public function withVat(float $price): float
     {
-        return round($price * (100 + $this->vatRate())) / 100;
+        return $this->prices->withVat($price);
     }
 
     private function cell(ShadeVariant $variant, ShadePriceCategory $category, float $width, float $height): ?ShadePrice
@@ -72,12 +76,31 @@ final readonly class ShadePricer
             return null;
         }
 
+        $gridWidth = $this->roundUpToGrid($variant->widths(), $width);
+        $gridHeight = $this->roundUpToGrid($variant->heights(), $height);
+
+        if ($gridWidth === null || $gridHeight === null) {
+            return null;
+        }
+
         return $variant->prices()
             ->where('price_category', $category)
-            ->where('width', '>=', $width)
-            ->where('height', '>=', $height)
-            ->orderBy('width')
-            ->orderBy('height')
+            ->where('width', $gridWidth)
+            ->where('height', $gridHeight)
             ->first();
+    }
+
+    /**
+     * @param  list<int>  $axis  vzestupně seřazené hodnoty řádků či sloupců tabulky
+     */
+    private function roundUpToGrid(array $axis, float $value): ?int
+    {
+        foreach ($axis as $gridValue) {
+            if ($gridValue >= $value) {
+                return $gridValue;
+            }
+        }
+
+        return null;
     }
 }

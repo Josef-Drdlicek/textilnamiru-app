@@ -2,6 +2,7 @@
 
 namespace App\Domain\Suppliers\Pavon;
 
+use App\Domain\Suppliers\SupplierImage;
 use App\Enums\ShadeFabricCollection;
 use App\Models\ShadeFabric;
 use Illuminate\Support\Facades\Storage;
@@ -40,6 +41,14 @@ class PavonFabricImporter
                 $fabrics = $this->parser->parse($this->client->page($collection->supplierPath()));
             } catch (Throwable $e) {
                 $this->warnings[] = "Kolekci {$collection->label()} se nepodařilo načíst ({$e->getMessage()}).";
+
+                continue;
+            }
+
+            // Prázdná kolekce skoro jistě znamená změněný web dodavatele, ne vyprodaný sortiment.
+            // Varování zároveň zastaví skrývání „zmizelých“ látek níže, které by import už nevrátil.
+            if ($fabrics === []) {
+                $this->warnings[] = "Kolekce {$collection->label()} je prázdná – možná se změnil web dodavatele, nic jsem neskryl.";
 
                 continue;
             }
@@ -109,9 +118,15 @@ class PavonFabricImporter
         $missing = ! $record->image_path || ! Storage::disk()->exists($record->image_path);
         if ($withImages && $fabric->imageUrl && ($missing || $imageChanged)) {
             try {
-                $extension = strtolower(pathinfo(parse_url($fabric->imageUrl, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION)) ?: 'jpg';
-                $file = sprintf('shades/%s/latky/%s.%s', PavonImporter::SUPPLIER, $record->slug, $extension);
-                Storage::disk()->put($file, $this->client->download($fabric->imageUrl));
+                $file = SupplierImage::store(
+                    sprintf('shades/%s/latky/%s', PavonImporter::SUPPLIER, $record->slug),
+                    $this->client->download($fabric->imageUrl),
+                );
+
+                if ($record->image_path && $record->image_path !== $file) {
+                    Storage::disk()->delete($record->image_path);
+                }
+
                 $record->image_path = $file;
             } catch (Throwable $e) {
                 $this->warnings[] = "{$fabric->name}: fotku se nepodařilo stáhnout ({$e->getMessage()}).";

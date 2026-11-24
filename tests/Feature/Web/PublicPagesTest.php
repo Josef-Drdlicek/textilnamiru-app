@@ -134,8 +134,8 @@ it('renders the b2b login page with noindex', function () {
         ->assertSee('action="'.route('login.store').'"', false);
 });
 
-it('no longer serves the catalog page', function () {
-    $this->get('/sortiment')->assertNotFound();
+it('redirects the former catalog page to curtains and drapes', function () {
+    $this->get('/sortiment')->assertStatus(301)->assertRedirect('/zaclony-a-zavesy');
 
     $this->get('/')
         ->assertOk()

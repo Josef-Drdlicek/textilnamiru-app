@@ -98,7 +98,8 @@ class ShadePricingController extends Controller
     }
 
     /**
-     * Rozsah a krok tabulky. Ceny mimo nový rozsah zůstanou uložené, jen se nezobrazí.
+     * Rozsah a krok tabulky. Ceny mimo novou mřížku zůstanou uložené (návrat
+     * k původnímu kroku je vrátí), ale nezobrazí se a ShadePricer s nimi nepočítá.
      */
     public function updateSettings(Request $request, ShadeVariant $variant): RedirectResponse
     {

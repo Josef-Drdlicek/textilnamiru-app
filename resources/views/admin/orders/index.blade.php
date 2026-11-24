@@ -140,7 +140,7 @@
                                                 @endif
 
                                                 <form method="POST" action="{{ route('admin.orders.destroy', $order) }}"
-                                                      onsubmit="return confirm('Opravdu smazat zakázku „{{ $order->name }}“?');">
+                                                      data-confirm="Opravdu smazat zakázku „{{ $order->name }}“?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50">

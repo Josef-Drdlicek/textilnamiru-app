@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     Storage::fake();
-    Http::fake(fn (Request $request) => Http::response('IMG:'.parse_url($request->url(), PHP_URL_PATH)));
+    Http::fake(fn (Request $request) => Http::response(fakeJpeg(parse_url($request->url(), PHP_URL_PATH))));
 });
 
 function smallDetedeCatalog(): string
@@ -100,7 +100,7 @@ it('replaces the former rail lines and keeps prices and visibility on re-import'
     $torino = RailProduct::query()->where('slug', 't1-torino')->sole();
     $photo = RailImage::query()->where('rail_product_id', $torino->id)->whereNull('rail_variant_id')->where('role', 'photo')->orderBy('sort_order')->first();
     expect($photo->source_url)->toBe(DetedeImporter::IMAGE_BASE.'t1~mv2.png')
-        ->and(Storage::get($photo->image_path))->toBe('IMG:/media/4586fe_t1~mv2.png/v1/fit/w_1600,h_1600,q_90/t1~mv2.png')
+        ->and(Storage::get($photo->image_path))->toBe(fakeJpeg('/media/4586fe_t1~mv2.png/v1/fit/w_1600,h_1600,q_90/t1~mv2.png'))
         // Stejný jezdec u dvou kolejnic = jedna stažená fotka.
         ->and($importer->images)->toBe(10);
 

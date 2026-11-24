@@ -57,7 +57,7 @@ function fakePavon(): void
         $path = parse_url($request->url(), PHP_URL_PATH);
 
         if (str_starts_with($path, '/upload/')) {
-            return Http::response('IMG:'.$path);
+            return Http::response(fakeJpeg($path));
         }
         if ($path === '/rolety/maestra') {
             return Http::response(pavonPage('Roleta Maestra', '<li>maximální šířka: 170 cm</li><li>maximální výška: 250 cm</li>'));
@@ -105,7 +105,7 @@ it('imports the chosen Pavon blinds as products with variants, texts, sizes and 
         'https://www.pavon.cz/upload/2510-1504055310.jpg',
         'https://www.pavon.cz/upload/2361-1301481307.jpg',
     ]);
-    expect(Storage::get($variant->images->first()->image_path))->toBe('IMG:/upload/4344-1410575782.jpg');
+    expect(Storage::get($variant->images->first()->image_path))->toBe(fakeJpeg('/upload/4344-1410575782.jpg'));
 
     // Rozměry z technických informací, chybějící výška = 250 cm.
     // Z jakých látek se provedení šije.

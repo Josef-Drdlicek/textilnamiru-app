@@ -85,7 +85,7 @@ function fakeLaguna(): void
             return Http::response(['data' => $catalog[$page] ?? [], 'meta' => ['current_page' => $page, 'last_page' => count($catalog), 'total' => 8]]);
         }
         if (str_starts_with($path, '/uploads/')) {
-            return Http::response('JPEGDATA:'.$path);
+            return Http::response(fakeJpeg($path));
         }
         foreach ($details as $prefix => $html) {
             if (str_starts_with(basename($path), $prefix)) {
@@ -116,7 +116,7 @@ it('imports curtains grouped by name and height with colors, photos and Czech sp
         ->and($p180->colors->pluck('name')->all())->toBe(['01', '03']);
 
     Storage::assertExists($p180->colors->first()->image_path);
-    expect(Storage::get($p180->colors->first()->image_path))->toBe('JPEGDATA:/uploads/files/11101_01.jpg');
+    expect(Storage::get($p180->colors->first()->image_path))->toBe(fakeJpeg('/uploads/files/11101_01.jpg'));
 
     // Jiná výška = samostatný produkt.
     expect(TextileProduct::query()->where('supplier_code', '11101/290')->sole()->colors)->toHaveCount(1);
@@ -331,4 +331,42 @@ it('shows drapes on their own page and prices them as drapes', function () {
         ->call('sendToInquiry');
 
     expect(session('inquiry.configuration.type'))->toBe('drape');
+});
+
+it('keeps the roll height and material corrected by the workshop on re-import', function () {
+    $this->artisan('textile:import-laguna')->assertSuccessful();
+    $product = TextileProduct::query()->where('supplier_code', '11101/180')->sole();
+    $product->update(['roll_height' => 185, 'material' => 'polyester (ověřeno)']);
+
+    $this->artisan('textile:import-laguna')->assertSuccessful();
+
+    expect($product->refresh())
+        ->roll_height->toBe(185)
+        ->material->toBe('polyester (ověřeno)');
+});
+
+it('does not bring back a supplier color the workshop deleted', function () {
+    $this->artisan('textile:import-laguna')->assertSuccessful();
+    $product = TextileProduct::query()->where('supplier_code', '11101/180')->sole();
+
+    $this->actingAs(\App\Models\User::factory()->admin()->create())
+        ->put(route('admin.textile-pricing.update', $product), [
+            'name' => $product->name,
+            'category' => 'curtain',
+            'roll_height' => 180,
+            'colors' => '01',
+        ])
+        ->assertRedirect();
+
+    $this->artisan('textile:import-laguna')->assertSuccessful();
+
+    expect($product->refresh()->colors->pluck('name')->all())->toBe(['01'])
+        ->and($product->excluded_colors)->toBe(['03']);
+});
+
+it('refuses supplier files that are not photos', function () {
+    expect(fn () => \App\Domain\Suppliers\SupplierImage::store('textile/test/svg', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'))
+        ->toThrow(RuntimeException::class);
+
+    expect(\App\Domain\Suppliers\SupplierImage::store('textile/test/foto', fakeJpeg('x')))->toBe('textile/test/foto.jpg');
 });

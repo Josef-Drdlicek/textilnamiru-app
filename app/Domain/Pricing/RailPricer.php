@@ -93,6 +93,6 @@ final readonly class RailPricer
 
     public function withVat(float $price): float
     {
-        return round($price * (100 + $this->vatRate())) / 100;
+        return $this->prices->withVat($price);
     }
 }

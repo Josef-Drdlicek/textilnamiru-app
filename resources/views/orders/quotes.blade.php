@@ -36,7 +36,7 @@
                                     <td class="whitespace-nowrap px-5 py-3 text-right">
                                         <a href="{{ route('orders.show', $quote) }}" class="font-medium text-teal-800 hover:underline">Upravit</a>
                                         <form method="POST" action="{{ route('orders.destroy', $quote) }}" class="ml-3 inline"
-                                              onsubmit="return confirm('Opravdu smazat tuto cenovou nabídku? Tuto akci nelze vrátit.');">
+                                              data-confirm="Opravdu smazat tuto cenovou nabídku? Tuto akci nelze vrátit.">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="font-medium text-red-700 hover:underline">Smazat</button>
