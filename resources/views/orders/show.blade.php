@@ -69,7 +69,7 @@
                                         <td class="px-5 py-3 text-right">
                                             <div class="flex items-center justify-end gap-3">
                                                 <a href="{{ route('items.edit', [$order, $item]) }}" class="font-medium text-teal-700 hover:underline">Upravit</a>
-                                                <form method="POST" action="{{ route('items.destroy', $item) }}" onsubmit="return confirm('Odebrat položku {{ $item->type->label() }} ze zakázky?');">
+                                                <form method="POST" action="{{ route('items.destroy', $item) }}" data-confirm="Odebrat položku {{ $item->type->label() }} ze zakázky?">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="font-medium text-red-600 hover:underline">Odebrat</button>
@@ -96,7 +96,7 @@
 
         @if ($order->isDraft())
             <section class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                <form method="POST" action="{{ route('orders.destroy', $order) }}" onsubmit="return confirm('Opravdu zrušit celou zakázku „{{ $order->name }}“ včetně všech položek?');">
+                <form method="POST" action="{{ route('orders.destroy', $order) }}" data-confirm="Opravdu zrušit celou zakázku „{{ $order->name }}“ včetně všech položek?">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50">

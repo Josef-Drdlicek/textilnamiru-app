@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\PricingCategory;
 use App\Http\Controllers\Controller;
 use App\Models\PricingVariable;
 use App\Models\Ribbon;
@@ -17,7 +18,11 @@ class PricingController extends Controller
     public function index(): View
     {
         return view('admin.pricing.index', [
-            'variables' => PricingVariable::query()->orderByDesc('is_system')->orderBy('id')->get(),
+            'variables' => PricingVariable::query()
+                ->where('category', PricingCategory::Sewing)
+                ->orderByDesc('is_system')
+                ->orderBy('id')
+                ->get(),
             'ribbons' => Ribbon::query()->orderBy('sort_order')->get(),
         ]);
     }

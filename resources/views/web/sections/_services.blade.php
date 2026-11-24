@@ -4,8 +4,8 @@
         [
             'title' => 'Zakázkové šití',
             'text' => 'Záclony, závěsy, polštáře, sedáky a římské rolety šité na míru ve vlastní dílně.',
-            'href' => route('web.sortiment'),
-            'cta' => 'Prohlédnout sortiment',
+            'href' => route('web.kalkulacka.sivani'),
+            'cta' => 'Spočítat cenu ušití',
             'img' => 'hero',
             'alt' => 'Interiérový textil šitý na míru',
         ],

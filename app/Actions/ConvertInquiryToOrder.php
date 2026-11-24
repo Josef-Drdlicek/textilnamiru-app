@@ -72,7 +72,8 @@ class ConvertInquiryToOrder
                 type: $type,
                 parameters: $parameters,
                 material: 'Dle poptávky — upřesnit se zákazníkem',
-                count: max(1, (int) ($configuration['count'] ?? 1)),
+                // Parametry popisují jeden díl; opona ze dvou dílů = dvojnásobek kusů.
+                count: max(1, (int) ($configuration['count'] ?? 1)) * max(1, (int) ($configuration['pieces'] ?? 1)),
                 notes: isset($configuration['summary']) ? 'Z webové kalkulačky: '.$configuration['summary'] : null,
             );
 

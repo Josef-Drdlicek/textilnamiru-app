@@ -7,7 +7,22 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>{{ route('web.sortiment') }}</loc>
+        <loc>{{ route('web.zaclony-a-zavesy') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>{{ route('web.zaclony') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>{{ route('web.zavesy') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>{{ route('web.zaveseni-textilu') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -38,6 +53,11 @@
     </url>
     <url>
         <loc>{{ route('web.stinici-technika') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>{{ route('web.rolety') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>

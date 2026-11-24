@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\PricingCategory;
 use App\Models\PricingVariable;
 use Illuminate\Support\Str;
 
@@ -11,10 +12,11 @@ use Illuminate\Support\Str;
  */
 class AddCustomPricingVariable
 {
-    public function handle(string $name, ?string $unit, float $value): PricingVariable
+    public function handle(string $name, ?string $unit, float $value, PricingCategory $category = PricingCategory::Sewing): PricingVariable
     {
         return PricingVariable::create([
             'code' => $this->uniqueCode($name),
+            'category' => $category,
             'name' => $name,
             'unit' => $unit,
             'value' => $value,

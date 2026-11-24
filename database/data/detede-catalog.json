@@ -1,0 +1,1712 @@
+{
+  "_info": "Katalog kolejnic (každý typ kolejnice = samostatný produkt, varianty = sestavy; u garnýží varianty = barvy) a garnýží DeTeDe (www.detede.net), přepsaný ze stránek dodavatele 22. 11. 2026. Fotky stahuje příkaz rails:import-detede. Obrázky: https://static.wixstatic.com/media/4586fe_{id}",
+  "products": [
+    {
+      "kind": "rail",
+      "line": "N-Line",
+      "name": "N1 Napoli",
+      "code": "N1",
+      "subtitle": "Kolejnice se skrytým držákem",
+      "source": "https://www.detede.net/n-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Kolejnice se skrytým držákem",
+        "Oboustranně pohledová kolejnice",
+        "Ideálně splyne s moderním interiérem",
+        "Horizontální ohyby i rohy",
+        "Velmi vhodná pro řasení „Vlna“",
+        "Různé typy jezdců"
+      ],
+      "specs": {
+        "Profil": "16,5 × 16,5 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005, broušený nerez (BN), broušený hliník (BH), broušený bronz (BB)"
+      },
+      "components": [
+        {
+          "code": "JS-01",
+          "name": "Jezdec standard",
+          "image": "24031d0055c34147b31480389c92cba6~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JV-01",
+          "name": "Jezdec vyosený",
+          "image": "aa40f66655104180a88288c567dc2035~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JN-01",
+          "name": "Jezdec nacvakávací s háčkem",
+          "image": "0f620432fe4f45d2a1a37178d1fc3a7e~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-01",
+          "name": "Jezdec s teflonem",
+          "image": "ac82f78009fb4c98a0395fc0c2874bc7~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-02",
+          "name": "Jezdec s teflonem a háčkem",
+          "image": "b07ba95931ec43d2bcb659d6f5be8444~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-03",
+          "name": "Jezdec s teflonem vyjmutelný",
+          "image": "ae4d69f8135c414892e40bb1c69dff2a~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "N1-02-BL",
+          "name": "Plastový držák",
+          "image": "cfbc7b57e6344799a515cddf82def9e4~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "N1-03",
+          "name": "Kovový držák",
+          "image": "71e67cc2bb03412e8f55ef7f4fa7f048~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "aaed7a6c458a4725897456a688f87f64~mv2_d_3840_2584_s_4_2.png",
+          "alt": "N1 Napoli hliníková kolejnice"
+        },
+        {
+          "id": "ea12a3b284194244afab0ac49d9291aa~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "40aed48ed9e048c9b76ecd63f63b466a~mv2_d_2560_1721_s_2.png",
+          "alt": "Ohyby kolejnice"
+        },
+        {
+          "id": "9c675d48122048229d4022973e978362~mv2_d_2560_1721_s_2.png",
+          "alt": "Roh kolejnice"
+        }
+      ],
+      "gallery": [
+        "ec684209903a4f73a62f5ab4cd643608~mv2.jpg",
+        "36a3f04c06bd45b293f52cc8602d4509~mv2.jpg",
+        "8a87ed73d6fe48328be3fa313171554e~mv2.jpg",
+        "096012dcb28e4940ac6ebdf465c3b963~mv2.jpg",
+        "b6126d39d98a44899ae1f3c5287d0c00~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Jednokolejnička rovná",
+          "code": "N1-11",
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        },
+        {
+          "name": "Jednokolejnička s koncovými ohyby",
+          "code": "N1-12",
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička rovná",
+          "code": "N1-21",
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička s koncovými ohyby",
+          "code": "N1-22",
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "N-Line",
+      "name": "N2 Nolina",
+      "code": "N2",
+      "subtitle": "Kolejnice se skrytým držákem",
+      "source": "https://www.detede.net/n-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Kolejnice se skrytým držákem",
+        "Velmi nenápadná",
+        "Oboustranně pohledová kolejnice",
+        "Horizontální ohyby",
+        "Velmi vhodná pro řasení „Vlna“ (nutné nižší jezdce)",
+        "Různé typy jezdců"
+      ],
+      "specs": {
+        "Profil": "16 × 10,4 mm",
+        "Barvy": "bílá"
+      },
+      "components": [
+        {
+          "code": "JS-01",
+          "name": "Jezdec standard",
+          "image": "cec8e993db2146dcb88565d510eb9ea3~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JN-01",
+          "name": "Jezdec nacvakávací s háčkem",
+          "image": "0b896f66061446d7b1cf8f2b5515b91a~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-01",
+          "name": "Jezdec s teflonem",
+          "image": "1224bf0396b041309dd86551f78339db~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-02",
+          "name": "Jezdec s teflonem a háčkem",
+          "image": "bc4fac32ca824271b68450ad0c796930~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "JT-03",
+          "name": "Jezdec s teflonem vyjmutelný",
+          "image": "49d2c7671c714396a54e529b639773b4~mv2_d_2560_1752_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "N1-02-BL",
+          "name": "Plastový držák",
+          "image": "cfbc7b57e6344799a515cddf82def9e4~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": "N1-03",
+          "name": "Kovový držák",
+          "image": "71e67cc2bb03412e8f55ef7f4fa7f048~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "bdeab8c293c643709fa0c214ca0d19b2~mv2_d_3840_2584_s_4_2.png",
+          "alt": "N2 Nolina hliníková kolejnice"
+        },
+        {
+          "id": "132c63ea216e4e7f806991095105c4d4~mv2_d_2560_1795_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "13106cf25d5344758140ca7c003bbd9e~mv2_d_2560_1721_s_2.png",
+          "alt": "Ohyby kolejnice"
+        }
+      ],
+      "gallery": [
+        "ec684209903a4f73a62f5ab4cd643608~mv2.jpg",
+        "36a3f04c06bd45b293f52cc8602d4509~mv2.jpg",
+        "8a87ed73d6fe48328be3fa313171554e~mv2.jpg",
+        "096012dcb28e4940ac6ebdf465c3b963~mv2.jpg",
+        "b6126d39d98a44899ae1f3c5287d0c00~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "N-Line",
+      "name": "N3 Nola",
+      "code": "N3",
+      "subtitle": "Kolejnice se skrytým držákem",
+      "source": "https://www.detede.net/n-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Kolejnice se skrytým držákem",
+        "Oboustranně pohledová kolejnice",
+        "Horizontální ohyby",
+        "Velmi vhodná pro řasení „Vlna“",
+        "Různé typy jezdců"
+      ],
+      "specs": {
+        "Profil": "18,5 × 22,5 mm",
+        "Barvy": "bílá"
+      },
+      "components": [
+        {
+          "code": "N3-03",
+          "name": "Kovový držák",
+          "image": "63a3f63419a9480796f3bdcd71f653e2~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "2ea9ae75ba67442cae804eadcb01fb2f~mv2_d_3840_2584_s_4_2.png",
+          "alt": "N3 Nola hliníková kolejnice"
+        },
+        {
+          "id": "87e71abd25a14461b6419ac3e459dcd0~mv2_d_2560_1795_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "288e74602778424d9e6bd421e980db44~mv2_d_2560_1721_s_2.png",
+          "alt": "Ohyby kolejnice"
+        }
+      ],
+      "gallery": [
+        "ec684209903a4f73a62f5ab4cd643608~mv2.jpg",
+        "36a3f04c06bd45b293f52cc8602d4509~mv2.jpg",
+        "8a87ed73d6fe48328be3fa313171554e~mv2.jpg",
+        "096012dcb28e4940ac6ebdf465c3b963~mv2.jpg",
+        "b6126d39d98a44899ae1f3c5287d0c00~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "T-Line",
+      "name": "T1 Torino",
+      "code": "T1",
+      "subtitle": "Řada kolejnic se stejnými díly – nejpoužívanější kolejnice",
+      "source": "https://www.detede.net/t-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Univerzální kolejnice",
+        "Lehká až střední zatížení",
+        "Vertikální i horizontální ohyby"
+      ],
+      "specs": {
+        "Profil": "13,1 × 13,9 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "d42ed85cb75642f18b9cf70368aff7ad~mv2_d_3840_2584_s_4_2.png",
+          "alt": "T1 Torino hliníková kolejnice"
+        },
+        {
+          "id": "932aab3644ce4446a6a2e7e0d9335d78~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Jednokolejnička rovná",
+          "code": "T1-11",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "e459e44c44e3467791bc1a6db207fc3e~mv2_d_2560_1721_s_2.png",
+              "alt": "T1-11 Jednokolejnička rovná"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Jednokolejnička s koncovými ohyby",
+          "code": "T1-12",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "eade782e50ce4da6bb5a5767d7cef837~mv2_d_2560_1721_s_2.png",
+              "alt": "T1-12 Jednokolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička rovná",
+          "code": "T1-21",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "1ed33eb38c494bb0817208eaad8973fd~mv2_d_2560_1721_s_2.png",
+              "alt": "T1-21 Dvoukolejnička rovná"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička s koncovými ohyby",
+          "code": "T1-22",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "43b2cf8e3c1e40a8bc6d2fabe9642074~mv2_d_2560_1721_s_2.png",
+              "alt": "T1-22 Dvoukolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "T-Line",
+      "name": "T2 Terme",
+      "code": "T2",
+      "subtitle": "Řada kolejnic se stejnými díly – nejpoužívanější kolejnice",
+      "source": "https://www.detede.net/t-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Designová úprava kolejnice T1 Torino",
+        "Lehká až střední zatížení",
+        "Horizontální ohyby"
+      ],
+      "specs": {
+        "Profil": "16,2 × 18,2 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005, broušený hliník"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "a9b95d21787c494eb87dda7bc0afcb1f~mv2_d_3840_2584_s_4_2.png",
+          "alt": "T2 Terme hliníková kolejnice"
+        },
+        {
+          "id": "337e05d286e747f6b3ee6fbea307a8c8~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "37f3a5446e03429bacd7103c9037abeb~mv2.png",
+          "alt": "T2 Terme – bílá"
+        },
+        {
+          "id": "c0b4ae4ed1384e6cb37a7e481b5e41ed~mv2.png",
+          "alt": "T2 Terme – černá"
+        },
+        {
+          "id": "f9bb88da09574fafb613013696e73cea~mv2.png",
+          "alt": "T2 Terme – broušený hliník"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Jednokolejnička rovná",
+          "code": "T2-11",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "b6f1532c410a470fbd88391a180b5e14~mv2.png",
+              "alt": "T2-11 Jednokolejnička rovná"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Jednokolejnička s koncovými ohyby",
+          "code": "T2-12",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "62d5a976aa184b58b14dd45f8865f2c4~mv2.png",
+              "alt": "T2-12 Jednokolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička rovná",
+          "code": "T2-21",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "a938ea43a39a444690273104f9d39a6c~mv2.png",
+              "alt": "T2-21 Dvoukolejnička rovná"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička s koncovými ohyby",
+          "code": "T2-22",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "1672639ccd9f4d78a63120ff7e082d9b~mv2.png",
+              "alt": "T2-22 Dvoukolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "T-Line",
+      "name": "T3 Trento",
+      "code": "T3",
+      "subtitle": "Řada kolejnic se stejnými díly – nejpoužívanější kolejnice",
+      "source": "https://www.detede.net/t-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Ovládání šňůrovým mechanizmem",
+        "Střední zatížení",
+        "Horizontální ohyby"
+      ],
+      "specs": {
+        "Profil": "24 × 13,9 mm",
+        "Barvy": "bílá"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "ca8a446fd2274d23a397e230b3654069~mv2_d_3840_2584_s_4_2.png",
+          "alt": "T3 Trento hliníková kolejnice"
+        },
+        {
+          "id": "870ea6be201d405789090854da736c80~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Jednokolejnička rovná",
+          "code": "T3-11",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "711145c37f2d4bb5be2ca5d574d3fca1~mv2.png",
+              "alt": "T3-11 Jednokolejnička rovná"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Jednokolejnička s koncovými ohyby",
+          "code": "T3-12",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "a2c15c7bf4cc412ab1d1e195cb3fb42e~mv2.png",
+              "alt": "T3-12 Jednokolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        },
+        {
+          "name": "Dvoukolejnička s koncovými ohyby",
+          "code": "T3-22",
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "0aa9e7ce74f2401b8f48c1ae070d03a0~mv2.png",
+              "alt": "T3-22 Dvoukolejnička s koncovými ohyby"
+            }
+          ],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "T-Line",
+      "name": "T9 Trentino",
+      "code": "T9",
+      "subtitle": "Řada kolejnic se stejnými díly – nejpoužívanější kolejnice",
+      "source": "https://www.detede.net/t-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Zalisovaný suchý zip na čelní straně",
+        "Horizontální ohyby"
+      ],
+      "specs": {
+        "Profil": "24 × 13,9 mm",
+        "Barvy": "bílá"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "8ac9fb2cd0004f05bf98da5981cb7801~mv2_d_3840_2584_s_4_2.png",
+          "alt": "T9 Trentino kolejnice se suchým zipem"
+        },
+        {
+          "id": "4a98533a18094507ba33658695411f17~mv2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "5fbd126b2c7742bc8009f44bd66f7856~mv2.png",
+          "alt": "Ohyb s rádiusem 200 mm"
+        },
+        {
+          "id": "4e2e50cd6e3f4be5900e257bc132a41d~mv2.png",
+          "alt": "Rohové provedení"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "B-Line",
+      "name": "B1 Basso",
+      "code": "B1",
+      "subtitle": "Vícekanálové kolejnice v jednom bloku",
+      "source": "https://www.detede.net/b-line",
+      "description": "B1 Basso je kompaktní kolejnice pro záclonu a závěs. Vznikla na základě požadavků zákazníků, kteří chtěli nízkou kompaktní dvoukolejnici, která pocitově splyne se stropem.\n\nKolejnice je vysoká pouze 8,5 mm včetně bajonetového skrytého držáku. Elegantní průhyb napříč kolejnicí umocňuje design a celou kolejnici zpevňuje.\n\nRozteč mezi pojezdovými drážkami je 65 mm, takže záclona a závěs mají mezi sebou dostatek prostoru pro pohyb.",
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Nízká designová dvoukolejnice",
+        "Bajonetový skrytý držák",
+        "Rozteč pojezdových drážek 65 mm"
+      ],
+      "specs": {
+        "Profil": "8,5 × 78 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005, nerez elox, bronz elox; další barvy RAL na zakázku",
+        "Montáž": "pro otočení držáku je potřeba prostor 2 cm"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "692796464d1f4561961d931fa7e99631~mv2.png",
+          "alt": "B1 Basso"
+        },
+        {
+          "id": "7d08c6aa57844857ae7d06821b05a051~mv2.png",
+          "alt": "B1 Basso – bílá"
+        },
+        {
+          "id": "34b3e552a26e4925abb612e69d57bd10~mv2.png",
+          "alt": "B1 Basso – černá"
+        },
+        {
+          "id": "8b3313dc66084ccea1041d2cf9a22738~mv2.png",
+          "alt": "B1 Basso – nerez elox"
+        },
+        {
+          "id": "9fbfe4554976497281208e987e1c0361~mv2.png",
+          "alt": "B1 Basso – bronz elox"
+        },
+        {
+          "id": "c6f773ad3b38410880669b76f27d60d9~mv2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "823812fdbf0b4196b6f99f565504433b~mv2.png",
+          "alt": "Montáž držáku"
+        },
+        {
+          "id": "f46b4265b20447e09f52ed32c5625fd6~mv2.png",
+          "alt": "Detail kolejnice"
+        },
+        {
+          "id": "cd0b32715ceb4201b4f3e7d02998e1fa~mv2.png",
+          "alt": "Detail kolejnice"
+        },
+        {
+          "id": "fac862bdf4ad416c8ad394af73724c2c~mv2.png",
+          "alt": "Detail kolejnice"
+        },
+        {
+          "id": "d5c2e486eb054405838e6fe0cfb079f6~mv2.png",
+          "alt": "Detail kolejnice"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "B-Line",
+      "name": "B2 Bergamo",
+      "code": "B2",
+      "subtitle": "Vícekanálové kolejnice v jednom bloku",
+      "source": "https://www.detede.net/b-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Dvoukolejnice",
+        "Možnost upevnění na stěnu"
+      ],
+      "specs": {
+        "Barvy": "bílá, broušený hliník"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Excentrický držák",
+          "image": "f8b1a807ac8b4edfbc05c6e9c7068bdd~mv2_d_2560_1722_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Odsazený držák",
+          "image": "8c6ea57bce4a4a63b636d00c7e628b7e~mv2_d_2560_1722_s_2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "0e1c651c31134cdc91c08f52a41ce581~mv2_d_3840_2584_s_4_2.png",
+          "alt": "B2 Bergamo dvoukolejnice"
+        },
+        {
+          "id": "a9c1c77140c24b7eb3eb10902d6c0911~mv2_d_2560_1430_s_2.png",
+          "alt": "B2 Bergamo – bílá"
+        },
+        {
+          "id": "34b76cea0cb9437ca594e234da201ab2~mv2_d_2560_1430_s_2.png",
+          "alt": "B2 Bergamo – broušený hliník"
+        },
+        {
+          "id": "20195847fc5747dca3a61ab4f369f266~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "78e54dbb49ee490abc15980a5deb8ab4~mv2_d_3840_2584_s_4_2.png",
+          "alt": "B2 Bergamo"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "B-Line",
+      "name": "B3 Bolzano",
+      "code": "B3",
+      "subtitle": "Vícekanálové kolejnice v jednom bloku",
+      "source": "https://www.detede.net/b-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Trojkolejnice se skrytým držákem",
+        "Ideální pro hotely a penziony",
+        "Přední kolejnice umožňují překrývání polovin závěsů bez překrývacích ramínek",
+        "Dostatečná rozteč mezi pojezdy – 55 mm",
+        "Držáky pro rovné i nerovné stropy",
+        "Lze použít s krycími čely T7 Tonale a T8 Torbole"
+      ],
+      "specs": {
+        "Barvy": "bílá"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "a9a96b0561c54029a5d535548daba42a~mv2_d_3840_2584_s_4_2.png",
+          "alt": "B3 Bolzano trojkolejnice"
+        },
+        {
+          "id": "951a7b5bd52f4a04af7c2264cdfe3abf~mv2_d_2560_1430_s_2.png",
+          "alt": "B3 Bolzano – bílá"
+        },
+        {
+          "id": "8409d30e0d6c4c768cdd6d58cb5ce2ff~mv2_d_2560_1721_s_2.png",
+          "alt": "Řez profilem"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "S-Line",
+      "name": "S1 Siena",
+      "code": "S1",
+      "subtitle": "Kolejnice do sádrokartonů",
+      "source": "https://www.detede.net/s-line",
+      "description": null,
+      "mountings": [
+        "ceiling"
+      ],
+      "features": [
+        "Kolejnice do sádrokartonů",
+        "Bezpečnostní gumová krycí páska proti poškození pojezdové drážky během montáže",
+        "Pomocné prvky pro montáž a vedení hlaviček vrtáků",
+        "Různé typy jezdců",
+        "Řešení pro montáž do již položeného stropu"
+      ],
+      "specs": {
+        "Profil": "14,5 × 11,6 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Adaptér",
+          "image": "90066e9708024501a5f988ade138163b~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Držák s křídly",
+          "image": "3b42b599d5fc4e9ea455b373e24a7720~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Držák s křídly – detail",
+          "image": "f078420a726745949bf1c20faa1aaf70~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "eedb18991d1c4389a35b0588d3fca0db~mv2_d_3840_2584_s_4_2.png",
+          "alt": "S1 Siena kolejnice do sádrokartonu"
+        },
+        {
+          "id": "d05a0111fe8641909c5f72829a5371d5~mv2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "056f604ab6224228a0aec62fc371c4ed~mv2_d_3840_2628_s_4_2.png",
+          "alt": "Montáž do sádrokartonu"
+        },
+        {
+          "id": "44dd7a0ebb1c4bc78f5833a85282cc66~mv2.png",
+          "alt": "Montáž do sádrokartonu"
+        },
+        {
+          "id": "f74de0f198844938b08fca8465fc32f1~mv2.png",
+          "alt": "Detail montáže"
+        },
+        {
+          "id": "7e68602f034449e69dc401a958dfdff0~mv2.png",
+          "alt": "Detail montáže"
+        },
+        {
+          "id": "7a6bac2c0a6f4ca29df53d72dca79dbe~mv2.png",
+          "alt": "Detail montáže"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "S-Line",
+      "name": "S2 Savona",
+      "code": "S2",
+      "subtitle": "Kolejnice do sádrokartonů",
+      "source": "https://www.detede.net/s-line",
+      "description": null,
+      "mountings": [
+        "ceiling"
+      ],
+      "features": [
+        "Kolejnice do sádrokartonů",
+        "Bezpečnostní gumová krycí páska proti poškození pojezdové drážky během montáže",
+        "Různé typy jezdců",
+        "Zavěšení do montážních háků"
+      ],
+      "specs": {
+        "Profil": "80 × 11,6 mm",
+        "Barvy": "bílá RAL 9016, černá RAL 9005"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Montážní hák",
+          "image": "41d3795d622149229f98368d774347af~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Spojka",
+          "image": "eeeb904f9378487b8d2a0482b2338b9c~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Těsnění",
+          "image": "786e7520c7354390aedc21ca94a5c0ef~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "07896a32f15d4d809b3755167cb2106a~mv2.png",
+          "alt": "S2 Savona kolejnice do sádrokartonu"
+        },
+        {
+          "id": "07543c26e39844d3916924f22a05a897~mv2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "8b68975e08a547b7a1389fe3f1a1a9cd~mv2.png",
+          "alt": "Řez s montážním hákem"
+        },
+        {
+          "id": "3d61b45d77b4454f97988a0447618261~mv2.png",
+          "alt": "S2 Savona"
+        },
+        {
+          "id": "b61a9820efa74461a08064e35affeddd~mv2.png",
+          "alt": "Profil"
+        },
+        {
+          "id": "6fe2bebe2bab4ffabd3d8e9266955893~mv2.png",
+          "alt": "Roh 50 mm"
+        }
+      ],
+      "gallery": [],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "E-Line",
+      "name": "E2 Empoli",
+      "code": "E2",
+      "subtitle": "Kolejnice pro větší a velká zatížení",
+      "source": "https://www.detede.net/e-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Těžká zatížení",
+        "Horizontální ohyby",
+        "Dva typy kolečkových jezdců s kuličkovými ložisky",
+        "Jezdci s ložisky i pro řasení „Vlna“"
+      ],
+      "specs": {
+        "Barvy": "bílá",
+        "Ovládání": "ruční"
+      },
+      "components": [],
+      "images": [
+        {
+          "id": "db01b43f3d4a4a50aa1ea979b0793f71~mv2_d_2560_1722_s_2.png",
+          "alt": "E2 Empoli kolejnice pro těžké závěsy"
+        },
+        {
+          "id": "efcba15692474143a85576ac971a5190~mv2_d_2560_1430_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "fed19d680e4845c6a7997bb5ff700220~mv2_d_2560_1721_s_2.png",
+          "alt": "Ohyb kolejnice"
+        },
+        {
+          "id": "afe45da26ee9416f993f007e92de54f0~mv2.png",
+          "alt": "Kolečkový jezdec"
+        },
+        {
+          "id": "a11cb63d5a30475e8c1de88ea95e34c1~mv2.png",
+          "alt": "Kolečkový jezdec"
+        }
+      ],
+      "gallery": [
+        "d5721fc26b04476b9d4c94397a5c2cba~mv2.jpg",
+        "3146d68b2aeb4fb6868f2793a6570dd8~mv2.jpg",
+        "44f8d44070164fe3a16a213f67b338ca~mv2.jpg",
+        "98bc256cf3fc46b2bd1276ffd4b7dd42~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "E-Line",
+      "name": "E3 Extra",
+      "code": "E3",
+      "subtitle": "Kolejnice pro větší a velká zatížení",
+      "source": "https://www.detede.net/e-line",
+      "description": null,
+      "mountings": [
+        "ceiling",
+        "wall"
+      ],
+      "features": [
+        "Těžká zatížení",
+        "Ovládání šňůrovým mechanizmem",
+        "Horizontální ohyby",
+        "Dva typy kolečkových jezdců s kuličkovými ložisky",
+        "Jezdci s ložisky i pro řasení „Vlna“",
+        "Lze použít i pro menší divadelní opony"
+      ],
+      "specs": {
+        "Barvy": "bílá",
+        "Ovládání": "šňůrou"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Jezdec – detail",
+          "image": "d02355b8dc914dce81faedab41f80d32~mv2_d_2560_1509_s_2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Jezdec otočný",
+          "image": "35ba963498784154bb459f6890b36b7a~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Jezdec pevný",
+          "image": "312ee4a77a534c54a3428ffa08a63c3c~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Jezdec rovný",
+          "image": "0bec9d963c024b88bdbb39f3f7c431a7~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "images": [
+        {
+          "id": "ce01d78fc362430b87a7c40ba6541640~mv2_d_3840_2584_s_4_2.png",
+          "alt": "E3 Extra kolejnice se šňůrovým ovládáním"
+        },
+        {
+          "id": "8dadd90572f849648f1fcbeed861617b~mv2_d_2560_1430_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "d09c3c7f190d46abacac469745d01543~mv2_d_2560_1721_s_2.png",
+          "alt": "Ohyb kolejnice"
+        },
+        {
+          "id": "cf094669e8c546a189511d8f83c8e1b9~mv2_d_1920_1291_s_2.png",
+          "alt": "Jezdci na šňůře"
+        }
+      ],
+      "gallery": [
+        "d5721fc26b04476b9d4c94397a5c2cba~mv2.jpg",
+        "3146d68b2aeb4fb6868f2793a6570dd8~mv2.jpg",
+        "44f8d44070164fe3a16a213f67b338ca~mv2.jpg",
+        "98bc256cf3fc46b2bd1276ffd4b7dd42~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "rail",
+      "line": "H-Line",
+      "name": "H1 Hospital",
+      "code": "H1",
+      "subtitle": "Kolejnice pro přepažování místností",
+      "source": "https://www.detede.net/h-line",
+      "description": null,
+      "mountings": [
+        "ceiling"
+      ],
+      "features": [
+        "Kolejnice pro přepažování místností",
+        "Odsazené upevnění do stropu",
+        "Vysoká pevnost v krutu",
+        "Vysoký ohybový moment",
+        "Vertikální ohyby",
+        "Svěšovací tyčky různých délek",
+        "Vhodná pro nemocnice, hospice, masážní salony apod."
+      ],
+      "specs": {},
+      "components": [],
+      "images": [
+        {
+          "id": "dd10f3cd019442babf91f221c2c388dc~mv2_d_3840_2584_s_4_2.png",
+          "alt": "H1 Hospital stropní sestava"
+        },
+        {
+          "id": "546dc8f8e9e64de9927710c56fee4959~mv2_d_1920_1314_s_2.png",
+          "alt": "Řez profilem"
+        },
+        {
+          "id": "f52653e8194c4d5d90b4d626e6544d1f~mv2_d_2560_1430_s_2.png",
+          "alt": "Stropní sestava"
+        },
+        {
+          "id": "edb0bef81db544ec8759bded80d44dac~mv2_d_2560_1722_s_2.png",
+          "alt": "Ohyb kolejnice"
+        },
+        {
+          "id": "5956245766f7448b8c7d128744f1a1f3~mv2_d_2560_1722_s_2.png",
+          "alt": "Stropní sestava"
+        },
+        {
+          "id": "b2b05f89c8e14160968aece7ce07f6e9~mv2_d_2560_1722_s_2.png",
+          "alt": "Stropní sestava"
+        },
+        {
+          "id": "e3f17914c7e24277866c52b8f95cb5d2~mv2_d_2560_1722_s_2.png",
+          "alt": "Stropní sestava"
+        }
+      ],
+      "gallery": [
+        "c480c3534b004cc2b1941be44bae748c~mv2.jpg",
+        "ba2191b744b145ccbb4e9a2c643d7fd9~mv2.jpg",
+        "77c44340d9d24998a5613785b45ab83e~mv2.jpg",
+        "f81b90041c05491db3eda96e963d4f90~mv2.jpg"
+      ],
+      "overview": null,
+      "variants": [
+        {
+          "name": "Základní provedení",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [],
+          "components": []
+        }
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Quadro 35",
+      "subtitle": "Dekorační garnýž s hranatým profilem 35 mm",
+      "source": "https://www.detede.net/kopie-gavia",
+      "gallery": [
+        "0928d9e920994b959b5198d4f91a2fdc~mv2.jpg",
+        "36a3f04c06bd45b293f52cc8602d4509~mv2.jpg",
+        "77c44340d9d24998a5613785b45ab83e~mv2.jpg",
+        "72580726f3d9427db69778781aec6f65~mv2.jpg"
+      ],
+      "overview": "04cb31d2ea0d4599a7ce6d7eb6cb76e2~mv2.png",
+      "features": [
+        "Jedno- i dvoukolejničkové provedení",
+        "Montáž na stěnu, na strop i mezi stěny"
+      ],
+      "specs": {
+        "Profil": "35 mm",
+        "Barvy": "broušený nerez, broušený hliník, broušený bronz, bílá, černá"
+      },
+      "components": [
+        {
+          "code": "JS-01",
+          "name": "Jezdec standard",
+          "image": "88809a71ab714a31a60e6afdd0b2fb13~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Stěnové upevnění jednokolejničkové",
+          "image": "4d0965f29ed84c7fb40a1ffec20f2865~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Stěnové upevnění dvoukolejničkové",
+          "image": "a91462709121406b874e09c95c1136f6~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Montáž těsně na strop",
+          "image": "04cbe9eb58ba4ed9b868646459c32e01~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Stropní montáž na 3cm válečky",
+          "image": "56785f55269b4ec7945b0967429fab2a~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Mezistěnové upevnění",
+          "image": "0a4c372de981486d953df82d9146fab9~mv2.png",
+          "group": "Montáž"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Broušený nerez",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "4e8e7704428642b5bda3143c84f91381~mv2.png",
+              "alt": "Quadro 35 – broušený nerez"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Broušený hliník",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "be684a3a7731457eb85a198ddd904cd5~mv2.png",
+              "alt": "Quadro 35 – broušený hliník"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Broušený bronz",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "c85ead6431e147e194af7a4a67a1502b~mv2.png",
+              "alt": "Quadro 35 – broušený bronz"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Bílá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "7adc86c0b7b749a787a46369be22bafa~mv2.png",
+              "alt": "Quadro 35 – bílá"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "2b46d705536e43229e40df4541b43bb4~mv2.png",
+              "alt": "Quadro 35 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Deco 28",
+      "subtitle": "Dekorační garnýž",
+      "source": "https://www.detede.net/kopie-square",
+      "gallery": [],
+      "overview": "5a9ffbcba2bc4025a122b1e282eeeedf~mv2.png",
+      "features": [],
+      "specs": {
+        "Barvy": "bílá, černá"
+      },
+      "components": [
+        {
+          "code": "JS-01",
+          "name": "Jezdec standard",
+          "image": "f8e050da2de94d5b820304f9e669d209~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Bílá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "16c221f5d8a94ab5a58b79246eeb1c8f~mv2.png",
+              "alt": "Deco 28 – bílá"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "f12c636ccebc432086337dcadc0f3dbb~mv2.png",
+              "alt": "Deco 28 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Deco 20",
+      "subtitle": "Dekorační garnýž",
+      "source": "https://www.detede.net/kopie-quadro",
+      "gallery": [],
+      "overview": "e2253d40798f43f386b83e28f6ffd512~mv2.png",
+      "features": [],
+      "specs": {
+        "Barvy": "bílá, černá"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Jezdec s teflonem",
+          "image": "e3b0491a17254fccba3280944b4c051a~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Bílá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "b4ea9b1ce57b4ad9b1f38d56903f0123~mv2.png",
+              "alt": "Deco 20 – bílá"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "ae0d8946ada14e069d3d8c254166247e~mv2.png",
+              "alt": "Deco 20 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Libero 20",
+      "subtitle": "Dekorační tyčová garnýž",
+      "source": "https://www.detede.net/kopie-quadrino",
+      "gallery": [],
+      "overview": "c2c535e24b244962ba26e992953d9d44~mv2.png",
+      "features": [],
+      "specs": {
+        "Barvy": "nerez finiš, bílá, černá"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Jezdec s teflonem",
+          "image": "e3b0491a17254fccba3280944b4c051a~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Nerez finiš",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "f2541d2cae6345199f8a7c4110764bd1~mv2.png",
+              "alt": "Libero 20 – nerez finiš"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Bílá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "6d41b4ded33549b6aced941dc4cb1a01~mv2.png",
+              "alt": "Libero 20 – bílá"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "e81408d330ba47858cd1e8ecc6175a72~mv2.png",
+              "alt": "Libero 20 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Gavia 19",
+      "subtitle": "Dekorační tyčová garnýž, trubka 19 mm",
+      "source": "https://www.detede.net/kopie-cube",
+      "gallery": [],
+      "overview": "24933fd57aca4a2ea98c786120c5aa82~mv2.png",
+      "features": [
+        "Jedno- i dvoutyčové provedení",
+        "Rohové spojky pro rohy a arkýře"
+      ],
+      "specs": {
+        "Trubka": "19 mm",
+        "Barvy": "nerez finiš, satin, antik, bílá, černá"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Trubka 19 mm",
+          "image": "0e38275e4eec464f8a5ec7b4c369d513~mv2.png",
+          "group": "Jezdci a držáky"
+        },
+        {
+          "code": null,
+          "name": "Stěnové upevnění jednotyčové",
+          "image": "86d0aaf489774218b2f61a9de44fe8e4~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Stěnové upevnění dvoutyčové",
+          "image": "2902527045e94bdaa4db3b21e384972b~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Mezistěnové upevnění",
+          "image": "dd635a00c1c044cba79e2ab39ba86fa7~mv2.png",
+          "group": "Montáž"
+        },
+        {
+          "code": null,
+          "name": "Rohové spojky, rohy, arkýře",
+          "image": "b28ac94f09054e7aaa96e6d518abf005~mv2.png",
+          "group": "Montáž"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Nerez finiš",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "0720e555f7be4843a7dd8ba30b2d4e5c~mv2.png",
+              "alt": "Gavia 19 – nerez finiš"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Satin",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "796c2780602749698791693b90765187~mv2.png",
+              "alt": "Gavia 19 – satin"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Antik",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "0c543d5b692e4de08f64cc9d0a7b5502~mv2.png",
+              "alt": "Gavia 19 – antik"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Bílá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "67c84c7ebd8c468f882130d24832f755~mv2.png",
+              "alt": "Gavia 19 – bílá"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "0227af82db814632843b3faa02f62554~mv2.png",
+              "alt": "Gavia 19 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    },
+    {
+      "kind": "decorative",
+      "name": "Rustik 19",
+      "subtitle": "Dekorační tyčová garnýž, trubka 19 mm",
+      "source": "https://www.detede.net/gavia",
+      "gallery": [],
+      "overview": "180c6ac9b88246a881fc3e543240552e~mv2.png",
+      "features": [],
+      "specs": {
+        "Trubka": "19 mm",
+        "Barvy": "satin, antik, černá"
+      },
+      "components": [
+        {
+          "code": null,
+          "name": "Trubka 19 mm",
+          "image": "0e38275e4eec464f8a5ec7b4c369d513~mv2.png",
+          "group": "Jezdci a držáky"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Satin",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "b3e608c1d7894cc5b7f40ac4b3fb9352~mv2.png",
+              "alt": "Rustik 19 – satin"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Antik",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "22960da82c6343ea83c57ca9f306a88a~mv2.png",
+              "alt": "Rustik 19 – antik"
+            }
+          ],
+          "components": [],
+          "description": null
+        },
+        {
+          "name": "Černá",
+          "code": null,
+          "features": [],
+          "specs": {},
+          "images": [
+            {
+              "id": "70e62039d53249e9a32df3debd0da99c~mv2.png",
+              "alt": "Rustik 19 – černá"
+            }
+          ],
+          "components": [],
+          "description": null
+        }
+      ],
+      "mountings": [
+        "ceiling",
+        "wall"
+      ]
+    }
+  ]
+}

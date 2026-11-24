@@ -3,12 +3,16 @@
  *
  * Markup: kořen [data-slider] obsahuje [data-slider-slide], volitelně
  * [data-slider-prev], [data-slider-next], [data-slider-dot], [data-slider-counter],
- * [data-slider-pause]. Další skupiny prvků, které se mají přepínat společně se
+ * [data-slider-pause], [data-slider-progress] (časová linka; uvnitř
+ * `.slider-progress-bar`). Další skupiny prvků, které se mají přepínat společně se
  * snímky (např. texty hera), se předají v `options.linked`.
  *
  * Přístupnost: neaktivní snímky dostanou `inert` + `aria-hidden`; autoplay se
- * nespustí při prefers-reduced-motion, pauzuje při hoveru/fokusu a po ruční
- * interakci se trvale vypne (WCAG 2.2.2). Šipky vlevo/vpravo přepínají snímky.
+ * nespustí při prefers-reduced-motion, pauzuje při najetí myší na ovládací prvky
+ * (šipky, tečky, pauza) a při klávesnicovém fokusu a jde vypnout tlačítkem pauzy
+ * (WCAG 2.2.2). Najetí na samotnou fotku autoplay nezastaví — hero zabírá horní
+ * část stránky a kurzor tam po otevření často zůstane. Po ruční změně snímku se
+ * odpočet intervalu spustí znovu. Šipky vlevo/vpravo přepínají snímky.
  */
 export function createSlider(root, options = {}) {
     const {
@@ -31,6 +35,8 @@ export function createSlider(root, options = {}) {
     const prevBtn = root.querySelector('[data-slider-prev]');
     const nextBtn = root.querySelector('[data-slider-next]');
     const pauseBtn = root.querySelector('[data-slider-pause]');
+    const progress = root.querySelector('[data-slider-progress]');
+    const progressBar = progress?.querySelector('.slider-progress-bar');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let index = 0;
@@ -90,22 +96,41 @@ export function createSlider(root, options = {}) {
         preloadNext();
     };
 
-    const stop = () => {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
+    // Časová linka se rozběhne od nuly s každým odpočtem; délku bere z intervalu.
+    const restartProgress = () => {
+        if (!progressBar) {
+            return;
         }
+        progressBar.classList.remove('is-running');
+        void progressBar.offsetWidth; // vynutí reflow, aby animace začala znovu od nuly
+        progressBar.classList.add('is-running');
     };
 
+    const stop = () => {
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        progressBar?.classList.remove('is-running');
+    };
+
+    // Jeden odpočet na snímek (setTimeout), aby linka a přepnutí běžely vždy spolu.
     const start = () => {
         stop();
         if (!playing || paused || document.hidden) {
             return;
         }
-        timer = setInterval(() => goTo(index + 1, 1), interval);
+        timer = setTimeout(() => {
+            goTo(index + 1, 1);
+            start();
+        }, interval);
+        restartProgress();
     };
 
     const renderPauseButton = () => {
+        if (progress) {
+            progress.hidden = reducedMotion || !autoplay;
+        }
         if (!pauseBtn) {
             return;
         }
@@ -117,12 +142,10 @@ export function createSlider(root, options = {}) {
         });
     };
 
-    // Ruční interakce autoplay natrvalo vypne — čtenář si vybral snímek sám.
+    // Ruční změna snímku: odpočet začíná znovu, aby snímek nezmizel hned po kliknutí.
     const userGoTo = (next, direction) => {
-        playing = false;
-        stop();
-        renderPauseButton();
         goTo(next, direction);
+        start();
     };
 
     prevBtn?.addEventListener('click', () => userGoTo(index - 1, -1));
@@ -154,9 +177,26 @@ export function createSlider(root, options = {}) {
         start();
     };
 
-    root.addEventListener('mouseenter', pause);
-    root.addEventListener('mouseleave', resume);
-    root.addEventListener('focusin', pause);
+    // Pauza jen nad ovládáním: kurzor nad fotkou (např. hned po otevření stránky) přepínání nezastaví.
+    const controls = '[data-slider-prev], [data-slider-next], [data-slider-dot], [data-slider-pause]';
+    const isControl = (element) => element instanceof Element && element.closest(controls) !== null;
+
+    root.addEventListener('pointerover', (event) => {
+        if (event.pointerType === 'mouse' && isControl(event.target)) {
+            pause();
+        }
+    });
+    root.addEventListener('pointerout', (event) => {
+        if (isControl(event.target) && !isControl(event.relatedTarget)) {
+            resume();
+        }
+    });
+    root.addEventListener('focusin', (event) => {
+        // Klik myší nechá fokus na tlačítku, pauzu proto vyvolá jen klávesnicový fokus.
+        if (event.target.matches(':focus-visible')) {
+            pause();
+        }
+    });
     root.addEventListener('focusout', (event) => {
         if (!root.contains(event.relatedTarget)) {
             resume();
@@ -193,6 +233,7 @@ export function createSlider(root, options = {}) {
         { passive: true },
     );
 
+    root.style.setProperty('--slider-interval', `${interval}ms`);
     root.classList.add(`slider-${effect}`, 'is-ready');
     render();
     renderPauseButton();

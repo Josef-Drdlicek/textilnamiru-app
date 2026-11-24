@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\PricingCategory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['code', 'name', 'value', 'unit', 'is_system'])]
+#[Fillable(['code', 'category', 'name', 'value', 'unit', 'is_system'])]
 class PricingVariable extends Model
 {
     protected function casts(): array
@@ -13,6 +14,7 @@ class PricingVariable extends Model
         return [
             'value' => 'float',
             'is_system' => 'boolean',
+            'category' => PricingCategory::class,
         ];
     }
 

@@ -55,13 +55,16 @@ ani textů pro zákazníky oslovení nikdy nepatří.
 
 ## Lokální běh
 
+Běžné spuštění (Windows): `powershell -ExecutionPolicy Bypass -File scripts\spustit.ps1`
+— viz `spusteni-aplikace.mdc`. Níže je ruční postup pro první instalaci.
+
 ```
 composer install && npm install
 cp .env.example .env && php artisan key:generate
 php artisan migrate --force
 php artisan db:seed --class=DemoSeeder     # demo účty dilna / lucie (jen lokálně)
 npm run build                              # po každé změně CSS/JS, jinak nové třídy nefungují
-php artisan serve                          # nebo: php -S 127.0.0.1:8000 -t public server.php
+php artisan serve                          # nebo: php -S 127.0.0.1:8000 -t public local-router.php
 ```
 
 Po úpravě Blade/CSS/JS vždy `npm run build` (nebo nech běžet `npm run dev`), jinak se změny neprojeví.

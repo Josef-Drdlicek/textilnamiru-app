@@ -97,7 +97,7 @@
                         Odložit objednávku
                     </button>
                     <button type="submit"
-                        onclick="return confirm('Závazně objednat tuto zakázku? Po objednání ji už nepůjde upravit.');"
+                        data-confirm="Závazně objednat tuto zakázku? Po objednání ji už nepůjde upravit."
                         class="rounded-lg bg-teal-700 px-6 py-2.5 font-semibold text-white transition hover:bg-teal-800">
                         Závazně objednat
                     </button>

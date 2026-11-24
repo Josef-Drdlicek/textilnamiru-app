@@ -11,6 +11,7 @@ Podrobná pravidla jsou v `.cursor/rules/`:
 - `frontend-web.mdc` – Blade, Tailwind, obrázky, přístupnost
 - `obsah-a-fotky.mdc` – kde se mění texty, fotky a ceník
 - `clean-code.mdc` – clean code, SOLID, žádné natvrdo psané hodnoty (platí vždy)
+- `spusteni-aplikace.mdc` – „run“, „spusť to“, „zapni to“ = `scripts\spustit.ps1` (platí vždy)
 - `tym-specialistu.mdc` – nová funkce jde přes tým specialistů; role jsou v `.cursor/agents/`
   (architekt, backend, frontend-ux, tester, reviewer)
 

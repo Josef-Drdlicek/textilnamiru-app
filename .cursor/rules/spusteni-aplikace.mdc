@@ -1,0 +1,85 @@
+---
+description: Co udělat, když majitel napíše „run“, „spusť to“, „zapni to“ a podobně.
+alwaysApply: true
+---
+
+# Spuštění aplikace
+
+Když majitel napíše **„run“, „spusť“, „spusť to“, „zapni to“, „zapni aplikaci“, „pusť to“, „start“,
+„rozjeď to“** nebo cokoli podobného, myslí tím vždy totéž: **spustit celou aplikaci lokálně tak,
+aby fungovala se vším JavaScriptem a styly** (slider, kalkulačky, Livewire, menu).
+
+Postup — nic se ho neptej, rovnou to udělej:
+
+1. Spusť v terminálu (jako proces na pozadí, ať terminál nečeká na konec):
+   ```
+   powershell -ExecutionPolicy Bypass -File scripts\spustit.ps1
+   ```
+   Skript zastaví starý server, smaže zbytek `public/hot`, udělá `npm run build`,
+   `php artisan migrate --force` a pustí server na `http://127.0.0.1:8000`.
+2. Počkej, až se v jeho výstupu objeví „Aplikace běží na http://127.0.0.1:8000“.
+3. Ověř, že stránka odpovídá (`http://127.0.0.1:8000` vrací 200 a skripty z `/build/` se načtou).
+4. Napiš majiteli adresu `http://127.0.0.1:8000` a že přihlášení do zakázek je na `/b2b`.
+   Když něco selže, napiš přesně který krok a chybovou hlášku, a oprav to.
+
+Nepoužívej `php artisan serve` (na Windows padá kvůli diakritice v cestě k projektu)
+ani samotné `npm run dev` bez běžícího Vite (zůstane po něm `public/hot` a stránka pak nemá JavaScript).
+Soubor `local-router.php` v kořeni projektu je potřeba — nemaž ho a nepřejmenovávej ho na
+`server.php` (ten antivirus AVG mylně blokuje jako IDP.Generic).
+
+Po každé úpravě Blade/CSS/JS, kterou majitel chce vidět, spusť znovu `npm run build`
+(nebo celý skript), jinak se změna v prohlížeči neprojeví.
+
+## Import látek od dodavatele (Laguna Textil)
+
+Když majitel napíše „importuj záclony“, „importuj závěsy“ / „dekorační látky“, „načti Lagunu“,
+„aktualizuj katalog dodavatele“ a podobně, nejdřív spusť migrace (`php artisan migrate --force`) a pak:
+
+```
+php artisan textile:import-laguna zaclony    # záclony
+php artisan textile:import-laguna zavesy     # dekorační látky = závěsy
+php artisan textile:import-laguna vse        # obojí
+```
+
+Každý katalog trvá několik minut (stahuje fotky všech barev). Na zkoušku `--pages=2`, bez fotek `--no-images`.
+Nové produkty jsou skryté a bez ceny; opakovaný import nemění ceny, názvy ani viditelnost.
+Když import spadne uprostřed, stačí ho spustit znovu – hotové produkty přeskočí, chybějící doplní.
+Na konci napiš majiteli souhrn z výstupu příkazu (počty a případná varování).
+
+## Import rolet od dodavatele (Pavon)
+
+Když majitel napíše „importuj rolety“, „načti Pavon“ a podobně, nejdřív spusť migrace
+(`php artisan migrate --force`) a pak:
+
+```
+php artisan shades:import-pavon              # texty, rozměry a fotky všech 12 provedení
+php artisan shades:import-pavon --no-images  # jen texty
+```
+
+Rolety jsou skryté a ceník je prázdný. Ceny se vyplňují v Admin → Ceník rolet (tabulka šířka × výška
+zvlášť pro každou cenovou skupinu látky A–D).
+
+Látky na rolety („importuj látky na rolety“, „načti textil pro rolety“): po migracích spusť
+
+```
+php artisan shades:import-pavon-fabrics              # látky Standard, Screen, Magico, Roma s fotkami
+php artisan shades:import-pavon-fabrics --no-images  # jen údaje
+```
+
+Látky ve výprodeji se nezakládají (a dříve načtené se skryjí). Výsledek je v Admin → Textil pro rolety.
+Opakovaný import přepíše jen texty a doplní chybějící fotky. Ceny, rozsahy tabulky ani viditelnost nemění.
+Na konci napiš majiteli souhrn z výstupu příkazu.
+
+## Import kolejnic a garnýží (DeTeDe)
+
+Když majitel napíše „importuj kolejnice“, „importuj garnýže“, „načti DeTeDe“ a podobně, spusť migrace a pak:
+
+```
+php artisan rails:import-detede              # kolejnice N/T/B/S/E/H-Line a dekorační garnýže s fotkami
+php artisan rails:import-detede --no-images  # jen texty
+```
+
+Texty a odkazy na fotky jsou v `database/data/detede-catalog.json` (web dodavatele nejde číst automaticky).
+Každý typ kolejnice je samostatný produkt, jeho varianty jsou sestavy (u garnýží barvy). Produkty jsou skryté a bez cen;
+ceny (sestava × stropní/stěnový držák × pásma po 50 cm do 6 m) a zobrazení jsou v Admin → Ceník kolejnic.
+Dřívější produkty „N-Line“ atd. import sám odstraní (pokud nemají ceny).

@@ -1,7 +1,7 @@
 {{-- Texty jsou výchozí návrh, majitel si je doladí. Dlaždice sdílí fotky s katalogem (tile-*). --}}
 @php
     $products = [
-        ['produkt' => 'shades', 'img' => 'tile-shades', 'title' => 'Žaluzie a rolety', 'alt' => 'Žaluzie na slunném okně', 'text' => 'Horizontální i vertikální žaluzie, látkové a den-noc rolety. Vybereme materiál podle světla v místnosti.'],
+        ['produkt' => 'shades', 'route' => 'web.rolety', 'cta' => 'Více o roletách', 'img' => 'tile-shades', 'title' => 'Rolety', 'alt' => 'Látková roleta na okně', 'text' => 'Látkové, den-noc a zatemňující rolety na míru. Vybereme materiál podle světla v místnosti.'],
         ['produkt' => 'panels', 'img' => 'tile-panels', 'title' => 'Japonské stěny', 'alt' => 'Japonské posuvné stěny v interiéru', 'text' => 'Posuvné panely pro velká okna a dělení prostoru. Panely šijeme ve vlastní dílně, kolejnice dodáme a namontujeme.'],
         ['produkt' => 'rails', 'img' => 'tile-rails', 'title' => 'Garnýže a kolejnice', 'alt' => 'Detail garnýže s kroužky', 'text' => 'Stropní i stěnové kolejnice, garnýže a elektrické pohony. Zaměříme tak, aby závěsy visely přesně.'],
     ];
@@ -42,8 +42,9 @@
                             <h2 class="text-lg font-extrabold">{{ $product['title'] }}</h2>
                             <p class="mt-2 flex-1 text-muted">{{ $product['text'] }}</p>
                             <p class="mt-3">
-                                <a href="{{ route('web.inquiry.create', ['produkt' => $product['produkt']]) }}" class="font-semibold text-brand-600 transition hover:text-brand-700">
-                                    Poptat <span aria-hidden="true">→</span>
+                                {{-- Dlaždice s vlastní stránkou vede na ni, ostatní rovnou na poptávku. --}}
+                                <a href="{{ isset($product['route']) ? route($product['route']) : route('web.inquiry.create', ['produkt' => $product['produkt']]) }}" class="font-semibold text-brand-600 transition hover:text-brand-700">
+                                    {{ $product['cta'] ?? 'Poptat' }} <span aria-hidden="true">→</span>
                                 </a>
                             </p>
                         </div>

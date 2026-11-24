@@ -4,6 +4,9 @@
  * České popisky parametrů položek (klíče JSON sloupce order_items.parameters).
  */
 return [
+    'variant' => 'Provedení',
+    'fabric' => 'Látka',
+    'mounting' => 'Zavěšení',
     'width' => 'Šířka',
     'height' => 'Výška',
     'depth' => 'Tloušťka',

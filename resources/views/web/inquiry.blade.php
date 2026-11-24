@@ -158,7 +158,7 @@
                         @endif
                         <p class="mt-3 text-xs text-muted">Přiložíme ji k poptávce, ať víme, s čím počítáte.</p>
                         <div class="mt-4 flex gap-4 text-sm font-semibold">
-                            <a href="{{ route('web.kalkulacka') }}" class="text-brand-600 hover:text-brand-700">Upravit</a>
+                            <a href="{{ $configuration['edit_url'] ?? route('web.kalkulacka') }}" class="text-brand-600 hover:text-brand-700">Upravit</a>
                             <a href="{{ route('web.inquiry.create', ['bez-konfigurace' => 1]) }}" class="text-muted hover:text-ink">Odebrat</a>
                         </div>
                     </div>

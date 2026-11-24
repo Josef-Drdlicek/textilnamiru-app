@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PricingVariableSeeder::class,
+            CeilingPricingVariableSeeder::class,
+            TextileProductSeeder::class,
             RibbonSeeder::class,
         ]);
     }

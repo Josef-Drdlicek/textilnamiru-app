@@ -47,7 +47,7 @@ final class PublicPresets
     /**
      * Parametry pro orientační kalkulačku — laický vstup doplněný o defaulty.
      *
-     * @param  array{width: float, height: float, ratio?: float, stuffing?: bool}  $input
+     * @param  array{width: float, height: float, ratio?: float, stuffing?: bool, surface?: CeilingSurface, light_strip?: bool}  $input
      */
     public static function estimatorParameters(ItemType $type, array $input): ItemParameters
     {
@@ -111,9 +111,10 @@ final class PublicPresets
             ItemType::StretchCeiling => new StretchCeilingParameters(
                 width: $input['width'],
                 length: $input['height'],
-                surface: CeilingSurface::Matte,
+                surface: $input['surface'] ?? CeilingSurface::Matte,
                 ledLength: 0.0,
                 distance: 0.0,
+                lightStrip: $input['light_strip'] ?? false,
             ),
         };
     }

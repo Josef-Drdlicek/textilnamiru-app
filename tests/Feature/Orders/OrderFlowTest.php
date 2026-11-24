@@ -31,7 +31,7 @@ it('requires a name to create an order', function () {
     expect(Order::count())->toBe(0);
 });
 
-it('lists quotes with net and VAT prices and submitted orders on the welcome page', function () {
+it('lists submitted orders on the welcome page and quotes on their own page', function () {
     $user = User::factory()->create();
     $quote = Order::factory()->for($user)->create(['name' => 'Rozpracovaná zakázka']);
     OrderItem::factory()->for($quote)->create(['total_price' => 100.0]);
@@ -40,8 +40,24 @@ it('lists quotes with net and VAT prices and submitted orders on the welcome pag
     $this->actingAs($user)
         ->get(route('orders.welcome'))
         ->assertOk()
-        ->assertSeeInOrder(['Cenové nabídky', 'Rozpracovaná zakázka', '100,00 Kč', '121,00 Kč', 'Zakázky', 'Odeslaná zakázka'])
-        ->assertSee($submitted->status->label());
+        ->assertSeeInOrder(['Nová zakázka', 'Zakázky', 'Odeslaná zakázka'])
+        ->assertSee($submitted->status->label())
+        ->assertDontSee('Rozpracovaná zakázka');
+
+    $this->actingAs($user)
+        ->get(route('orders.quotes'))
+        ->assertOk()
+        ->assertSeeInOrder(['Cenové nabídky', 'Rozpracovaná zakázka', '100,00 Kč', '121,00 Kč'])
+        ->assertDontSee('Odeslaná zakázka');
+});
+
+it('shows only the studio its own quotes', function () {
+    Order::factory()->create(['name' => 'Cizí nabídka']);
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('orders.quotes'))
+        ->assertOk()
+        ->assertDontSee('Cizí nabídka');
 });
 
 it('defers an order with materials and an optional deadline', function () {
@@ -49,7 +65,7 @@ it('defers an order with materials and an optional deadline', function () {
 
     $this->actingAs($order->user)
         ->post(route('orders.defer', $order), ['materials_note' => 'voal bílý – 9 m'])
-        ->assertRedirect(route('orders.welcome'));
+        ->assertRedirect(route('orders.quotes'));
 
     expect($order->refresh())
         ->status->toBe(OrderStatus::Draft)
@@ -108,7 +124,7 @@ it('lets the owner cancel a draft', function () {
 
     $this->actingAs($order->user)
         ->delete(route('orders.destroy', $order))
-        ->assertRedirect(route('orders.welcome'));
+        ->assertRedirect(route('orders.quotes'));
 
     $this->assertSoftDeleted($order);
 });

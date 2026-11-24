@@ -81,9 +81,13 @@
                         <div>
                             <p class="font-semibold">{{ $configuration['summary'] ?? $configType?->label() ?? 'Konfigurace' }}</p>
                             <p class="text-sm text-stone-500">
-                                Orientačně
-                                <span class="font-semibold tabular-nums">{{ number_format($configuration['total_price_vat'] ?? 0, 0, ',', ' ') }} Kč</span>
-                                vč. DPH ({{ number_format($configuration['vat_rate'] ?? 0, 0) }} %)
+                                @if (isset($configuration['total_price_vat']))
+                                    Orientačně
+                                    <span class="font-semibold tabular-nums">{{ number_format($configuration['total_price_vat'], 0, ',', ' ') }} Kč</span>
+                                    vč. DPH ({{ number_format($configuration['vat_rate'] ?? 0, 0) }} %)
+                                @else
+                                    Bez ceny – nacenit ručně
+                                @endif
                                 · spočteno {{ isset($configuration['calculated_at']) ? \Illuminate\Support\Carbon::parse($configuration['calculated_at'])->format('j. n. Y') : '—' }}
                             </p>
                         </div>
@@ -122,7 +126,7 @@
                 </form>
 
                 <form method="POST" action="{{ route('admin.inquiries.destroy', $inquiry) }}" class="mt-6 border-t border-stone-100 pt-4"
-                      onsubmit="return confirm('Opravdu smazat poptávku od „{{ $inquiry->name }}“? Údaje budou nenávratně odstraněny.');">
+                      data-confirm="Opravdu smazat poptávku od „{{ $inquiry->name }}“? Údaje budou nenávratně odstraněny.">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50">

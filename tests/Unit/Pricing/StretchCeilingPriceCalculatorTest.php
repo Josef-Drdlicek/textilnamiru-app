@@ -33,3 +33,21 @@ it('adds LED strip per meter and transport per kilometer', function () {
 it('does not change the price for the surface', function () {
     expect(priceCeiling(['surface' => CeilingSurface::Glossy->value])->unitPrice)->toBe(priceCeiling()->unitPrice);
 });
+
+// Obvod 2 × (3 + 4) = 14 bm: lišta 14 × 300 + LED 14 × 250 + zdroj 1 800 + přijímač 900 = 10 400
+it('adds light strip, LED along the perimeter and one power supply with receiver', function () {
+    $result = priceCeiling(['light_strip' => true]);
+
+    expect($result->unitPrice)->toEqualWithDelta(18000.0 + 10400.0, 0.001)
+        ->and(array_column($result->linesToArray(), 'label'))->toBe([
+            'Vypínaný strop',
+            'Lišta světelná (14 bm)',
+            'LED COB 15 W (14 bm)',
+            'Napájecí zdroj 400 W',
+            'Přijímač',
+        ]);
+});
+
+it('keeps old ceiling items without the light strip flag', function () {
+    expect(priceCeiling()->lines)->toHaveCount(1);
+});
